@@ -13,7 +13,8 @@ class MessagesController extends Controller
     {
         $message = Message::create([
             'content' => $request->input('message'),
-            'image' => 'https://picsum.photos/600/338?random'
+            'image' => 'http://placeimg.com/600/338/tech?'  . mt_rand(0,1000)
+//            'image' => 'https://picsum.photos/600/338?random'
         ]);
 
         return redirect('/messages/'.$message->id);
