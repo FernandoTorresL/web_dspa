@@ -2,11 +2,11 @@
 
 @section('content')
     <div class="jumbotron text-center">
-        <h1>Laratter</h1>
+        <h1>Web DSPA</h1>
         <nav>
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link" href="/">Inicio</a>
                 </li>
             </ul>
         </nav>
