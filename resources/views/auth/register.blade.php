@@ -12,10 +12,24 @@
                         @csrf
 
                         <div class="form-group row">
+                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('CURP') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="curp" type="text" class="form-control{{ $errors->has('curp') ? ' is-invalid' : '' }}" name="curp" value="{{ old('curp') }}" required autofocus maxlength="18">
+
+                                @if ($errors->has('curp'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('curp') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nombre completo') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
+                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required>
 
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" role="alert">
