@@ -1,4 +1,5 @@
 <?php
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -9,13 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', function () {
-    $links = [
-        'https://platzi.com/laravel' => 'Curso de Laravel',
-        'https://laravel.com' => 'Página de Laravel'
-    ];
-    return view('welcome', [
-        'teacher' => 'Guido Contreras Woda',
-        'links' => $links,
-    ]);
-});
+
+Route::get('/', 'PagesController@home');
+
+Route::get('/acerca', 'PagesController@about');
