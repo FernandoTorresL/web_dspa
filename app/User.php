@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'name', 'email', 'password', 'avatar'
+        'username', 'name', 'email', 'password', 'avatar', 'delegacion_id'
     ];
 
     /**
@@ -26,4 +26,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function delegacion()
+    {
+        return $this->belongsTo(Delegacion::class);
+    }
 }
