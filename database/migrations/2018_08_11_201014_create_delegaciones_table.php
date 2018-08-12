@@ -14,7 +14,7 @@ class CreateDelegacionesTable extends Migration
     public function up()
     {
         Schema::create('delegaciones', function (Blueprint $table) {
-            $table->increments('id');
+            $table->tinyIncrements('id');
 
             $table->tinyInteger('entidad_imss');
             $table->tinyInteger('ciz');
