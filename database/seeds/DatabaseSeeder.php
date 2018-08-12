@@ -14,5 +14,9 @@ class DatabaseSeeder extends Seeder
         factory(App\Message::class)
             ->times(100)
             ->create();
+
+        factory(\App\Delegacion::class)
+            ->times(40)
+            ->create();
     }
 }
