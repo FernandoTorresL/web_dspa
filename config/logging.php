@@ -35,11 +35,11 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single', 'errorlog'],
         ],
-
         'single' => [
             'driver' => 'single',
+            'tap' => [App\Logging\CustomizeFormatter::class],
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
@@ -74,7 +74,8 @@ return [
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level' => 'debug',
+            'tap' => [App\Logging\CustomizeFormatter::class],
+            'level' => 'error',
         ],
     ],
 
