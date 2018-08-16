@@ -4,8 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Delegacion extends Model
+class Job extends Model
 {
-    protected $table = 'delegaciones';
     protected $guarded = [];
 }

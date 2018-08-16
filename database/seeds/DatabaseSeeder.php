@@ -11,11 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\Delegacion::class)
-            ->times(40)
-            ->create();
-
-        factory(App\User::class, 50)->create()->each(function (App\User $user) {
+        factory(App\User::class, 10)->create()->each(function (App\User $user) {
 
             factory(App\Message::class)
                 ->times(20)

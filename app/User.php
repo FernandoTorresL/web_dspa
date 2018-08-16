@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'name', 'email', 'password', 'avatar', 'delegacion_id'
+        'username', 'name', 'email', 'password', 'avatar', 'delegacion_id', 'job_id', 'status'
     ];
 
     /**
@@ -30,5 +30,10 @@ class User extends Authenticatable
     public function delegacion()
     {
         return $this->belongsTo(Delegacion::class);
+    }
+
+    public function job()
+    {
+        return $this->belongsTo(Job::class);
     }
 }
