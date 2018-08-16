@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddJobIdAndStatusToUsersTable extends Migration
+class AddMatriculaColumnToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class AddJobIdAndStatusToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('job_id')->after('delegacion_id')->unsigned();
-            $table->foreign('job_id')->references('id')->on('jobs');
-            $table->char('status', 1)->after('remember_token')->default(0);
+            $table->char('matricula', 10)->after('username')->unique();
         });
     }
 
@@ -28,9 +26,7 @@ class AddJobIdAndStatusToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('users_job_id_foreign');
-            $table->dropColumn('job_id');
-            $table->dropColumn('status');
+            $table->dropColumn('matricula');
         });
     }
 }

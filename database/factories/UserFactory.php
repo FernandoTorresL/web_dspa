@@ -15,7 +15,8 @@ use Faker\Generator as Faker;
 
 $factory->define(App\User::class, function (Faker $faker) {
     return [
-        'username' => $faker->userName,
+        'username' => $faker->toUpper($faker->regexify('/^[A-Z]{1}(A|E|I|O|U)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1}')),
+        'matricula' => $faker->unique()->randomNumber(8),
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'avatar' => 'https://picsum.photos/300/300?image=' . mt_rand(1,1000),

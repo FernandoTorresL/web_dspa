@@ -15,7 +15,6 @@ class AddDelegacionIdColumnToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->tinyInteger('delegacion_id')->after('remember_token')->unsigned();
-
             $table->foreign('delegacion_id')->references('id')->on('delegaciones');
         });
     }
@@ -29,7 +28,6 @@ class AddDelegacionIdColumnToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_delegacion_id_foreign');
-
             $table->dropColumn('delegacion_id');
         });
     }
