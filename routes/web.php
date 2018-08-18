@@ -22,3 +22,5 @@ Auth::routes();
 Route::get('/inicio', 'HomeController@home');
 
 Route::get('/ctas', 'CuentasController@home');
+
+Route::get('/inventario', 'InventarioController@home');

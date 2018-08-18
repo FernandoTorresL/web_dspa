@@ -78,7 +78,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Último inventario de cuentas (Fecha de corte: 24 Julio 2018)</h5>
                         <p class="card-text">Total de Cuentas: 456</p>
-                        <a href="#" class="btn btn-success">Ir al inventario</a>
+                        <a href="inventario" class="btn btn-success">Ir al inventario</a>
                     </div>
                 </div>
             </div>
