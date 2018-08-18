@@ -10,7 +10,7 @@ class PagesController extends Controller
 {
     public function home()
     {
-        Log::info('Visitando HOME');
+        Log::info('Visitando WELCOME');
         $messages = Message::paginate(10);
 
         return view('welcome', [

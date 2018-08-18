@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         factory(App\User::class, 5)->create()->each(function (App\User $user) {
 
             factory(App\Message::class)
-                ->times(5)
+                ->times(20)
                 ->create([
                     'user_id' => $user->id,
                 ]);
