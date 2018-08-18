@@ -24,13 +24,13 @@ class CreateDetalleCtasTable extends Migration
             $table->unsignedInteger('area_id');
             $table->string('name', 32);
             $table->date('created');
-            $table->date('passdate');
+            $table->date('passdate')->nullable();
             $table->string('passint', 5);
             $table->string('attribute', 50);
-            $table->dateTime('last_access');
+            $table->dateTime('last_access')->nullable();
             $table->string('install_data', 100);
             $table->string('model', 16);
-            $table->string('comment', 256);
+            $table->string('comment', 256)->nullable();
             $table->timestamps();
         });
     }

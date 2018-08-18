@@ -5,7 +5,7 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <a class="btn btn-default" href="">Regresar</a>
+            <a class="btn btn-default" href="/">Regresar</a>
         </div>
         <div class="row">
             <div class="card-body">
@@ -78,7 +78,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Último inventario de cuentas (Fecha de corte: 24 Julio 2018)</h5>
                         <p class="card-text">Total de Cuentas: 456</p>
-                        <a href="inventario" class="btn btn-success">Ir al inventario</a>
+                        <a href="ctas/inventario" class="btn btn-success">Ir al inventario</a>
                     </div>
                 </div>
             </div>
