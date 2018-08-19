@@ -31,9 +31,12 @@ class InventarioController extends Controller
 
         $total_detalle_ctas = $listado_detalle_ctas->count();
 
+        $detalle_cta = Detalle_cta::find(1);
+
         return view('ctas/inventario/show', [
             'listado_detalle_ctas' => $listado_detalle_ctas,
             'total_detalle_ctas' => $total_detalle_ctas,
+            'inventory' => $detalle_cta->inventory,
             'del_id' => $del_id,
             'del_name' => $del_name,
         ]);
