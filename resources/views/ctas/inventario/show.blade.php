@@ -35,7 +35,7 @@
                 <td class="text-left" width="30%">{{ $detalle_cta->name }}</td>
                 <td class="text-center">{{ $detalle_cta->gpo_owner_id }}</td>
                 <td class="text-right" width="40%">{{ $detalle_cta->install_data }}</td>
-                <td class="text-right" width="40%">{{ $detalle_cta->area_id }}</td>
+                <td class="text-right" width="40%">{{ $detalle_cta->work_area_id }}</td>
             </tr>
         @empty
             <p>No hay cuentas registradas</p>

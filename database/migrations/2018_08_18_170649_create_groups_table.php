@@ -17,8 +17,9 @@ class CreateGroupsTable extends Migration
             $table->increments('id');
 
             $table->string('name');
-            $table->unsignedInteger('work_area_id');
-            $table->string('status', 1);
+            $table->unsignedInteger('work_area_id')->nullable();
+            $table->string('status', 1)->nullable();
+
             $table->timestamps();
         });
     }

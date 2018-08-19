@@ -27,7 +27,7 @@ class InventarioController extends Controller
         Log::info('Visitando Inventario. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
 
         $listado_detalle_ctas =
-            Detalle_cta::select('cuenta', 'name', 'gpo_owner_id', 'area_id', 'install_data')->where('delegacion_id', $del_id)->orderBy('area_id', 'cuenta')->distinct()->get();
+            Detalle_cta::select('cuenta', 'name', 'gpo_owner_id', 'work_area_id', 'install_data')->where('delegacion_id', $del_id)->orderBy('work_area_id', 'cuenta')->distinct()->get();
 
         $total_detalle_ctas = $listado_detalle_ctas->count();
 

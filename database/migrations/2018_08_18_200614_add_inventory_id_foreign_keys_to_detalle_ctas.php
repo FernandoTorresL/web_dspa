@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWorkAreasTable extends Migration
+class AddInventoryIdForeignKeysToDetalleCtas extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateWorkAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('work_areas', function (Blueprint $table) {
-            $table->unsignedInteger('id', true);
-
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('detalle_ctas', function (Blueprint $table) {
+            $table->foreign('inventory_id')->references('id')->on('inventories');
         });
     }
 
@@ -28,6 +25,8 @@ class CreateWorkAreasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('work_areas');
+        Schema::table('detalle_ctas', function (Blueprint $table) {
+            $table->dropForeign('detalle_ctas_inventory_id_foreign');
+        });
     }
 }
