@@ -14,7 +14,7 @@ class AddDelegacionIdColumnToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('delegacion_id')->after('remember_token')->unsigned();
+            $table->unsignedTinyInteger('delegacion_id')->after('remember_token');
             $table->foreign('delegacion_id')->references('id')->on('delegaciones');
         });
     }

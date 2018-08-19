@@ -15,13 +15,14 @@ class CreateDetalleCtasTable extends Migration
     {
         Schema::create('detalle_ctas', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('inventario_id');
+
+            $table->unsignedInteger('inventory_id');
             $table->string('cuenta', 12);
             $table->unsignedTinyInteger('ciz_id');
             $table->unsignedTinyInteger('delegacion_id');
             $table->unsignedInteger('gpo_owner_id');
             $table->unsignedInteger('gpo_default_id');
-            $table->unsignedInteger('area_id');
+            $table->unsignedInteger('work_area_id');
             $table->string('name', 32);
             $table->date('created');
             $table->date('passdate')->nullable();
@@ -30,7 +31,8 @@ class CreateDetalleCtasTable extends Migration
             $table->dateTime('last_access')->nullable();
             $table->string('install_data', 100);
             $table->string('model', 16);
-            $table->string('comment', 256)->nullable();
+            $table->string('comment')->nullable();
+
             $table->timestamps();
         });
     }

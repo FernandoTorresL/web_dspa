@@ -14,7 +14,8 @@ class AddJobIdAndStatusToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('job_id')->after('delegacion_id')->unsigned();
+            $table->unsignedTinyInteger('job_id')->after('delegacion_id');
+
             $table->foreign('job_id')->references('id')->on('jobs');
             $table->char('status', 1)->after('remember_token')->default(0);
         });

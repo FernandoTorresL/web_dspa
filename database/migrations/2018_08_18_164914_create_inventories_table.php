@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateJobsTable extends Migration
+class CreateInventoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateJobsTable extends Migration
      */
     public function up()
     {
-        Schema::create('jobs', function (Blueprint $table) {
-            $table->unsignedTinyInteger('id', true);
+        Schema::create('inventories', function (Blueprint $table) {
+            $table->increments('id');
 
-            $table->string('name');
+            $table->string('name', 4);
+            $table->date('delivery_date');
+            $table->dateTime('cut_off_date');
+            $table->string('comment')->nullable();
+
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ class CreateJobsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jobs');
+        Schema::dropIfExists('inventories');
     }
 }
