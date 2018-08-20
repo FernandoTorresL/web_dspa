@@ -81,7 +81,7 @@
         <div class="row"></div>
 
         <div class="row">
-            <div class="col-12 col-md-12">
+            <div class="col-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
 
@@ -90,6 +90,16 @@
                         <h5 class="card-title">Último inventario de cuentas (Fecha de corte: 24 Julio 2018)</h5>
                         <p class="card-text">Total de Cuentas: 456</p>
                         <a href="ctas/inventario" class="btn btn-success">Ir al inventario</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Solicitudes</h5>
+                        <p class="card-text">Captura y envía solicitudes a Nivel Central </p>
+                        <a href="ctas/solicitudes" class="btn btn-info">Crear solicitud</a>
                     </div>
                 </div>
             </div>
