@@ -19,5 +19,14 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $user->id,
                 ]);
         });
+
+        factory(App\Delegacion::class, 40)->create()->each(function (\App\Delegacion $delegacion) {
+
+            factory(App\Subdelegacion::class)
+                ->times(4)
+                ->create([
+                    'delegacion_id' => $delegacion->id,
+                ]);
+        });
     }
 }
