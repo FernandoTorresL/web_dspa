@@ -19,8 +19,8 @@ Route::post('/messages/create', 'MessagesController@create')->middleware('auth')
 
 Auth::routes();
 
-Route::get('/inicio', 'HomeController@home');
+Route::get('/inicio', 'HomeController@home')->middleware('auth');
 
-Route::get('/ctas', 'CuentasController@home');
+Route::get('/ctas', 'CuentasController@home')->middleware('auth');
 
-Route::get('/ctas/inventario', 'InventarioController@home');
+Route::get('/ctas/inventario', 'InventarioController@home')->middleware('auth');

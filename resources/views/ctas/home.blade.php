@@ -9,7 +9,7 @@
         </div>
         <div class="row">
             <div class="card-body">
-                <h4 class="card-title">Delegación Ciudad de México Norte</h4>
+                <h4 class="card-title">Delegación {{ $del_id }} - {{ $del_name }}</h4>
                 {{--<p><small class="card-subtitle text-muted">Toledo 21, 8 piso, Colonia Juárez, Delegación Cuauhtemoc, Ciudad de México, 06600</small></p>--}}
             </div>
         </div>
@@ -53,7 +53,7 @@
                                 <li class="list-group-item">
                                     SSJSAV: <span class="badge badge-pill badge-primary col-sm-2">1</span>
                                 </li>
-                                <li class="list-group-item">SSJDAV: <span class="badge badge-pill badge-danger">4</span></li>
+                                <li class="list-group-item">SSJDAV: <span class="badge badge-pill badge-danger">{{ $total_ctas_SSJSAV }}</span></li>
                                 <li class="list-group-item">SSJOFA: <span class="badge badge-pill badge-warning">6</span></li>
                                 <li class="list-group-item">SSCONS: <span class="badge badge-pill badge-success">253</span></li>
                                 <li class="list-group-item">SSADIF: <span class="badge badge-pill badge-warning">234</span></li>

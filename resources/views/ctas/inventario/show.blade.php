@@ -8,7 +8,7 @@
 
     <div class="card">
         <div class="card-header">
-             <p class="h3">Delegación {{ $del_id }} - {{ $del_name }} </p>
+             <p class="h3">Delegación {{ $del_id }} - {{ $del_name }}</p>
         </div>
         <div class="card-body">
             <h5 class="card-title">Inventario de cuentas Mainframe-SINDO</h5>
