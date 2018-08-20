@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateSolicitudRequest;
 use App\Solicitud;
+use App\Subdelegacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,9 +17,13 @@ class SolicitudesController extends Controller
         $del_id = Auth::user()->delegacion_id;
         $del_name = Auth::user()->delegacion->name;
 
+        $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->orderBy('num_sub', 'name')->get();
+
         Log::info('Visitando Crear Solicitud. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
+
         return view(
             'ctas.solicitudes.create', [
+            'subdelegaciones' =>  $subdelegaciones,
         ]);
     }
 

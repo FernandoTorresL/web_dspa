@@ -79,9 +79,10 @@
                             <label for="subdelegacion">Subdelegación</label>
                             <select class="form-control @if($errors->has('subdelegacion')) is-invalid @endif" id="subdelegacion" name="subdelegacion">
                                 <option value="" selected>Selecciona...</option>
-                                <option value="0">Sin Subdelegación asignada</option>
-                                <option value="1">Polanco</option>
-                                <option value="2">Centro</option>
+                                @forelse($subdelegaciones as $subdelegacion)
+                                    <option value="{{ $subdelegacion->id }}">{{ $subdelegacion->id }} - {{ $subdelegacion->name }}</option>
+                                @empty
+                                @endforelse
                             </select>
                             @if ($errors->has('subdelegacion'))
                                 @foreach($errors->get('subdelegacion') as $error)
