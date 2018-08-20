@@ -29,11 +29,13 @@ class SolicitudesController extends Controller
         $del_id = Auth::user()->delegacion_id;
         $del_name = Auth::user()->delegacion->name;
 
+        $archivo = $request->file('archivo');
+
         Log::info('Enviando Crear Solicitud. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
 
         $solicitud = Solicitud::create([
             'valija_id' => 0,
-            'fecha_solicitud_del' => $request->input('fecha_solicitud_del'),
+            'fecha_solicitud_del' => $request->input('fecha_solicitud'),
             'lote_id' => 0,
             'delegacion_id' => $del_id,
             'subdelegacion_id' => $request->input('subdelegacion'),
@@ -48,7 +50,7 @@ class SolicitudesController extends Controller
             'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
             'causa_rechazo_id' => 0,
-            'archivo' => 'pdf_nuevo.pdf',
+            'archivo' => $archivo->store('solicitudes/' . $del_id, 'public'),
             'user_id' => $user_id,
         ]);
 
