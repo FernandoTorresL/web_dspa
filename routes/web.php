@@ -25,6 +25,7 @@ Route::get('/ctas', 'CuentasController@home')->middleware('auth');
 
 Route::get('/ctas/inventario', 'InventarioController@home')->middleware('auth');
 
+Route::post('/ctas/solicitudes/create', 'SolicitudesController@create')->middleware('auth');
+
 Route::get('/ctas/solicitudes', 'SolicitudesController@home')->middleware('auth');
 
-Route::post('/ctas/solicitudes/create', 'SolicitudesController@create')->middleware('auth');

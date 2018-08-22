@@ -28,8 +28,8 @@ class CreateSolicitudesTable extends Migration
             $table->string('curp', 18);
             $table->string('cuenta', 7);
             $table->unsignedTinyInteger('movimiento_id');
-            $table->unsignedInteger('gpo_nuevo_id');
-            $table->unsignedInteger('gpo_actual_id');
+            $table->unsignedInteger('gpo_nuevo_id')->nullable();
+            $table->unsignedInteger('gpo_actual_id')->nullable();
             $table->string('comment')->nullable();
             $table->unsignedTinyInteger('causa_rechazo_id');
             $table->string('archivo');
