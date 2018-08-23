@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Delegacion;
+use App\Job;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -50,12 +52,43 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         Log::info('Validando Datos-Registrar Usuario');
+
         return Validator::make($data, [
-            'username' => 'required|string|min:18|max:18|unique:users',
+            'username' => ['required','string','min:18','max:18','unique:users','regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/',],
             'matricula' => 'required|string|max:11|unique:users',
             'email' => 'required|string|email|max:100|unique:users',
+            'delegacion' => 'required',
+            'puesto' => 'required',
             'password' => 'required|string|min:6|max:12|confirmed',
         ]);
+    }
+
+    protected function messages()
+    {
+        return [
+            'matricula.required' => 'Matrícula es un campo obligatorio',
+            'matricula.max' => 'Matrícula debe tener menos de :max caracteres',
+            'matricula.regex' => 'Matrícula inválida. Para BAJA, puede capturar SIN DATO',
+            'curp.required' => 'CURP es un campo obligatorio',
+            'curp.size' => 'CURP debe contener :size caracteres',
+            'curp.regex' => 'CURP inválida. Para BAJA, puede capturar SIN DATO',
+            'cuenta.required' => 'User-ID es un campo obligatorio',
+            'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
+            'gpo_actual.required_if' => 'Grupo Actual es obligatorio cuando Tipo de Movimiento es BAJA.',
+            'gpo_nuevo.required_if' => 'Grupo Nuevo es obligatorio cuando Tipo de Movimiento es ALTA o CAMBIO.',
+            'comment.max' => 'Comentario ebe tener menos de :max caracteres',
+        ];
+    }
+
+    protected function attributes()
+    {
+        return [
+            'email' => 'Correo Electrónico',
+            'username' => 'CURP',
+            'delegacion' => 'Delegación',
+            'puesto' => 'Puesto',
+            'matricula' => 'Matrícula',
+        ];
     }
 
     /**
@@ -66,7 +99,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        Log::info('Creando usuario:'.$data['username'] . ' Email:'.$data['email']);
+        Log::info('Creando usuario:'.$data['username'] . ' Email:'.$data['email'] . 'Del:' . $data['delegacion']);
+
         return User::create([
             'username' => $data['username'],
             'matricula' => $data['matricula'],
@@ -74,8 +108,23 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'avatar' => 'https://loremflickr.com/300/300/kid',
-            'delegacion_id' => env('DEL_DEFAULT'),
-            'job_id' => env('JOB_DEFAULT'),
+            'delegacion_id' => $data['delegacion'],
+            'job_id' => $data['puesto'],
+            'status' => 1,
+        ]);
+    }
+
+    public function showRegistrationForm()
+    {
+
+        $delegaciones = Delegacion::where('status', 1)->orderBy('id', 'asc')->get();
+        $puestos = Job::where('id', '>', '1')->where('id', '<=', '4')->orderBy('id', 'asc')->get();
+
+        Log::info('Registrar Nuevo Usuario XXX.');
+
+        return view('auth.register', [
+            'delegaciones' => $delegaciones,
+            'puestos' => $puestos,
         ]);
     }
 }

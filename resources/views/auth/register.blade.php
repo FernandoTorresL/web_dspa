@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Registrar Usuario')
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -54,6 +56,42 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="delegacion" class="col-md-4 col-form-label text-md-right">Delegación</label>
+                            <div class="col-md-6">
+                                    <select class="form-control @if($errors->has('delegacion')) is-invalid @endif" id="delegacion" name="delegacion">
+                                        <option value="" selected>Selecciona...</option>
+                                        @forelse($delegaciones as $delegacion)
+                                            <option value="{{ $delegacion->id }}">{{ $delegacion->id }} - {{ $delegacion->name }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                    @if ($errors->has('delegacion'))
+                                        @foreach($errors->get('delegacion') as $error)
+                                            <div class="invalid-feedback"><strong>{{ $error }}</strong></div>
+                                        @endforeach
+                                    @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="puesto" class="col-md-4 col-form-label text-md-right">Puesto</label>
+                            <div class="col-md-6">
+                                <select class="form-control @if($errors->has('puesto')) is-invalid @endif" id="puesto" name="puesto">
+                                    <option value="" selected>Selecciona...</option>
+                                    @forelse($puestos as $puesto)
+                                        <option value="{{ $puesto->id }}">{{ $puesto->name }}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                                @if ($errors->has('puesto'))
+                                    @foreach($errors->get('puesto') as $error)
+                                        <div class="invalid-feedback"><strong>{{ $error }}</strong></div>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Contraseña') }}</label>
 
                             <div class="col-md-6">
@@ -76,10 +114,12 @@
                         </div>
 
                         <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
+                            <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Registrar') }}
                                 </button>
+                                <a class="btn btn-link" href="{{ route('login') }}">
+                                {{ __('¿Ya tienes una cuenta? Entra aquí.') }}
                             </div>
                         </div>
                     </form>

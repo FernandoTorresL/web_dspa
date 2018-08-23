@@ -4,18 +4,18 @@
 
 @section('content')
     <div class="row">
-        <a class="btn btn-default" href="/">Regresar</a>
+        <a class="btn btn-default" href="{{ url('/') }}">Regresar</a>
     </div>
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    {{--@if ($errors->any())--}}
+        {{--<div class="alert alert-danger">--}}
+            {{--<ul>--}}
+                {{--@foreach ($errors->all() as $error)--}}
+                    {{--<li>{{ $error }}</li>--}}
+                {{--@endforeach--}}
+            {{--</ul>--}}
+        {{--</div>--}}
+    {{--@endif--}}
 
     </div>
     <form action="solicitudes/create" method="POST" enctype="multipart/form-data">
@@ -90,7 +90,7 @@
                         <select class="form-control @if($errors->has('subdelegacion')) is-invalid @endif" id="subdelegacion" name="subdelegacion">
                             <option value="" selected>Selecciona...</option>
                             @forelse($subdelegaciones as $subdelegacion)
-                                <option value="{{ $subdelegacion->id }}">{{ $subdelegacion->id }} - {{ $subdelegacion->name }}</option>
+                                <option value="{{ $subdelegacion->id }}">{{ $subdelegacion->num_sub }} - {{ $subdelegacion->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -191,15 +191,16 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="gpo_actual">Grupo Actual</label>
                         </div>
-                        <select class="custom-select @if($errors->has('gpo_actual')) is-invalid @endif" id="gpo_actual" name="gpo_actual">
+                        <select class="form-control @if($errors->has('gpo_actual')) is-invalid @endif" id="gpo_actual" name="gpo_actual">
                             <option value="" selected>Selecciona...</option>
-                            <option value="1">SSCONS</option>
-                            <option value="2">SSADIF</option>
-                            <option value="3">SSOPER</option>
+                            @forelse($gruposActual as $gpo_actual)
+                                <option value="{{ $gpo_actual->id }}">{{ $gpo_actual->name }}</option>
+                            @empty
+                            @endforelse
                         </select>
                         @if ($errors->has('gpo_actual'))
                             @foreach($errors->get('gpo_actual') as $error)
-                                <div class="invalid-feedback">{{ $error }}</div>
+                                <div class="invalid-feedback"><strong>{{ $error }}</strong></div>
                             @endforeach
                         @endif
                     </div>
@@ -214,15 +215,16 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="gpo_nuevo">Grupo Nuevo</label>
                         </div>
-                        <select class="custom-select @if($errors->has('gpo_nuevo')) is-invalid @endif" id="inputGroupSelect01" name="gpo_nuevo">
+                        <select class="form-control @if($errors->has('gpo_nuevo')) is-invalid @endif" id="gpo_nuevo" name="gpo_nuevo">
                             <option value="" selected>Selecciona...</option>
-                            <option value="1">SSCONS</option>
-                            <option value="2">SSADIF</option>
-                            <option value="3">SSOPER</option>
+                            @forelse($gruposNuevo as $gpo_nuevo)
+                                <option value="{{ $gpo_nuevo->id }}">{{ $gpo_nuevo->name }}</option>
+                            @empty
+                            @endforelse
                         </select>
                         @if ($errors->has('gpo_nuevo'))
                             @foreach($errors->get('gpo_nuevo') as $error)
-                                <div class="invalid-feedback">{{ $error }}</div>
+                                <div class="invalid-feedback"><strong>{{ $error }}</strong></div>
                             @endforeach
                         @endif
                     </div>
