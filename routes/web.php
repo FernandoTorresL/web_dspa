@@ -17,6 +17,9 @@ Route::get('/messages/{message}', 'MessagesController@show');
 
 Route::post('/messages/create', 'MessagesController@create')->middleware('auth');
 
+//$this->get('/verify')
+Route::get('/verify-user/{code}', 'Auth\RegisterController@activateUser')->name('activate.user');
+
 Auth::routes();
 
 Route::get('/inicio', 'HomeController@home')->middleware('auth');

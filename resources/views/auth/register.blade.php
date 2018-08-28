@@ -8,6 +8,11 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Registro de Usuario') }}</div>
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}" aria-label="{{ __('Registrarse') }}">
