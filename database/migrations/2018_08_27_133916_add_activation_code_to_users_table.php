@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddJobIdAndStatusToUsersTable extends Migration
+class AddActivationCodeToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,7 @@ class AddJobIdAndStatusToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedTinyInteger('job_id')->after('delegacion_id');
-
-            $table->foreign('job_id')->references('id')->on('jobs');
-            $table->boolean('status', 1)->after('remember_token')->default(0);
+            $table->string('activation_code')->nullable()->after('remember_token');
         });
     }
 
@@ -29,9 +26,7 @@ class AddJobIdAndStatusToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('users_job_id_foreign');
-            $table->dropColumn('job_id');
-            $table->dropColumn('status');
+            $table->dropColumn('activation_code');
         });
     }
 }
