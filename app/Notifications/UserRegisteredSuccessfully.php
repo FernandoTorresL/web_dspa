@@ -50,6 +50,7 @@ class UserRegisteredSuccessfully extends Notification
 
         return (new MailMessage)
             ->from(env('ADMIN_MAIL'))
+
             ->subject('¡Registro de cuenta exitoso!')
             ->greeting(sprintf('Hola %s', $user->name))
             ->line('Te has registrado exitosamente en el sistema. Por favor activa tu cuenta.')

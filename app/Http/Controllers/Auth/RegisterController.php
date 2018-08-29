@@ -96,8 +96,8 @@ class RegisterController extends Controller
             Log::error('Error al Registrar Usuario|' . $exception);
             return redirect()->back()->with('message', 'Unable to create new user.');
         }
-        //We can't Internet free, only some sites. Can't reach Mail, so, we have to disable the notifications by now.
-        $user->notify(new UserRegisteredSuccessfully($user));
+        //We dont have Internet 100% free, only some sites. Can't reach Mail, so, we have to disable the notifications by now.
+        //        $user->notify(new UserRegisteredSuccessfully($user));
         return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo para activar tu acceso.');
     }
 
@@ -119,7 +119,7 @@ class RegisterController extends Controller
             auth()->login($user);
         } catch (\Exception $exception) {
             logger()->error($exception);
-            Log::error('Whoops! something went malooo|' . $exception);
+            Log::error('Whoops! Algo salió mal|' . $exception);
             return "Whoops! Algo salió mal. Comunícate con los administradores del portal";
         }
         return redirect()->to('/');
