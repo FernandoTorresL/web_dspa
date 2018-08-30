@@ -51,19 +51,6 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-//    protected function validator(array $data)
-//    {
-//        Log::info('Validando Datos-Registrar Usuario');
-//
-//        return Validator::make($data, [
-//            'username' => ['required','string','min:18','max:18','unique:users','regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/',],
-//            'matricula' => 'required|string|max:11|unique:users',
-//            'email' => 'required|string|email|max:100|unique:users',
-//            'delegacion' => 'required',
-//            'puesto' => 'required',
-//            'password' => 'required|string|min:6|max:12|confirmed',
-//        ]);
-//    }
 
     protected function register(Request $request)
     {
@@ -96,9 +83,17 @@ class RegisterController extends Controller
             Log::error('Error al Registrar Usuario|' . $exception);
             return redirect()->back()->with('message', 'Unable to create new user.');
         }
-        //We dont have Internet 100% free, only some sites. Can't reach Mail, so, we have to disable the notifications by now.
-        //        $user->notify(new UserRegisteredSuccessfully($user));
-        return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo para activar tu acceso.');
+
+        //We dont have Internet 100% free, only some sites. Can't reach Mail sometimes, so, we have to try to send the notification
+        try {
+            Log::info('Enviando notificación|usuario:'. array_get($validatedData, 'username') . ' Email:'. array_get($validatedData, 'email') . ' Del:' . array_get($validatedData, 'delegacion'));
+            $user->notify(new UserRegisteredSuccessfully($user));
+        } catch (\Exception $exception) {
+            logger()->error($exception);
+            Log::error('Error al enviar notificación|' . $exception);
+        }
+
+        return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo en los próximos minutos para activar tu acceso.');
     }
 
     /**
@@ -159,22 +154,6 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-//    protected function create(array $data)
-//    {
-//        Log::info('Creando usuario:'.$data['username'] . ' Email:'.$data['email'] . 'Del:' . $data['delegacion']);
-//
-//        return User::create([
-//            'username' => $data['username'],
-//            'matricula' => $data['matricula'],
-//            'name' => $data['username'],
-//            'email' => $data['email'],
-//            'password' => Hash::make($data['password']),
-//            'avatar' => 'https://loremflickr.com/300/300/kid',
-//            'delegacion_id' => $data['delegacion'],
-//            'job_id' => $data['puesto'],
-//            'status' => 1,
-//        ]);
-//    }
 
     public function showRegistrationForm()
     {
@@ -182,7 +161,7 @@ class RegisterController extends Controller
         $delegaciones = Delegacion::where('status', 1)->orderBy('id', 'asc')->get();
         $puestos = Job::where('id', '>', '1')->where('id', '<=', '4')->orderBy('id', 'asc')->get();
 
-        Log::info('Registrar Nuevo Usuario XXX.');
+        Log::info('Registrar nuevo usuario.');
 
         return view('auth.register', [
             'delegaciones' => $delegaciones,

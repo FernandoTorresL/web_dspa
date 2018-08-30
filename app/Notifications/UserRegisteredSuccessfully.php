@@ -50,13 +50,13 @@ class UserRegisteredSuccessfully extends Notification
 
         return (new MailMessage)
             ->from(env('ADMIN_MAIL'))
-
+            ->replyTo('fernando.torresl@imss.gob.mx', 'Fernando Torres Laguna')
             ->subject('¡Registro de cuenta exitoso!')
             ->greeting(sprintf('Hola %s', $user->name))
-            ->line('Te has registrado exitosamente en el sistema. Por favor activa tu cuenta.')
+            ->line('Te has registrado exitosamente en el ' . env('APP_NAME'))
+            ->line('Por favor activa tu cuenta presionando el botón: ')
             ->action('Activar Cuenta', route('activate.user', $user->activation_code))
-            ->line('Gracias por utilizar el Portal Web DSPA')
-            ->replyTo('fernando.torresl@imss.gob.mx', 'Fernando Torres Laguna');
+            ->line('Gracias por utilizar el ' . env('APP_NAME'));
     }
 
     /**
