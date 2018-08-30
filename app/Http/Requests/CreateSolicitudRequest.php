@@ -25,7 +25,7 @@ class CreateSolicitudRequest extends FormRequest
     public function rules()
     {
         return [
-            'archivo' => ['required'],
+            'archivo' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
             'tipo_movimiento' => ['required', Rule::in(['1', '2', '3'])],
             'subdelegacion' => ['required'],
@@ -37,34 +37,37 @@ class CreateSolicitudRequest extends FormRequest
             'cuenta' => ['required', 'max:8'],
             'gpo_actual' => ['required_if:tipo_movimiento,==,2,3'],
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
-            'comment' => ['max:4'],
+            'comment' => ['max:190'],
         ];
     }
 
     public function messages()
     {
         return [
-            'archivo.required' => 'El archivo PDF del formato es obligatorio',
-            'fecha_solicitud.before_or_equal' => 'Debe ser una fecha anterior o igual a hoy',
-            'fecha_solicitud.required' => 'Fecha de solicitud es dato obligatorio.',
-            'tipo_movimiento.required' => 'Debe elegir un valor',
-            'subdelegacion.required' => 'Debe elegir un valor',
-            'primer_apellido.required' => 'Es un campo obligatorio',
-            'primer_apellido.max' => 'Debe tener menos de :max caracteres',
-            'segundo_apellido.max' => 'Debe tener menos de :max caracteres',
-            'nombre.required' => 'Es un campo obligatorio',
-            'nombre.max' => 'Debe tener menos de :max caracteres',
-            'matricula.required' => 'Es un campo obligatorio',
-            'matricula.max' => 'Debe tener menos de :max caracteres',
+            'archivo.required' => 'Adjuntar un archivo PDF con el formato y tarjetón es obligatorio',
+            'archivo.mimes' => 'Archivo debe ser de formato: pdf',
+//            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
+            'fecha_solicitud.before_or_equal' => 'Fecha de Solicitud debe ser anterior o igual al día de hoy',
+            'fecha_solicitud.required' => 'Fecha de Solicitud es dato obligatorio.',
+            'tipo_movimiento.required' => 'Tipo de Movimiento es obligatorio',
+            'tipo_movimiento.in' => 'Debe elegir un Tipo de Movimiento',
+            'subdelegacion.required' => 'Debe elegir un valor para Subdelegación',
+            'primer_apellido.required' => 'Primer Apellido es un campo obligatorio',
+            'primer_apellido.max' => 'Primer Apellido debe tener menos de :max caracteres',
+            'segundo_apellido.max' => 'Segundo Apellido debe tener menos de :max caracteres',
+            'nombre.required' => 'Nombre es un campo obligatorio',
+            'nombre.max' => 'Nombre debe tener menos de :max caracteres',
+            'matricula.required' => 'Matrícula es un campo obligatorio',
+            'matricula.max' => 'Matrícula debe tener menos de :max caracteres',
             'matricula.regex' => 'Matrícula inválida. Para BAJA, puede capturar SIN DATO',
-            'curp.required' => 'Es un campo obligatorio',
-            'curp.size' => 'Debe contener :size caracteres',
+            'curp.required' => 'CURP es un campo obligatorio',
+            'curp.size' => 'CURP debe contener :size caracteres',
             'curp.regex' => 'CURP inválida. Para BAJA, puede capturar SIN DATO',
-            'cuenta.required' => 'Es un campo obligatorio',
-            'cuenta.max' => 'Debe tener menos de :max caracteres',
+            'cuenta.required' => 'User-ID es un campo obligatorio',
+            'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
             'gpo_actual.required_if' => 'Grupo Actual es obligatorio cuando Tipo de Movimiento es BAJA.',
             'gpo_nuevo.required_if' => 'Grupo Nuevo es obligatorio cuando Tipo de Movimiento es ALTA o CAMBIO.',
-            'comment.max' => 'Debe tener menos de :max caracteres',
+            'comment.max' => 'Comentario ebe tener menos de :max caracteres',
         ];
     }
 
@@ -74,6 +77,7 @@ class CreateSolicitudRequest extends FormRequest
             'archivo' => 'Archivo',
             'curp' => 'CURP',
             'tipo movimiento' => 'Tipo de Movimiento',
+            'matricula' => 'Matrícula',
         ];
     }
 }

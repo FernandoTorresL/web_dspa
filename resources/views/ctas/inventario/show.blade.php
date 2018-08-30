@@ -2,7 +2,7 @@
 
 @section('content')
     <p>
-        <a class="btn btn-default" href="/ctas">Regresar</a>
+        <a class="btn btn-default" href="{{ url('/') }}">Regresar</a>
     </p>
 
 
@@ -42,7 +42,7 @@
                 <td class="small text-left">{{ $detalle_cta->name }}</td>
                 <td class="small text-center">{{ $detalle_cta->gpo_owner->name }}</td>
                 <td class="small text-right">{{ $detalle_cta->install_data }}</td>
-                <td class="text-right"><span class="badge badge-danger ">{{ $detalle_cta->work_area->name }}</span></td>
+                <td class="text-right"><span class="badge badge-info">{{ $detalle_cta->work_area->name }}</span></td>
             </tr>
         @empty
             <p>No hay cuentas registradas</p>

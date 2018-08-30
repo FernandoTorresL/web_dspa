@@ -5,103 +5,216 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <a class="btn btn-default" href="/">Regresar</a>
+                <a class="nav-link" href="{{ url('/') }}">Regresar</a>
         </div>
-        <div class="row">
-            <div class="card-body">
-                <h4 class="card-title">Delegación {{ $del_id }} - {{ $del_name }}</h4>
-                {{--<p><small class="card-subtitle text-muted">Toledo 21, 8 piso, Colonia Juárez, Delegación Cuauhtemoc, Ciudad de México, 06600</small></p>--}}
+
+        <div class="card-body">
+            <h4 class="card-title">Delegación {{ $del_id }} - {{ $del_name }}</h4>
+            {{--<p><small class="card-subtitle text-muted">Toledo 21, 8 piso, Colonia Juárez, Delegación Cuauhtemoc, Ciudad de México, 06600</small></p>--}}
+        </div>
+
+        <div class="card-group">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Subdelegaciones</h5>
+                    {{--<h6 class="card-title">Cuentas en Subdelegaciones</h6>--}}
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @forelse($subdelegaciones as $subdelegacion)
+                            <li class="list-group-item text-truncate">
+                                {{ $subdelegacion->num_sub }} - {{ $subdelegacion->name }}<span class="badge badge-pill badge-success"></span>
+                            </li>
+                        @empty
+                            <li class="list-group-item">
+                                No hay subdelegaciones registradas
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        Próximamente: Cifras de conteo por subdelegacion
+                    </small>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Cuentas en Subdelegaciones</h6>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Cuentas por grupos</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @if($total_ctas_SSJSAV == 1 )
+                            @php
+                                $color = 'success';
+                                $mensaje = '';
+                            @endphp
+                        @elseif($total_ctas_SSJDAV < 1 )
+                            @php
+                                $guion = '-';
+                                $color = 'warning';
+                                $mensaje = 'Faltan cuentas';
+                            @endphp
+                        @else
+                            @php
+                                $color = 'danger';
+                                $mensaje = 'Sólo debe existir un Supervisor';
+                            @endphp
+                        @endif
+                        <li class="list-group-item">
+                            SSJSAV <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJSAV }}</span>
+                            <small class="text-muted">{{ $mensaje }}</small>
+                        </li>
 
-                            <dl class="row">
-                                <dt class="col-sm-12"></dt>
+                        @if($total_ctas_SSJDAV == count($subdelegaciones) )
+                            @php
+                                $color = 'success';
+                                $mensaje = '';
+                            @endphp
+                        @elseif($total_ctas_SSJDAV <= count($subdelegaciones) )
+                            @php
+                                $guion = '-';
+                                $color = 'warning';
+                                $mensaje = 'Faltan cuentas';
+                            @endphp
+                        @else
+                            @php
+                                $color = 'danger';
+                                $mensaje = 'Demasiados Jefes de Depto.';
+                            @endphp
+                        @endif
+                        <li class="list-group-item">
+                            SSJDAV <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJDAV }}</span>
+                            <small class="text-muted">{{ $mensaje }}</small>
+                        </li>
 
-                                <dd class="col-sm-10 text-truncate">Genéricas: Genéricas Genéricas Genéricas</dd>
-                                <dd class="col-sm-2 text-sm-right"><span class="badge badge-pill badge-danger text-sm-right">15</span></dd>
+                        @if($total_ctas_SSJOFA == count($subdelegaciones) )
+                            @php
+                                $guion = '-';
+                                $color = 'success';
+                                $mensaje = '';
+                            @endphp
+                        @elseif($total_ctas_SSJOFA <= count($subdelegaciones) )
+                            @php
+                                $guion = '-';
+                                $color = 'warning';
+                                $mensaje = 'Faltan cuentas';
+                            @endphp
+                        @else
+                            @php
+                                $guion = '-';
+                                $color = 'danger';
+                                $mensaje = 'Demasiados Jefes de Oficina.';
+                            @endphp
+                        @endif
+                        <li class="list-group-item">
+                            SSJOFA <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJOFA }}</span>
+                            <p><small class="text-muted">{{ $mensaje }}</small></p>
+                        </li>
+                        <li class="list-group-item">
+                            SSCONS <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSCONS }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            SSADIF <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSADIF }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            SSOPER <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSOPER }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Código de colores:
+                        <span class="badge badge-pill badge-success">Correcto</span>
+                        <span class="badge badge-pill badge-danger">Depurar</span>
+                        <span class="badge badge-pill badge-primary">Informativo</span>
+                    </small>
+                </div>
+            </div>
 
-                                <dd class="col-sm-10 text-truncate">Centro</dd>
-                                <dd class="col-sm-2 text-right"><span class="badge badge-pill badge-warning">345</span></dd>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Cuentas por tipo</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @if($total_ctas_genericas == 0 )
+                            @php
+                                $color = 'success';
+                                $mensaje = '';
+                            @endphp
+                        @else
+                            @php
+                                $color = 'danger';
+                                $mensaje = 'Reemplazar por ctas personales';
+                            @endphp
+                        @endif
+                        <li class="list-group-item">
+                            Genéricas <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_genericas }}</span>
+                            <small class="text-muted">{{ $mensaje }}</small>
+                        </li>
+                        @if($total_ctas_svc <= 1 )
+                            @php
+                                $color = 'success';
+                                $mensaje = '';
+                            @endphp
+                        @else
+                            @php
+                                $color = 'danger';
+                                $mensaje = 'Debe existir sólo una';
+                            @endphp
+                        @endif
+                        <li class="list-group-item">
+                            SVC <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_svc }}</span>
+                            <small class="text-muted">{{ $mensaje }}</small>
+                        </li>
+                        <li class="list-group-item">
+                            Clasificación <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_clas }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            Fiscalización <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_fisca }}</span>
+                        </li>
+                    </ul>
+                </div>
 
-                                <dd class="col-sm-10 text-truncate">Santa María La Ribera </dd>
-                                <dd class="col-sm-2"><span class="badge badge-pill badge-primary">150</span></dd>
-
-                                <dd class="col-sm-10 text-truncate">Polanco</dd>
-                                <dd class="col-sm-2"><span class="badge badge-pill badge-danger">155</span></dd>
-
-                                <dd class="col-sm-10 text-truncate">Sin subdelegación asignada</dd>
-                                <dd class="badge badge-pill col-sm-2 badge-success">5</dd>
-                            </dl>
-
-                        </div>
-
-                        <div class="card-footer">
-                            <small class="text-muted">Situación:</small>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">Cuentas por Grupos</h6>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    SSJSAV: <span class="badge badge-pill badge-primary col-sm-2">1</span>
-                                </li>
-                                <li class="list-group-item">SSJDAV: <span class="badge badge-pill badge-danger">{{ $total_ctas_SSJSAV }}</span></li>
-                                <li class="list-group-item">SSJOFA: <span class="badge badge-pill badge-warning">6</span></li>
-                                <li class="list-group-item">SSCONS: <span class="badge badge-pill badge-success">253</span></li>
-                                <li class="list-group-item">SSADIF: <span class="badge badge-pill badge-warning">234</span></li>
-                                <li class="list-group-item">SSOPER: <span class="badge badge-pill badge-primary">42</span></li>
-                            </ul>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Total de cuentas: 654</small>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <img class="card-img-top" src="https://picsum.photos/600/338?image=4" alt="Card image cap">
-                        <div class="card-body">
-                            <h5 class="card-title">Título de la foto Dummy Dummiest</h5>
-                            <p class="card-text text-muted">Aquí va un comentario dummy del publicador sobre esta foto</p>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Last updated 3 mins ago</small>
-                        </div>
-                    </div>
+                <div class="card-footer">
+                    <small class="text-muted">Total de cuentas <span class="float-right badge badge-pill badge-info">{{ $total_ctas }}</span></small>
                 </div>
             </div>
         </div>
 
-        <div class="row"></div>
+
+        <div class="col-10 col-md-12">
+            <br>
+        </div>
 
         <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-10 col-md-1">
+            </div>
+            <div class="col-10 col-md-5">
                 <div class="card">
                     <div class="card-header">
-
+                        <h5 class="card-title">Inventario (corte 24 Julio 2018)</h5>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">Último inventario de cuentas (Fecha de corte: 24 Julio 2018)</h5>
-                        <p class="card-text">Total de Cuentas: 456</p>
-                        <a href="ctas/inventario" class="btn btn-success">Ir al inventario</a>
+                        <p class="card-text">Total de Cuentas <span class="badge badge-pill badge-info">{{ $total_ctas }}</span></p>
+                        <a href="ctas/inventario" class="btn btn-info">Ir al inventario</a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 col-md-6">
+            <div class="col-10 col-md-5">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <h5 class="card-title">Solicitudes</h5>
+                    </div>
+                    <div class="card-body">
                         <p class="card-text">Captura y envía solicitudes a Nivel Central </p>
-                        <a href="ctas/solicitudes" class="btn btn-info">Crear solicitud</a>
+                        <a href="ctas/solicitudes" class="btn btn-success">Crear solicitud</a>
                     </div>
                 </div>
+            </div>
+            <div class="col-10 col-md-1">
             </div>
         </div>
 
