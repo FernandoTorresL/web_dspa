@@ -32,3 +32,4 @@ Route::post('/ctas/solicitudes/create', 'SolicitudesController@create')->middlew
 
 Route::get('/ctas/solicitudes', 'SolicitudesController@home')->middleware('auth');
 
+Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show')->middleware('auth');
