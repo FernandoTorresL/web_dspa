@@ -7,15 +7,15 @@
         <a class="btn btn-default" href="{{ url('/') }}">Regresar</a>
     </div>
 
-    {{--@if ($errors->any())--}}
-        {{--<div class="alert alert-danger">--}}
-            {{--<ul>--}}
-                {{--@foreach ($errors->all() as $error)--}}
-                    {{--<li>{{ $error }}</li>--}}
-                {{--@endforeach--}}
-            {{--</ul>--}}
-        {{--</div>--}}
-    {{--@endif--}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     </div>
     <form action="solicitudes/create" method="POST" enctype="multipart/form-data">
@@ -58,18 +58,6 @@
                 <div class="col-sm-8">
                     <label for="tipo_movimiento">Tipo de Movimiento</label>
                     <div class="form-group">
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input class="custom-control-input" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_alta" value="1">
-                            <label class="custom-control-label" for="radiotipo_movimiento_alta">ALTA</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input class="custom-control-input" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_baja" value="2">
-                            <label class="custom-control-label" for="radiotipo_movimiento_baja">BAJA</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input class="custom-control-input" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_cambio" value="3">
-                            <label class="custom-control-label" for="radiotipo_movimiento_cambio">CAMBIO</label>
-                        </div>
                         <div class="custom-control custom-radio">
                             <input class="custom-control-input @if($errors->has('tipo_movimiento')) is-invalid @endif" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_Nulo" hidden checked>
                             @if ($errors->has('tipo_movimiento'))
@@ -78,6 +66,22 @@
                                 @endforeach
                             @endif
                         </div>
+                        @forelse($movimientos as $movimiento)
+                            @if ($movimiento->id == old('tipo_movimiento'))
+                                @php
+                                    $str_check = 'checked';
+                                @endphp
+                            @else
+                                @php
+                                    $str_check = '';
+                                @endphp
+                            @endif
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="custom-control-input" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_{{ $movimiento->name }}" value="{{ $movimiento->id }}" {{ $str_check }}>
+                                <label class="custom-control-label" for="radiotipo_movimiento_{{ $movimiento->name }}">{{ $movimiento->name }}</label>
+                            </div>
+                        @empty
+                        @endforelse
                     </div>
                 </div>
 
@@ -88,9 +92,18 @@
                     <div class="form-group">
                         <label for="subdelegacion">Subdelegación</label>
                         <select class="form-control @if($errors->has('subdelegacion')) is-invalid @endif" id="subdelegacion" name="subdelegacion">
-                            <option value="" selected>Selecciona...</option>
+                            {{--<option value="" selected>Selecciona...</option>--}}
                             @forelse($subdelegaciones as $subdelegacion)
-                                <option value="{{ $subdelegacion->id }}">{{ $subdelegacion->num_sub }} - {{ $subdelegacion->name }}</option>
+                                @if ($subdelegacion->id == old('subdelegacion'))
+                                    @php
+                                        $str_check = 'selected';
+                                    @endphp
+                                @else
+                                    @php
+                                        $str_check = '';
+                                    @endphp
+                                @endif
+                                <option value="{{ $subdelegacion->id }}" {{ $str_check }}>{{ $subdelegacion->num_sub }} - {{ $subdelegacion->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -194,20 +207,28 @@
                         <select class="form-control @if($errors->has('gpo_actual')) is-invalid @endif" id="gpo_actual" name="gpo_actual">
                             <option value="" selected>Selecciona...</option>
                             @forelse($gruposActual as $gpo_actual)
-                                <option value="{{ $gpo_actual->id }}">{{ $gpo_actual->name }}</option>
+                                @if ($gpo_actual->id == old('gpo_actual'))
+                                    @php
+                                        $str_check = 'selected';
+                                    @endphp
+                                @else
+                                    @php
+                                        $str_check = '';
+                                    @endphp
+                                @endif
+                                <option value="{{ $gpo_actual->id }}" {{ $str_check }}>{{ $gpo_actual->name }}</option>
                             @empty
                             @endforelse
                         </select>
                         @if ($errors->has('gpo_actual'))
                             @foreach($errors->get('gpo_actual') as $error)
-                                <div class="invalid-feedback"><strong>{{ $error }}</strong></div>
+                                <div class="invalid-feedback">{{ $error }}</div>
                             @endforeach
                         @endif
                     </div>
                 </div>
 
                 <div class="col-sm-1">
-
                 </div>
 
                 <div class="col-sm-3">
@@ -218,7 +239,16 @@
                         <select class="form-control @if($errors->has('gpo_nuevo')) is-invalid @endif" id="gpo_nuevo" name="gpo_nuevo">
                             <option value="" selected>Selecciona...</option>
                             @forelse($gruposNuevo as $gpo_nuevo)
-                                <option value="{{ $gpo_nuevo->id }}">{{ $gpo_nuevo->name }}</option>
+                                @if ($gpo_nuevo->id == old('gpo_nuevo'))
+                                    @php
+                                        $str_check = 'selected';
+                                    @endphp
+                                @else
+                                    @php
+                                        $str_check = '';
+                                    @endphp
+                                @endif
+                                <option value="{{ $gpo_nuevo->id }}" {{ $str_check }}>{{ $gpo_nuevo->name }}</option>
                             @empty
                             @endforelse
                         </select>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Group;
 use App\Http\Requests\CreateSolicitudRequest;
+use App\Movimiento;
 use App\Solicitud;
 use App\Subdelegacion;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class SolicitudesController extends Controller
         $del_id = Auth::user()->delegacion_id;
         $del_name = Auth::user()->delegacion->name;
 
+        $movimientos = Movimiento::where('status', '>=', 1)->orderBy('name', 'asc')->get();
         $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->orderBy('num_sub', 'asc')->get();
         $gruposNuevo =  Group::where('status', '=',  1)->orderBy('name', 'asc')->get();
         $gruposActual = Group::where('status', '>=', 1)->orderBy('name', 'asc')->get();
@@ -26,6 +28,7 @@ class SolicitudesController extends Controller
 
         return view(
             'ctas.solicitudes.create', [
+            'movimientos' =>  $movimientos,
             'subdelegaciones' =>  $subdelegaciones,
             'gruposNuevo' =>  $gruposNuevo,
             'gruposActual' =>  $gruposActual,
