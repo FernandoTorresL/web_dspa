@@ -18,12 +18,18 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     'user_id' => $user->id,
                 ]);
+
+            factory(App\Solicitud::class)
+                ->times(9)
+                ->create([
+                    'user_id' => $user->id,
+                ]);
         });
 
-        factory(App\Delegacion::class, 40)->create()->each(function (\App\Delegacion $delegacion) {
+        factory(App\Delegacion::class, 2)->create()->each(function (\App\Delegacion $delegacion) {
 
             factory(App\Subdelegacion::class)
-                ->times(4)
+                ->times(2)
                 ->create([
                     'delegacion_id' => $delegacion->id,
                 ]);

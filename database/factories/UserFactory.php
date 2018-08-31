@@ -19,7 +19,8 @@ $factory->define(App\User::class, function (Faker $faker) {
         'matricula' => $faker->unique()->randomNumber(8),
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'avatar' => 'https://picsum.photos/300/300?image=' . mt_rand(1,1000),
+//        'avatar' => 'https://picsum.photos/300/300?image=' . mt_rand(1,1000),
+        'avatar' => $faker->imageUrl(300,300, 'people'),
         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
         'remember_token' => str_random(10),
         'status' => $faker->randomElement([0, 1]),

@@ -7,7 +7,7 @@ $factory->define(\App\Solicitud::class, function (Faker $faker) {
         'valija_id' => 0,
         'fecha_solicitud_del' => $faker->dateTimeThisDecade('now'),
         'lote_id' => 0,
-        'delegacion_id' => 40,
+        'delegacion_id' => random_int(1, 40),
         'subdelegacion_id' => random_int(1, 180),
         'nombre' => $faker->toUpper(($faker->name)),
         'primer_apellido' => $faker->toUpper(($faker->lastName)),
@@ -21,6 +21,5 @@ $factory->define(\App\Solicitud::class, function (Faker $faker) {
         'comment' => $faker->realText(random_int(20, 50)),
         'causa_rechazo_id' => 0,
         'archivo' => 'https://picsum.photos/300/300?image=' . mt_rand(1,1000),
-        'user_id' => 1,
     ];
 });

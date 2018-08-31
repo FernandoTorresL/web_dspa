@@ -65,9 +65,11 @@ class CreateSolicitudRequest extends FormRequest
             'curp.regex' => 'CURP inválida. Para BAJA, puede capturar SIN DATO',
             'cuenta.required' => 'User-ID es un campo obligatorio',
             'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
-            'gpo_actual.required_if' => 'Grupo Actual es obligatorio cuando Tipo de Movimiento es BAJA.',
-            'gpo_nuevo.required_if' => 'Grupo Nuevo es obligatorio cuando Tipo de Movimiento es ALTA o CAMBIO.',
-            'comment.max' => 'Comentario ebe tener menos de :max caracteres',
+            'gpo_actual.required_if' => 'Elija un valor cuando Tipo de Movimiento es BAJA o CAMBIO.',
+            'gpo_nuevo.required_if' => 'Elija un valor cuando Tipo de Movimiento es ALTA o CAMBIO.',
+            'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',
+            'gpo_nuevo.min' => 'Requerido si Tipo de Movimiento es ALTA o CAMBIO.',
+            'comment.max' => 'Comentario debe tener menos de :max caracteres',
         ];
     }
 
