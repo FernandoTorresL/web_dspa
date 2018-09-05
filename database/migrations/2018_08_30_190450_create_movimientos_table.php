@@ -16,6 +16,7 @@ class CreateMovimientosTable extends Migration
         Schema::create('movimientos', function (Blueprint $table) {
             $table->unsignedTinyInteger('id', true);
             $table->string('name', 16);
+            $table->boolean('status');
 
             $table->timestamps();
         });
