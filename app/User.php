@@ -36,4 +36,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Job::class);
     }
+
+    public function isAdminUser(User $user) {
+        return $this->job->id == Job::find(1)->id;
+    }
 }
