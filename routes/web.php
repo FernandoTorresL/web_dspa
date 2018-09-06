@@ -15,21 +15,20 @@ Route::get('/', 'PagesController@home');
 
 Route::get('/messages/{message}', 'MessagesController@show');
 
-Route::post('/messages/create', 'MessagesController@create')->middleware('auth');
-
-//$this->get('/verify')
 Route::get('/verify-user/{code}', 'Auth\RegisterController@activateUser')->name('activate.user');
 
 Auth::routes();
 
-Route::get('/inicio', 'HomeController@home')->middleware('auth');
+Route::group(['middleware' => 'auth'], function () {
+    //    Route::get('/inicio', 'HomeController@home');
 
-Route::get('/ctas', 'CuentasController@home')->middleware('auth');
+    Route::post('/messages/create', 'MessagesController@create');
 
-Route::get('/ctas/inventario', 'InventarioController@home')->middleware('auth');
+    Route::get('/ctas/solicitudes', 'SolicitudesController@home');
+    Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
+    Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
 
-Route::post('/ctas/solicitudes/create', 'SolicitudesController@create')->middleware('auth');
+    Route::get('/ctas', 'CuentasController@home');
+    Route::get('/ctas/inventario', 'InventarioController@home');
 
-Route::get('/ctas/solicitudes', 'SolicitudesController@home')->middleware('auth');
-
-Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show')->middleware('auth');
+});
