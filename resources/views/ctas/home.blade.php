@@ -27,8 +27,5 @@
         @else
             <p>No tienes permiso para ver esta página</p>
         @endif
-
-        <div class="col-10 col-md-1">
-        </div>
     </div>
 @endsection

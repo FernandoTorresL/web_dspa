@@ -10,7 +10,6 @@
                 <th scope="col">Grupo</th>
                 <th scope="col">Info</th>
                 <th scope="col">Tipo Cuenta</th>
-                {{--<th scope="col"></th>--}}
             </tr>
             </thead>
 @endif

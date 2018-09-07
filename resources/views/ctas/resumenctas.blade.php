@@ -168,7 +168,7 @@
         </div>
 
         <div class="card-footer">
-            <small class="text-muted">Total de cuentas <span class="float-right badge badge-pill badge-info">{{ $total_ctas }}</span></small>
+            <small class="text-muted">Total de cuentas <span class="float-right badge badge-pill badge-info">{{ $total_ctas->count() }}</span></small>
         </div>
     </div>
 </div>
