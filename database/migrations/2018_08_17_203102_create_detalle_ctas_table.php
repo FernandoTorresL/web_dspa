@@ -22,7 +22,7 @@ class CreateDetalleCtasTable extends Migration
             $table->unsignedTinyInteger('delegacion_id');
             $table->unsignedInteger('gpo_owner_id');
             $table->unsignedInteger('gpo_default_id');
-            $table->unsignedInteger('work_area_id');
+            $table->unsignedInteger('work_area_id')->nullable();
             $table->string('name', 32);
             $table->date('created');
             $table->date('passdate')->nullable();

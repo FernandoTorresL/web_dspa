@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateLotesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('lotes', function (Blueprint $table) {
+            $table->unsignedInteger('id', true);
+
+            $table->string('num_lote', 9);
+            $table->date('fecha_oficio_lote');
+            $table->string('ticket_msi', 15);
+            $table->string('status',1);
+            $table->string('comment')->nullable();
+            $table->string('archivo');
+            $table->unsignedInteger('user_id');
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('lotes');
+    }
+}
