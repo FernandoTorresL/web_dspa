@@ -11,6 +11,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        factory(App\Delegacion::class, 2)->create()->each(function (\App\Delegacion $delegacion) {
+
+            factory(App\Subdelegacion::class)
+                ->times(5)
+                ->create([
+                    'delegacion_id' => $delegacion->id,
+                ]);
+        });
+
         factory(App\User::class, 40)->create()->each(function (App\User $user) {
 
             factory(App\Message::class)
@@ -26,13 +35,5 @@ class DatabaseSeeder extends Seeder
                 ]);
         });
 
-        factory(App\Delegacion::class, 2)->create()->each(function (\App\Delegacion $delegacion) {
-
-            factory(App\Subdelegacion::class)
-                ->times(2)
-                ->create([
-                    'delegacion_id' => $delegacion->id,
-                ]);
-        });
     }
 }

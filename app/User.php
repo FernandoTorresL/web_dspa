@@ -38,6 +38,17 @@ class User extends Authenticatable
     }
 
     public function isAdminUser(User $user) {
-        return $this->job->id == Job::find(1)->id;
+        return $this->job->id == Job::find(1)->id || $this->job->id == Job::find(4)->id;
+    }
+
+    public function isDSPAUser(User $user) {
+        $isDSPAUser =
+             $this->delegacion_id == env('DSPA_USER_DEL_1') &&
+            (
+                $this->job->id == env('DSPA_USER_JOB_1') ||
+                $this->job->id == env('DSPA_USER_JOB_2')
+            );
+
+        return $isDSPAUser;
     }
 }

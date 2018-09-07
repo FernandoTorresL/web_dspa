@@ -9,6 +9,11 @@ class Solicitud extends Model
     protected $table = 'solicitudes';
     protected $guarded = [];
 
+    public function valija()
+    {
+        return $this->belongsTo(Valija::class);
+    }
+
     public function delegacion()
     {
         return $this->belongsTo(Delegacion::class);

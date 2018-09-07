@@ -29,5 +29,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('inventory', function(User $user){
             return $user->isAdminUser($user);
         });
+
+        Gate::define('captura_completa_solicitudes', function(User $user){
+            return $user->isDSPAUser($user);
+        });
     }
 }

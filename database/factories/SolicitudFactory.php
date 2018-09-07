@@ -4,11 +4,9 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Solicitud::class, function (Faker $faker) {
     return [
-        'valija_id' => 0,
         'fecha_solicitud_del' => $faker->dateTimeThisDecade('now'),
-        'lote_id' => 0,
         'delegacion_id' => random_int(1, 40),
-        'subdelegacion_id' => random_int(1, 180),
+        'subdelegacion_id' => random_int(1, 150),
         'nombre' => $faker->toUpper(($faker->name)),
         'primer_apellido' => $faker->toUpper(($faker->lastName)),
         'segundo_apellido' => $faker->toUpper(($faker->lastName)),
@@ -19,7 +17,6 @@ $factory->define(\App\Solicitud::class, function (Faker $faker) {
         'gpo_nuevo_id' => random_int(1, 19),
         'gpo_actual_id' => random_int(1, 19),
         'comment' => $faker->realText(random_int(20, 50)),
-        'causa_rechazo_id' => 0,
         'archivo' => 'https://picsum.photos/300/300?image=' . mt_rand(1,1000),
     ];
 });
