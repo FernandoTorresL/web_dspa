@@ -11,7 +11,7 @@
         @if(Gate::allows('inventory', Auth::user()))
             <div class="card text-white bg-primary">
                 <div class="card-header">
-                    <p class="h4">Delegación {{ $del_id }} - {{ $del_name }} | Inventario</p>
+                    <p class="h4">Delegación {{ Auth::user()->delegacion->id }} - {{ Auth::user()->delegacion->name }} | Inventario</p>
                 </div>
                 <div class="card-body">
                     <p class="card-title">Total de cuentas: {{ $listado_detalle_ctas->count() }}</p>

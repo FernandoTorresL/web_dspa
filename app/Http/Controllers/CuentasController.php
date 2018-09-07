@@ -22,12 +22,15 @@ class CuentasController extends Controller
         $del_id = Auth::user()->delegacion_id;
         $del_name = Auth::user()->delegacion->name;
 
-        Log::info('Visitando Ctas-Home. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
+        Log::info('Visitando Ctas-Home. Usuario:' . $user . '|Del:' . $del_id);
 
         $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('num_sub', '>', 0)->orderBy('num_sub', 'asc')->get();
 
         $total_ctas =
-            DB::table('detalle_ctas')->select('cuenta')->where('delegacion_id', $del_id)->distinct()->get()->count();
+            DB::table('detalle_ctas')->select('cuenta', 'gpo_owner_id', 'work_area_id')->where('delegacion_id', $del_id)->distinct()->get();
+
+        $cuentas = Detalle_cta::with('gpo_owner', 'work_area')->where('delegacion_id', Auth::user()->delegacion_id)->distinct()->get();
+//        dd($cuentas);
 
         $total_ctas_genericas =
             DB::table('detalle_ctas')->select('cuenta')->where('delegacion_id', $del_id)->where('work_area_id', 2)->distinct()->get()->count();
