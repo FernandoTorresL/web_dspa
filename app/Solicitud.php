@@ -14,6 +14,11 @@ class Solicitud extends Model
         return $this->belongsTo(Valija::class);
     }
 
+    public function lote()
+    {
+        return $this->belongsTo(Lote::class);
+    }
+
     public function delegacion()
     {
         return $this->belongsTo(Delegacion::class);
@@ -37,6 +42,11 @@ class Solicitud extends Model
     public function gpo_nuevo()
     {
         return $this->belongsTo(Group::class, 'gpo_nuevo_id');
+    }
+
+    public function rechazo()
+    {
+        return $this->belongsTo(Rechazo::class);
     }
 
     public function user()

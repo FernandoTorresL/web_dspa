@@ -155,7 +155,7 @@ class SolicitudesController extends Controller
     public function show(Solicitud $solicitud)
     {
         Log::info('Consultando Solicitud ID:' . $solicitud->id );
-
+//        dd($solicitud);
         return view('ctas.solicitudes.show', [
             'solicitud' => $solicitud
         ]);

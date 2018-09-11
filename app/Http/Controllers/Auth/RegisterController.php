@@ -42,7 +42,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware(['guest','checkstatus']);
     }
 
     /**
@@ -74,6 +74,7 @@ class RegisterController extends Controller
             $validatedData['avatar']          = 'https://loremflickr.com/300/300/kid';
             $validatedData['delegacion_id']   = array_get($validatedData, 'delegacion');
             $validatedData['job_id']          = array_get($validatedData, 'puesto');
+            $validatedData['status']          = 2;
 
             $user                             = app(User::class)->create($validatedData);
 
@@ -108,10 +109,11 @@ class RegisterController extends Controller
             if (!$user) {
                 return "El código de activación no existe en el sistema o ya ha sido utilizado.";
             }
-            $user->status          = 1;
+            $user->status          = 2;
             $user->activation_code = null;
             $user->save();
-            auth()->login($user);
+//            auth()->login($user);
+            return redirect('/login')->with('login_info', 'Correo verificado! Ahora puedes iniciar sesión');
         } catch (\Exception $exception) {
             logger()->error($exception);
             Log::error('Whoops! Algo salió mal|' . $exception);
