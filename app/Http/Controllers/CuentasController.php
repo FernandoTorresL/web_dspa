@@ -24,7 +24,7 @@ class CuentasController extends Controller
 
         Log::info('Visitando Ctas-Home. Usuario:' . $user . '|Del:' . $del_id);
 
-        $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('num_sub', '>', 0)->orderBy('num_sub', 'asc')->get();
+        $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
 
         $total_ctas =
             DB::table('detalle_ctas')->select('cuenta', 'gpo_owner_id', 'work_area_id')->where('delegacion_id', $del_id)->distinct()->get();

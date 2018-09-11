@@ -25,7 +25,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/messages/create', 'MessagesController@create');
 
     Route::get('/ctas/solicitudes', 'SolicitudesController@home');
+    Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
     Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
+    Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
     Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
 
     Route::get('/ctas', 'CuentasController@home');

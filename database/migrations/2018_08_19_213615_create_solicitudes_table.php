@@ -25,7 +25,7 @@ class CreateSolicitudesTable extends Migration
             $table->string('primer_apellido', 32);
             $table->string('segundo_apellido', 32);
             $table->char('matricula', 10)->nullable();
-            $table->string('curp', 18)->nullable();
+            $table->string('curp', 20)->nullable();
             $table->string('cuenta', 7);
             $table->unsignedTinyInteger('movimiento_id');
             $table->unsignedInteger('gpo_nuevo_id')->nullable();

@@ -17,14 +17,15 @@ class CreateValijasTable extends Migration
             $table->increments('id');
 
             $table->unsignedTinyInteger('origen_id')->default(0);
+            $table->string('status',1)->default(0);
             $table->string('num_oficio_ca', 32);
-            $table->date('fecha_recepcion_ca');
+            $table->date('fecha_recepcion_ca')->nullable();
             $table->unsignedTinyInteger('delegacion_id');
             $table->string('num_oficio_del', 32);
-            $table->date('fecha_valija_del');
-            $table->unsignedTinyInteger('rechazo_id')->default(0);
-            $table->string('comment')->nullable();
-            $table->string('archivo')->nullable();;
+            $table->date('fecha_valija_del')->nullable();
+            $table->unsignedTinyInteger('rechazo_id')->nullable();
+            $table->string('comment', 500)->nullable();
+            $table->string('archivo')->nullable();
             $table->unsignedInteger('user_id');
 
             $table->timestamps();

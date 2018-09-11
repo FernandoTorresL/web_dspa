@@ -84,16 +84,16 @@ class RegisterController extends Controller
             return redirect()->back()->with('message', 'Unable to create new user.');
         }
 
-        //We dont have Internet 100% free, only some sites. Can't reach Mail sometimes, so, we have to try to send the notification
-        try {
-            Log::info('Enviando notificación|usuario:'. array_get($validatedData, 'username') . ' Email:'. array_get($validatedData, 'email') . ' Del:' . array_get($validatedData, 'delegacion'));
-            $user->notify(new UserRegisteredSuccessfully($user));
-        } catch (\Exception $exception) {
-            logger()->error($exception);
-            Log::error('Error al enviar notificación|' . $exception);
-        }
+//        //We dont have Internet 100% free, only some sites. Can't reach Mail sometimes, so, we have to try to send the notification
+//        try {
+//            Log::info('Enviando notificación|usuario:'. array_get($validatedData, 'username') . ' Email:'. array_get($validatedData, 'email') . ' Del:' . array_get($validatedData, 'delegacion'));
+//            $user->notify(new UserRegisteredSuccessfully($user));
+//        } catch (\Exception $exception) {
+//            logger()->error($exception);
+//            Log::error('Error al enviar notificación|' . $exception);
+//        }
 
-        return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo en los próximos minutos para activar tu acceso.');
+        return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo para activar tu acceso. Si no recibe el correo de activación en los próximos minutos, favor de notificarlo a ' . env('ADMIN_MAIL'));
     }
 
     /**
