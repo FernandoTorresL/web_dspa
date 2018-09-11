@@ -8,4 +8,9 @@ class Delegacion extends Model
 {
     protected $table = 'delegaciones';
     protected $guarded = [];
+
+    public function subdelegaciones()
+    {
+        return $this->hasMany(Subdelegacion::class);
+    }
 }

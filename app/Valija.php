@@ -13,4 +13,9 @@ class Valija extends Model
         return $this->hasMany(Solicitud::class);
     }
 
+    public function delegacion()
+    {
+        return $this->belongsTo(Delegacion::class);
+    }
+
 }
