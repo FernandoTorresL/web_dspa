@@ -12,11 +12,20 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}" aria-label="{{ __('Entrar') }}">
                         @csrf
+
                         @if(session()->has('login_error'))
                             <div class="alert alert-success">
                                 {{ session()->get('login_error') }}
                             </div>
                         @endif
+
+                        <div class="flash-message">
+                            @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                                @if(\Illuminate\Support\Facades\Session::has('alert-' . $msg))
+                                    <p class="alert alert-{{ $msg }}">{{ \Illuminate\Support\Facades\Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+                                @endif
+                            @endforeach
+                        </div> <!-- end .flash-message -->
 
                         <div class="form-group row">
                             <label for="email" class="col-sm-4 col-form-label text-md-right">{{ __('Correo Electrónico') }}</label>
