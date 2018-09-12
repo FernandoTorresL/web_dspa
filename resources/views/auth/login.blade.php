@@ -19,6 +19,12 @@
                             </div>
                         @endif
 
+                        @if(session()->has('login_info'))
+                            <div class="alert alert-info">
+                                {{ session()->get('login_info') }}
+                            </div>
+                        @endif
+
                         <div class="flash-message">
                             @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                                 @if(\Illuminate\Support\Facades\Session::has('alert-' . $msg))

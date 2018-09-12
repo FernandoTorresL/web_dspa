@@ -19,8 +19,7 @@ class CheckStatus
     {
         $response = $next($request);
         //If the status is not approved redirect to login
-        if(Auth::check() && Auth::user()->status != '1'){
-
+        if(Auth::check() && Auth::user()->status != '2'){
             Auth::logout();
             $request->session()->flash('alert-danger', 'Tu cuenta no está activa. Comunícate con el Administrador');
             return redirect('/login')->with('erro_login', 'Your error text');
