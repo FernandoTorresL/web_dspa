@@ -107,7 +107,6 @@ class SolicitudesController extends Controller
         ]);
 
         return redirect('ctas/solicitudes/'.$solicitud->id)->with('message', '¡Solicitud creada!');
-//        return redirect()->back()->with('message', 'Creación de cuenta exitosa. Por favor revisa tu correo en los próximos minutos para activar tu acceso.');
     }
 
     public function createNC(CreateSolicitudNCRequest $request)
@@ -116,18 +115,6 @@ class SolicitudesController extends Controller
         $archivo = $request->file('archivo');
 
         Log::info('Enviando Crear SolicitudNC. Usuario:' . $user->username );
-
-        if (null == $request->input('gpo_nuevo')) {
-            $gpo_nuevo = 0;
-        } else {
-            $gpo_nuevo = $request->input('gpo_nuevo');
-        }
-
-        if (null == $request->input('gpo_actual')) {
-            $gpo_actual = 0;
-        } else {
-            $gpo_actual = $request->input('gpo_actual');
-        }
 
         $solicitud = Solicitud::create([
             'valija_id' => $request->input('valija'),
@@ -141,8 +128,8 @@ class SolicitudesController extends Controller
             'curp' => strtoupper($request->input('curp')),
             'cuenta' => strtoupper($request->input('cuenta')),
             'movimiento_id' => $request->input('tipo_movimiento'),
-            'gpo_nuevo_id' => $gpo_nuevo,
-            'gpo_actual_id' => $gpo_actual,
+            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
+            'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
             'rechazo_id' => $request->input('rechazo'),
             'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
@@ -155,7 +142,6 @@ class SolicitudesController extends Controller
     public function show(Solicitud $solicitud)
     {
         Log::info('Consultando Solicitud ID:' . $solicitud->id );
-//        dd($solicitud);
         return view('ctas.solicitudes.show', [
             'solicitud' => $solicitud
         ]);
