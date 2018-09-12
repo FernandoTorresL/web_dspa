@@ -1,14 +1,19 @@
+<h4 class="card-title"><strong>{{ str_pad($solicitud->delegacion->id, 2, '0', STR_PAD_LEFT)  }} - {{ $solicitud->delegacion->name }}</strong></h4>
+
 <div class="card border-info">
     <div class="card-header">
         <h4 class="card-title">
-            <strong>{{ $solicitud->cuenta }} </strong>
+            <strong>
+                {{ $solicitud->movimiento->name }} - {{ $solicitud->cuenta }} ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})</strong>
             <span class="text-muted float-right">
                 {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
             </span>
         </h4>
         <h4 class="card-title">
-            <strong>{{ $solicitud->movimiento->name }} </strong>
-            <span class="text-muted float-right"> {{ $solicitud->gpo_actual->name }} -> {{ $solicitud->gpo_nuevo->name }}</span>
+            <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin Valija)' }} </strong>
+            <span class="text-muted float-right">
+
+            </span>
         </h4>
     </div>
 
@@ -38,7 +43,7 @@
                     <li class="list-group-item">
                         <strong>Status: </strong>
                         <span class="card-text float-right @if(isset($solicitud->rechazo)) text-success @else text-info @endif">
-                            {{ isset($solicitud->rechazo) ? 'Atendido' : 'En espera de respuesta' }}
+                            {{ isset($solicitud->rechazo) ? 'Revisado/Atendido' : 'En espera de respuesta' }}
                         </span>
                         {{--</strong><span class="badge badge-pill badge-info">En revisión</span>--}}
                         <div>

@@ -4,7 +4,7 @@
 
 @section('content')
     <p>
-        <a class="btn btn-default" href="{{ url('/') }}">Regresar</a>
+        <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </p>
 
     @if(Auth::check())

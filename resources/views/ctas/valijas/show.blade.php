@@ -10,7 +10,7 @@
         </div>
     @endif
     <br>
-    <h3 class="card-title"><strong>Datos de la Solicitud</strong></h3>
+    <h3 class="card-title"><strong>Datos de la Valija</strong></h3>
     <br>
-    @include('ctas.solicitudes.solicitud')
+    @include('ctas.valijas.valija')
 @endsection

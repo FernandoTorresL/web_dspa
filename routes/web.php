@@ -19,10 +19,14 @@ Route::get('/verify-user/{code}', 'Auth\RegisterController@activateUser')->name(
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //    Route::get('/inicio', 'HomeController@home');
 
     Route::post('/messages/create', 'MessagesController@create');
+
+    Route::get('/ctas/valijasNC', 'ValijasController@homeNC');
+    Route::post('/ctas/valijas/createNC', 'ValijasController@createNC');
+    Route::get('/ctas/valijas/{valija}', 'ValijasController@show');
 
     Route::get('/ctas/solicitudes', 'SolicitudesController@home');
     Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
