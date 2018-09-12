@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="row">
-        <a class="btn btn-default" href="{{ url('/') }}">Regresar</a>
+        <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </div>
     <br>
 

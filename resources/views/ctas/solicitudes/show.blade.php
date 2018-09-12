@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="row">
-        <a class="nav-link" href="{{ url('/') }}">Regresar</a>
+        <a class="nav-link" href="{{ url('/ctas') }}">Regresar</a>
     </div>
     @if(session()->has('message'))
         <div class="alert alert-success">
