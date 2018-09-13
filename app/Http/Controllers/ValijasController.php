@@ -49,7 +49,7 @@ class ValijasController extends Controller
             'num_oficio_del' => $request->input('num_oficio_del'),
             'fecha_valija_del' => $request->input('fecha_valija_del'),
             'comment' => $request->input('comment'),
-            'archivo' => $archivo->store('valijas/' . $user->delegacion_id, 'public'),
+            'archivo' => $archivo->store('valijas/' . $request->input('delegacion'), 'public'),
             'user_id' => $user->id,
         ]);
 

@@ -74,19 +74,7 @@ class SolicitudesController extends Controller
         $user = $request->user();
         $archivo = $request->file('archivo');
 
-        Log::info('Enviando Crear Solicitud. Usuario:' . $user->username );
-
-        if (null == $request->input('gpo_nuevo')) {
-            $gpo_nuevo = 0;
-        } else {
-            $gpo_nuevo = $request->input('gpo_nuevo');
-        }
-
-        if (null == $request->input('gpo_actual')) {
-            $gpo_actual = 0;
-        } else {
-            $gpo_actual = $request->input('gpo_actual');
-        }
+        Log::info('Creando Solicitud. Usuario:' . $user->username );
 
         $solicitud = Solicitud::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
@@ -99,8 +87,8 @@ class SolicitudesController extends Controller
             'curp' => strtoupper($request->input('curp')),
             'cuenta' => strtoupper($request->input('cuenta')),
             'movimiento_id' => $request->input('tipo_movimiento'),
-            'gpo_nuevo_id' => $gpo_nuevo,
-            'gpo_actual_id' => $gpo_actual,
+            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
+            'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
             'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
             'user_id' => $user->id,
@@ -113,13 +101,14 @@ class SolicitudesController extends Controller
     {
         $user = $request->user();
         $archivo = $request->file('archivo');
+        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
 
         Log::info('Enviando Crear SolicitudNC. Usuario:' . $user->username );
 
         $solicitud = Solicitud::create([
             'valija_id' => $request->input('valija'),
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
-            'delegacion_id' => 1,
+            'delegacion_id' => $delegacion,
             'subdelegacion_id' => $request->input('subdelegacion'),
             'nombre' => strtoupper($request->input('nombre')),
             'primer_apellido' => strtoupper($request->input('primer_apellido')),
@@ -132,7 +121,7 @@ class SolicitudesController extends Controller
             'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
             'rechazo_id' => $request->input('rechazo'),
-            'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
+            'archivo' => $archivo->store('solicitudes/' . $delegacion, 'public'),
             'user_id' => $user->id,
         ]);
 
