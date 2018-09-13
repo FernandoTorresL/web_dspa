@@ -38,7 +38,7 @@ class ValijasController extends Controller
         $user = $request->user();
         $archivo = $request->file('archivo');
 
-        Log::info('Enviando Crear ValijaNC. Usuario:' . $user->username );
+        Log::info('Creando Valija desde Nivel Central. Usuario:' . $user->username );
 
         $valija = Valija::create([
             'origen_id' => $user->id,
@@ -49,7 +49,7 @@ class ValijasController extends Controller
             'num_oficio_del' => $request->input('num_oficio_del'),
             'fecha_valija_del' => $request->input('fecha_valija_del'),
             'comment' => $request->input('comment'),
-            'archivo' => $archivo->store('valijas/' . $user->delegacion_id, 'public'),
+            'archivo' => $archivo->store('valijas/' . $request->input('delegacion'), 'public'),
             'user_id' => $user->id,
         ]);
 
