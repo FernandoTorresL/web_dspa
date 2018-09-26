@@ -27,8 +27,11 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/valijasNC', 'ValijasController@homeNC');
     Route::post('/ctas/valijas/createNC', 'ValijasController@createNC');
     Route::get('/ctas/valijas/{valija}', 'ValijasController@show');
+<<<<<<< Updated upstream
     Route::get('/ctas/valijas/editNC/{valija}', 'ValijasController@show_for_edit');
     Route::post('/ctas/valijas/editNC/{valija}', 'ValijasController@editNC');
+=======
+>>>>>>> Stashed changes
 
     Route::get('/ctas/solicitudes', 'SolicitudesController@home');
     Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
