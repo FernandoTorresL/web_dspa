@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Valija extends Model
 {
@@ -35,5 +36,15 @@ class Valija extends Model
 
     public function hasBeenModified(Valija $valija) {
         return !$valija->hist_valijas->isEmpty();
+    }
+
+    public function getArchivoAttribute($archivo)
+    {
+
+        if (!$archivo || starts_with($archivo, 'http')) {
+            return $archivo;
+        }
+
+        return Storage::disk('public')->url($archivo);
     }
 }

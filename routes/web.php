@@ -34,9 +34,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
     Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
     Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
-
-
     Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
+    Route::get('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@show_for_edit');
+    Route::post('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@editNC');
 
     Route::get('/ctas', 'CuentasController@home');
     Route::get('/ctas/inventario', 'InventarioController@home');

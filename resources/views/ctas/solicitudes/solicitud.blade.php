@@ -1,4 +1,20 @@
-<h4 class="card-title"><strong>{{ str_pad($solicitud->delegacion->id, 2, '0', STR_PAD_LEFT)  }} - {{ $solicitud->delegacion->name }}</strong></h4>
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
+<h4 class="card-title">
+    <strong>
+        {{--@php--}}
+            {{--setlocale(LC_ALL, 'es-ES');--}}
+            {{--echo strftime("%A %e %B %Y", mktime(0, 0, 0, 12, 22, 1978));--}}
+            {{--// jeuves 22 diciembre 1978--}}
+        {{--@endphp--}}
+        Fecha: {{ date('D, d \d\e M, Y', strtotime($solicitud->fecha_solicitud_del)) }}
+    </strong>
+    <span class="text-muted float-right">
+        <a href="{{ $solicitud->archivo }}" target="_blank">Viir PDF</a>
+    </span>
+</h4>
 
 <div class="card border-info">
     <div class="card-header">
@@ -12,7 +28,9 @@
         <h4 class="card-title">
             <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin Valija)' }} </strong>
             <span class="text-muted float-right">
-
+                @if(!isset($solicitud->lote_id))
+                    <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
+                @endif
             </span>
         </h4>
     </div>
@@ -52,7 +70,6 @@
                                 {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}
                             </span>
                         </div>
-                        {{--$solicitud->has('rechazo') ? $solicitud->rechazo->full_name : ''--}}
                     </li>
                 </ul>
             </div>
@@ -64,22 +81,25 @@
                     <li class="list-group-item">
                         <strong>Capturado por: </strong>
                         <span class="card-text float-right">
-                            {{ $solicitud->user->name }}
+                            {{ $solicitud_hasBeenModified ? $solicitud->hist_solicitudes->first()->user->name : $solicitud->user->name }}
                         </span>
                         <div>
-                            <strong>Fecha de captura: </strong><span class="card-text float-right">{{ $solicitud->created_at }}</span>
+                            <strong>Fecha de captura: </strong>
+                            <span class="card-text float-right">
+                                {{ date('D, d-M-Y, H:i', strtotime($solicitud->created_at)) }}
+                            </span>
                         </div>
                     </li>
 
                     <li class="list-group-item">
                         <strong>Modificado por: </strong>
                         <span class="card-text float-right">
-                            {{ $solicitud->user->name }}
+                            {{ $solicitud_hasBeenModified ? $solicitud->user->name : ''}}
                         </span>
                         <div>
                             <strong>Fecha de última modificación: </strong>
                             <span class="card-text float-right">
-                                {{ $solicitud->updated_at }}
+                                {{ $solicitud_hasBeenModified ? date('D, d-M-Y, H:i', strtotime($solicitud->updated_at)) : '' }}
                             </span>
                         </div>
                     </li>
@@ -92,13 +112,10 @@
                         <div>
                             <strong>Fecha de envío a Mainframe: </strong>
                             <span class="card-text float-right @if(isset($solicitud->lote)) text-info @endif">
-                                {{ isset($solicitud->lote) ? $solicitud->lote->fecha_oficio_lote : '' }}
+                                {{ isset($solicitud->lote) ? date('D, d-M-Y', strtotime($solicitud->lote->fecha_oficio_lote)) : '' }}
                             </span>
                         </div>
                     </li>
-                    {{--<li class="list-group-item">--}}
-                        {{--<a class="nav-link" href="{{ $solicitud->archivo }}">Ver PDF</a>--}}
-                    {{--</li>--}}
                 </ul>
             </div>
         </div>
