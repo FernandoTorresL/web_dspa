@@ -10,17 +10,6 @@
 
     <h5>Captura los datos de la solicitud</h5>
 
-    <div class="row">
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    </div>
     <form action="solicitudes/createNC" method="POST" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="container">

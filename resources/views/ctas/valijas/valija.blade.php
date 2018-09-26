@@ -3,7 +3,9 @@
         {{ str_pad($valija->delegacion->id, 2, '0', STR_PAD_LEFT)  }} - {{ $valija->delegacion->name }}
     </strong>
     <span class="text-muted float-right">
-        <a href="{{ $valija->archivo }}" target="_blank">PDF</a>
+        @if (isset($valija->archivo))
+            <a href="{{ $valija->archivo }}" target="_blank">Ver PDF</a>
+        @endif
     </span>
 </h4>
 

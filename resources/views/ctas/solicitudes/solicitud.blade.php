@@ -1,7 +1,3 @@
-@php
-use Illuminate\Support\Facades\Storage;
-@endphp
-
 <h4 class="card-title">
     <strong>
         {{--@php--}}
@@ -12,7 +8,9 @@ use Illuminate\Support\Facades\Storage;
         Fecha: {{ date('D, d \d\e M, Y', strtotime($solicitud->fecha_solicitud_del)) }}
     </strong>
     <span class="text-muted float-right">
-        <a href="{{ $solicitud->archivo }}" target="_blank">Viir PDF</a>
+        @if (isset($solicitud->archivo))
+            <a href="{{ $solicitud->archivo }}" target="_blank">Ver PDF</a>
+        @endif
     </span>
 </h4>
 

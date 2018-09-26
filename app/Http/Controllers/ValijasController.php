@@ -55,7 +55,6 @@ class ValijasController extends Controller
         $user = Auth::user();
 
         $valija_original = Valija::find($id);
-        $archivo = $request->file('archivo');
 
         $valija_hist = Hist_valija::create([
             'valija_id'         => $valija_original->id,
@@ -75,6 +74,7 @@ class ValijasController extends Controller
         Log::info('Nva Valija Hist:' . $valija_hist->id . '| Usuario:' . $user->username );
 
         $valija = Valija::find($id);
+        $archivo = $request->file('archivo');
 
         $valija->num_oficio_ca      = $request->input('num_oficio_ca');
         $valija->fecha_recepcion_ca = $request->input('fecha_recepcion_ca');

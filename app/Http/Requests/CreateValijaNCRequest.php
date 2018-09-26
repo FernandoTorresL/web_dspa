@@ -40,7 +40,7 @@ class CreateValijaNCRequest extends FormRequest
         return [
             'archivo.required' => 'Adjuntar un archivo PDF con el oficio es obligatorio',
             'archivo.mimes' => 'Archivo debe ser de formato: pdf',
-//            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
+            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
             'num_oficio_ca.required' => 'Núm. del Área de Gestión es un campo obligatorio',
             'num_oficio_ca.max' => 'Núm. del Área de Gestión debe tener menos de :max caracteres',
             'fecha_recepcion_ca.before_or_equal' => 'Fecha de Recepción en Gestión debe ser anterior o igual al día de hoy',

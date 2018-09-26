@@ -98,7 +98,6 @@ class SolicitudesController extends Controller
         $user = Auth::user();
 
         $solicitud_original = Solicitud::find($id);
-        $archivo = $request->file('archivo');
 
         $solicitud_hist = Hist_solicitud::create([
             'solicitud_id'          => $solicitud_original->id,
@@ -126,6 +125,7 @@ class SolicitudesController extends Controller
 
         $solicitud = Solicitud::find($id);
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+        $archivo = $request->file('archivo');
 
         $solicitud->valija_id               = $request->input('valija');
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
@@ -143,7 +143,7 @@ class SolicitudesController extends Controller
         $solicitud->gpo_actual_id           = $request->input('gpo_actual');
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
-        $solicitud->archivo                 = $archivo->store('solicitudes/' . $delegacion, 'public');
+        $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
         $solicitud->user_id                 = $user->id;
 
         $solicitud->save();
