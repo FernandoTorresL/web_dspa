@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Solicitud extends Model
 {
@@ -52,5 +53,24 @@ class Solicitud extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function hist_solicitudes()
+    {
+        return $this->hasMany(Hist_solicitud::class);
+    }
+
+    public function hasBeenModified(Solicitud $solicitud) {
+        return !$solicitud->hist_solicitudes->isEmpty();
+    }
+
+    public function getArchivoAttribute($archivo)
+    {
+
+        if (!$archivo || starts_with($archivo, 'http')) {
+            return $archivo;
+        }
+
+        return Storage::disk('public')->url($archivo);
     }
 }

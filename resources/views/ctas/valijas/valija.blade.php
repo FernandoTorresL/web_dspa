@@ -1,4 +1,11 @@
-<h4 class="card-title"><strong>{{ str_pad($valija->delegacion->id, 2, '0', STR_PAD_LEFT)  }} - {{ $valija->delegacion->name }}</strong></h4>
+<h4 class="card-title">
+    <strong>
+        {{ str_pad($valija->delegacion->id, 2, '0', STR_PAD_LEFT)  }} - {{ $valija->delegacion->name }}
+    </strong>
+    <span class="text-muted float-right">
+        <a href="{{ $valija->archivo }}" target="_blank">PDF</a>
+    </span>
+</h4>
 
 <div class="card border-info">
     <div class="card-header">
