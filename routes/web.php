@@ -40,4 +40,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas', 'CuentasController@home');
     Route::get('/ctas/inventario', 'InventarioController@home');
 
-});
+    Route::get('/ctas/admin/resumen', 'CuentasController@show_resume');
+//    if (Gate::allows('ver_resumen_admin_ctas')) {
+//    }
+}
+
+);
