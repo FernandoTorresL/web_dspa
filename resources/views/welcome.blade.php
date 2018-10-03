@@ -71,12 +71,6 @@
         @else
             No estás autorizado a ver este Módulo
         @endcan
-
-        {{--@can('capture_sol_nc')--}}
-            {{--Puedes capturar solicitudes--}}
-        {{--@else--}}
-            {{--No puedes capturar solicitudes--}}
-        {{--@endcan--}}
             </div>
         </div>
     @endguest

@@ -15,7 +15,7 @@ class PagesController extends Controller
 //        $messages = Message::paginate(10);
 
         //Test login with another id
-        Auth::LoginUsingID(2);
+        Auth::LoginUsingID(9);
 
         return view('welcome', [
 //            'messages' => $messages,
