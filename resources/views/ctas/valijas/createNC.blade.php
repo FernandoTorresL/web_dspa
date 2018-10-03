@@ -1,12 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Crear Valija')
+@section('title', 'Crear Valija Nivel Central')
 
 @section('content')
     <div class="row">
         <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </div>
     <br>
+
+    <div class="row">
+        <div class="card-body">
+            <h4 class="card-title">{{ $primer_renglon }}</h4>
+        </div>
+    </div>
 
     <h5>Captura los datos de la Valija/Oficio</h5>
 
@@ -32,7 +38,7 @@
 
             <div class="row">
                 <div class="col-sm-4">
-                    <label for="num_oficio_ca">Núm. del Área de Gestión</label>
+                    <label for="num_oficio_ca">Núm. del Área de Gestión (sólo número)</label>
                     <div class="input-group mb-4">
                         <input type="text" name="num_oficio_ca" class="form-control @if($errors->has('num_oficio_ca')) is-invalid @endif" value="{{ old('num_oficio_ca') }}">
                         @if ($errors->has('num_oficio_ca'))
