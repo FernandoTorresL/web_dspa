@@ -9,7 +9,7 @@ class Detalle_cta extends Model
     protected $guarded = [];
 
     public function inventory() {
-        return $this->belongsTo(Inventory::class);
+        return $this->belongsTo(Inventory::class, 'inventory_id');
     }
 
     public function gpo_owner() {

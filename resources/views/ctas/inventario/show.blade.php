@@ -8,21 +8,20 @@
     </p>
 
     @if(Auth::check())
-        @if(Gate::allows('inventory', Auth::user()))
+        @can('ver_inventario_del')
             <div class="card text-white bg-primary">
                 <div class="card-header">
                     <p class="h4">Delegación {{ Auth::user()->delegacion->id }} - {{ Auth::user()->delegacion->name }} | Inventario</p>
                 </div>
                 <div class="card-body">
                     <p class="card-title">Total de cuentas: {{ $listado_detalle_ctas->count() }}</p>
-                    <p class="card-text">Fecha de corte: {{ date('d-M-Y', strtotime($inventory->cut_off_date)) }}</p>
+                    <p class="card-text">Fecha de corte: {{ date('d-M-Y', strtotime($listado_detalle_ctas->first()->inventory->cut_off_date)) }}</p>
                 </div>
             </div>
-
             @include('ctas.inventario.inventario')
         @else
             <p>No tienes permiso para ver esta página</p>
-        @endif
+        @endcan
     @endif
 
 @endsection

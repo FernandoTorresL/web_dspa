@@ -1,13 +1,7 @@
-<div class="card-body">
-    <h4 class="card-title">Delegación {{ $del_id }} - {{ $del_name }}</h4>
-    {{--<p><small class="card-subtitle text-muted">Toledo 21, 8 piso, Colonia Juárez, Delegación Cuauhtemoc, Ciudad de México, 06600</small></p>--}}
-</div>
-
 <div class="card-group">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Subdelegaciones</h5>
-            {{--<h6 class="card-title">Cuentas en Subdelegaciones</h6>--}}
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">

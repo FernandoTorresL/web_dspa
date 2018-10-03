@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Inventory extends Model
+class Rechazo_mainframe extends Model
 {
-    protected $table = 'inventories';
+    //
 }

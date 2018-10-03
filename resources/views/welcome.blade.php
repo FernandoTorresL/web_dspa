@@ -56,28 +56,22 @@
         </div>
     @else
         <div class="row">
-        @can('ver_modulo_ctas')
-            <div class="col-6">
-                <h1 class="h3">Módulo Gestión de Cuentas SINDO</h1>
-                <a href="ctas">
-                    <img class="img-thumbnail" src="{{ url('../resources/img/03.jpg') }}">
-                </a>
-                <p class="text-muted">
-                    Revisa inventario, solicitudes, estatus, etc.
+            @can('ver_modulo_ctas')
+                <div class="col-6">
+                    <h1 class="h3">Módulo Gestión de Cuentas SINDO</h1>
                     <a href="ctas">
-                        <span class="card-text">Entrar</span>
+                        <img class="img-thumbnail" src="{{ url('../resources/img/03.jpg') }}">
                     </a>
-                </p>
-        @else
-            No estás autorizado a ver este Módulo
-        @endcan
-
-        {{--@can('capture_sol_nc')--}}
-            {{--Puedes capturar solicitudes--}}
-        {{--@else--}}
-            {{--No puedes capturar solicitudes--}}
-        {{--@endcan--}}
-            </div>
+                    <p class="text-muted">
+                        Revisa inventario, solicitudes, estatus, etc.
+                        <a href="ctas">
+                            <span class="card-text">Entrar</span>
+                        </a>
+                    </p>
+                </div>
+            @else
+                No estás autorizado a ver este Módulo
+            @endcan
         </div>
     @endguest
 

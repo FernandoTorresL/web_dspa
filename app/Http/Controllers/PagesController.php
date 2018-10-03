@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Message;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller
@@ -15,7 +12,7 @@ class PagesController extends Controller
 //        $messages = Message::paginate(10);
 
         //Test login with another id
-        Auth::LoginUsingID(2);
+//        Auth::LoginUsingID(2);
 
         return view('welcome', [
 //            'messages' => $messages,
