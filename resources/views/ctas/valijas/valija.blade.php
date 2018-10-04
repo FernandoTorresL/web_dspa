@@ -21,7 +21,7 @@
             <strong>Fecha de recepción: {{ $valija->fecha_recepcion_ca }}</strong>
             <span class="text-muted float-right">
                 @can('editar_valijas')
-                    @if($valija->status == 1 && $valija->origen_id == 12)
+                    @if($valija->status == 1 && ($valija->origen_id == 12 || $valija->origen_id == 2))
                         <a class="nav-link" href="{{ url('/ctas/valijas/editNC/'.$valija->id) }}">Editar valija</a>
                     @endif
                 @endcan

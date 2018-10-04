@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Consultar Solicitud')
+
 @section('content')
     <div class="row">
         <a class="nav-link" href="{{ url('/ctas') }}">Regresar</a>
