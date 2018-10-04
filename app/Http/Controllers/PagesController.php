@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller

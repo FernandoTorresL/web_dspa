@@ -46,7 +46,7 @@ class SolicitudesController extends Controller
         $del_id = Auth::user()->delegacion_id;
         $del_name = Auth::user()->delegacion->name;
 
-        $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'desc')->get();
+        $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'desc')->get();
         $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
         $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
 

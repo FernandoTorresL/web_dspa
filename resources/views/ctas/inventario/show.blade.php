@@ -18,7 +18,7 @@
                     <p class="card-text">Fecha de corte: {{ date('d-M-Y', strtotime($listado_detalle_ctas->first()->inventory->cut_off_date)) }}</p>
                 </div>
             </div>
-            @include('ctas.inventario.inventario')
+            @include('ctas.admin.resume')
         @else
             <p>No tienes permiso para ver esta página</p>
         @endcan
