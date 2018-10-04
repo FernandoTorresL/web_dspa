@@ -16,7 +16,8 @@ class CreateLotesTable extends Migration
         Schema::create('lotes', function (Blueprint $table) {
             $table->unsignedInteger('id', true);
 
-            $table->string('num_lote', 9);
+	    $table->string('num_lote', 9);
+	    $table->string('num_oficio_ca', 16);
             $table->date('fecha_oficio_lote')->nullable();
             $table->string('ticket_msi', 15)->nullable();
             $table->string('status',1);
