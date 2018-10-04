@@ -12,7 +12,7 @@
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <a class="nav-link" href="{{ route('login') }}">
-                    <img class="d-block w-100" src="{{ url('../resources/img/01.jpg') }}?text=First slide" alt="Entrar">
+                    <img class="d-block w-100" src="{{ url('storage/img/01.jpg') }}?text=First slide" alt="Entrar">
                     <div class="carousel-caption d-none d-md-block">
                         <h5  class="text-primary">Entrar</h5>
                         <p class="text-primary">Ingresa con tu correo y contraseña</p>
@@ -21,7 +21,7 @@
             </div>
             <div class="carousel-item">
                 <a class="nav-link" href="{{ route('register') }}">
-                    <img class="d-block w-100" src="{{ url('../resources/img/02.jpg') }}?text=First slide" alt="Registrarse">
+                    <img class="d-block w-100" src="{{ url('storage/img/02.jpg') }}?text=First slide" alt="Registrarse">
                     <div class="carousel-caption d-none d-md-block">
                         <h5 class="text-primary">Registrarse</h5>
                         <p class="text-primary">¿Aún no tienes cuenta? Ingresa aquí para registrarte</p>
@@ -60,7 +60,7 @@
                 <div class="col-6">
                     <h1 class="h3">Módulo Gestión de Cuentas SINDO</h1>
                     <a href="ctas">
-                        <img class="img-thumbnail" src="{{ url('../resources/img/03.jpg') }}">
+                        <img class="img-thumbnail" src="{{ url('storage/img/03.jpg') }}">
                     </a>
                     <p class="text-muted">
                         Revisa inventario, solicitudes, estatus, etc.
