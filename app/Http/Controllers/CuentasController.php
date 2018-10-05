@@ -162,4 +162,37 @@ class CuentasController extends Controller
             abort(403,'No tiene permitido ver éste Resumen');
         }
     }
+
+    public function show_admin_tabla() {
+        if (Gate::allows('genera_tabla_oficio')) {
+
+            Log::info('Genera Tabla para Oficio. Usuario id:' . Auth::id() . '|Nombre:|Del:' . Auth::user()->delegacion_id);
+
+            $tabla_movimientos = DB::table('solicitudes')
+                ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
+                ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
+                ->leftjoin('groups as gpo_a', 'solicitudes.gpo_actual_id', '=', 'gpo_a.id')
+                ->leftjoin('groups as gpo_n', 'solicitudes.gpo_nuevo_id', '=', 'gpo_n.id')
+                ->select('valijas.id as val_id', 'valijas.num_oficio_ca',
+                    'solicitudes.id as sol_id', 'solicitudes.primer_apellido', 'solicitudes.segundo_apellido', 'solicitudes.nombre',
+                    'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
+                    'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
+                ->where('solicitudes.rechazo_id', NULL)
+                ->where('solicitudes.lote_id', NULL)
+                ->where('valijas.origen_id', 2)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta')
+                ->get();
+
+            return view(
+                'ctas.admin.show_tabla', [
+                'tabla_movimientos' => $tabla_movimientos,
+            ]);
+        }
+        else {
+            Log::info('Sin permiso-Generar Tabla. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            abort(403,'No tiene permitido ver esta tabla');
+        }
+    }
 }
