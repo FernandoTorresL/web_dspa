@@ -117,7 +117,7 @@
                         else
                             $archivoPDF = '(Sin PDF)';
                     @endphp
-                    <td class="small"><a target="_blank" href="/ctas/valijas/editNC/{{ $solicitud->valija->id }}">{{ $solicitud->valija->num_oficio_ca }} </a></td>
+                    <td class="small"><a target="_blank" href="/ctas/valijas/{{ $solicitud->valija->id }}">{{ $solicitud->valija->num_oficio_ca }} </a></td>
 
                     @php
                         $columna_fecha_usuario = $solicitud->created_at;
@@ -132,7 +132,7 @@
                     <td class="small">{{ $solicitud->user->name }}</td>
                     <td class="small">{{ $solicitud->valija->delegacion_id }}({{ $solicitud->delegacion->id }}){{ $solicitud->delegacion->name }} - ({{ $solicitud->subdelegacion->num_sub }}){{ $solicitud->subdelegacion->name }}</td>
                     <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
-                    <td class="small"><a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/editNC/{{ $solicitud->id }}">{{ $solicitud->cuenta }} ({{ $solicitud->movimiento->name }})</a></td>
+                    <td class="small"><a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">{{ $solicitud->cuenta }} ({{ $solicitud->movimiento->name }})</a></td>
                     <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
                     <td class="small">{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '-' }}</td>
                     <td class="small">{{ isset($solicitud->rechazo) ? 'Rechazada' : 'OK' }}</td>
