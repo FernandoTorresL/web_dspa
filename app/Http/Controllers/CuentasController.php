@@ -113,13 +113,6 @@ class CuentasController extends Controller
 
             Log::info('Visitando Ver Resumen-Admin. Usuario id:' . Auth::id() . '|Nombre:|Del:' . Auth::user()->delegacion_id);
 
-//            $delegaciones = Delegacion::where('status', 1)->orderBy('id', 'asc')->get();
-
-            // Obtener los últimos lotes capturados al momento
-//            $listado_lotes = DB::table('lotes')->orderBy('id', 'desc')->limit(10)->get();
-
-//            $solicitudes_sin_lote = Solicitud::doesntHave('lote')->get();
-
             $solicitudes_sin_lote = DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
@@ -139,17 +132,12 @@ class CuentasController extends Controller
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
-                ->where('lote_id', NULL)->get();
-
-//            dd($solicitudes_sin_lote2);
-
-            //Detalle_cta::select('cuenta', 'name', 'gpo_owner_id', 'install_data', 'work_area_id', 'inventory_id')
-//    ->with('gpo_owner', 'work_area', 'inventory')->distinct()->where('delegacion_id', Auth::user()->delegacion_id)->orderBy('work_area_id', 'desc')->get();
-//            #	Lote	# Área de Gestión - PDF	Fecha de Captura / Fecha de Modificación	Última modificación por	Delegación - Subdelegación	Nombre completo	Usuario(Mov)	Grupo Actual->Nuevo	Causas Rechazo	Estatus	Comentario DSPA / Comentario Mainframe	PDF
+                ->where('lote_id', NULL)
+		->where('solicitudes.rechazo_id', NULL)
+		->orderBy('solicitudes.cuenta', 'asc')->get();
 
             return view(
                 'ctas.admin.show_resume', [
-//                'primer_renglon'    => $primer_renglon,
                 'solicitudes_sin_lote' => $solicitudes_sin_lote,
                 'solicitudes_sin_lote2' => $solicitudes_sin_lote2,
                 'listado_lotes'      => $listado_lotes,
@@ -157,8 +145,6 @@ class CuentasController extends Controller
         }
         else {
             Log::info('Sin permiso-Ver Resumen-Admin. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-
-//            return response(['status' => 'No tiene permitido ver éste Resumen'], 403);
             abort(403,'No tiene permitido ver éste Resumen');
         }
     }
