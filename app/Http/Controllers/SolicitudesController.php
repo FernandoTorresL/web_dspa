@@ -129,7 +129,6 @@ class SolicitudesController extends Controller
 
         $solicitud->valija_id               = $request->input('valija');
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
-        $solicitud->lote_id                 = $request->input('lote');
         $solicitud->delegacion_id           = $delegacion;
         $solicitud->subdelegacion_id        = $request->input('subdelegacion');
         $solicitud->nombre                  = strtoupper($request->input('nombre'));

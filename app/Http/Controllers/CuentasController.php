@@ -124,7 +124,7 @@ class CuentasController extends Controller
 
             $listado_lotes = DB::table('lotes')
                                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
-                                ->join('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
+                                ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
                                 ->select('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
                                 ->groupBy('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
                                 ->orderBy('lotes.id', 'desc')->limit(10)->get();
@@ -133,8 +133,7 @@ class CuentasController extends Controller
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
                 ->where('lote_id', NULL)
-		->where('solicitudes.rechazo_id', NULL)
-		->orderBy('solicitudes.cuenta', 'asc')->get();
+                ->orderBy('valija_id', 'asc')->get();
 
             return view(
                 'ctas.admin.show_resume', [
@@ -168,6 +167,8 @@ class CuentasController extends Controller
                 ->where('valijas.origen_id', 2)
                 ->orderBy('solicitudes.movimiento_id')
                 ->orderBy('solicitudes.cuenta')
+
+
                 ->get();
 
             return view(
