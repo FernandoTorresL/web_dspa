@@ -111,8 +111,6 @@ class CuentasController extends Controller
                 $primer_renglon = 'Nivel Central - DSPA';
             }
 
-            Log::info('Visitando Ver Resumen-Admin. Usuario id:' . Auth::id() . '|Nombre:|Del:' . Auth::user()->delegacion_id);
-
             $solicitudes_sin_lote = DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
@@ -127,13 +125,13 @@ class CuentasController extends Controller
                                 ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
                                 ->select('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
                                 ->groupBy('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
-                                ->orderBy('lotes.id', 'desc')->limit(10)->get();
+                                ->orderBy('lotes.id', 'desc')->limit(20)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
                 ->where('lote_id', NULL)
-                ->orderBy('valija_id', 'asc')->get();
+                ->orderBy('cuenta', 'asc')->get();
 
             return view(
                 'ctas.admin.show_resume', [
@@ -166,9 +164,7 @@ class CuentasController extends Controller
                 ->where('solicitudes.lote_id', NULL)
                 ->where('valijas.origen_id', 2)
                 ->orderBy('solicitudes.movimiento_id')
-                ->orderBy('solicitudes.cuenta')
-
-
+				->orderBy('solicitudes.cuenta')
                 ->get();
 
             return view(

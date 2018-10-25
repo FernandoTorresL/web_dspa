@@ -26,8 +26,14 @@
         <h4 class="card-title">
             <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin Valija)' }} </strong>
             <span class="text-muted float-right">
-                @if(!isset($solicitud->lote_id))
-                    <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
+                @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
+                    @can('consultar_solicitudes_nc')
+                        <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
+                    @else
+                        <a class="nav-link" href="{{ url('/ctas/solicitudes/edit/'.$solicitud->id) }}">Editar</a>
+                    @endcan
+                @else
+
                 @endif
             </span>
         </h4>
@@ -58,14 +64,16 @@
 
                     <li class="list-group-item">
                         <strong>Status: </strong>
-                        <span class="card-text float-right @if(isset($solicitud->rechazo)) text-success @else text-info @endif">
-                            {{ isset($solicitud->rechazo) ? 'Revisado/Atendido' : 'En espera de respuesta' }}
+                        <span class="card-text float-right @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @else @if(!isset($solicitud->resultado_solicitud)) text-warning @else text-success @endif @endif">
+                            {{--{{ isset($solicitud->rechazo) ? 'Revisado/Atendido' : 'En espera de respuesta' }}--}}
+                            {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}
                         </span>
                         {{--</strong><span class="badge badge-pill badge-info">En revisión</span>--}}
                         <div>
                             <strong>Causa de rechazo: </strong>
-                            <span class="card-text float-right @if(isset($solicitud->rechazo)) text-danger @endif">
-                                {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}
+                            <span class="card-text float-right @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
+                                {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
+                                {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
                             </span>
                         </div>
                     </li>

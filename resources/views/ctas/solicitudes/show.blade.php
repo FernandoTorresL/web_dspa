@@ -14,5 +14,10 @@
     <br>
     <h3 class="card-title"><strong>Datos de la Solicitud</strong></h3>
     <br>
-    @include('ctas.solicitudes.solicitud')
+
+    @can('consultar_solicitudes_del')
+        @include('ctas.solicitudes.solicitud')
+    @else
+        No estás autorizado a consultar solicitudes
+    @endcan
 @endsection

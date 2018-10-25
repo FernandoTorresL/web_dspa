@@ -74,7 +74,7 @@ class RegisterController extends Controller
             $validatedData['avatar']          = 'https://loremflickr.com/300/300/kid';
             $validatedData['delegacion_id']   = array_get($validatedData, 'delegacion');
             $validatedData['job_id']          = array_get($validatedData, 'puesto');
-            $validatedData['status']          = 2;
+            $validatedData['status']          = 0;
 
             $user                             = app(User::class)->create($validatedData);
 
@@ -105,8 +105,11 @@ class RegisterController extends Controller
     public function activateUser(string $activationCode)
     {
         try {
+
+            Log::info('Activando Usuario');
             $user = app(User::class)->where('activation_code', $activationCode)->first();
             if (!$user) {
+                Log::error('Activando usuario. Código no existe o ya ha sido utilizado.');
                 return "El código de activación no existe en el sistema o ya ha sido utilizado.";
             }
             $user->status          = 2;
@@ -161,7 +164,7 @@ class RegisterController extends Controller
     {
 
         $delegaciones = Delegacion::where('status', 1)->orderBy('id', 'asc')->get();
-        $puestos = Job::where('id', '>', '1')->where('id', '<=', '4')->orderBy('id', 'asc')->get();
+        $puestos = Job::whereBetween('id', [2, 4])->orWhere('id', 12)->orderBy('id', 'asc')->get();
 
         Log::info('Registrar nuevo usuario.');
 

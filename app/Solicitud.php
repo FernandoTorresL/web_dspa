@@ -60,6 +60,11 @@ class Solicitud extends Model
         return $this->hasMany(Hist_solicitud::class);
     }
 
+    public function resultado_solicitud()
+    {
+        return $this->hasOne(Resultado_Solicitud::class);
+    }
+
     public function hasBeenModified(Solicitud $solicitud) {
         return !$solicitud->hist_solicitudes->isEmpty();
     }

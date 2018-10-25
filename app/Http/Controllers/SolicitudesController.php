@@ -13,31 +13,39 @@ use App\Subdelegacion;
 use App\Valija;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
 class SolicitudesController extends Controller
 {
     public function home()
     {
-        $user = Auth::user()->name;
-        $del_id = Auth::user()->delegacion_id;
-        $del_name = Auth::user()->delegacion->name;
 
-        $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-        $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
-        $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
-        $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
+        if (Gate::allows('capture_sol_del')) {
 
-        Log::info('Visitando Crear Solicitud. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
+            Log::info('Capturar Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
-        return view(
-            'ctas.solicitudes.create', [
-            'del_id' => $del_id,
-            'del_name' => $del_name,
-            'movimientos' =>  $movimientos,
-            'subdelegaciones' =>  $subdelegaciones,
-            'gruposNuevo' =>  $gruposNuevo,
-            'gruposActual' =>  $gruposActual,
-        ]);
+            $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
+            $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
+            $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
+            $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
+
+            Log::info('Vista Capturar Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:(' . Auth::user()->delegacion_id . ')-' . Auth::user()->delegacion->name);
+
+            return view(
+                'ctas.solicitudes.create', [
+                'del_id' => Auth::user()->delegacion_id,
+                'del_name' => Auth::user()->delegacion->name,
+                'movimientos' => $movimientos,
+                'subdelegaciones' => $subdelegaciones,
+                'gruposNuevo' => $gruposNuevo,
+                'gruposActual' => $gruposActual,
+            ]);
+        }
+        else {
+            Log::warning('Sin permiso-Capturar Solicitud. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            return "No estas autorizado a ver esta página";
+        }
     }
 
     public function homeNC()
@@ -70,6 +78,39 @@ class SolicitudesController extends Controller
 
     public function show_for_edit(Solicitud $solicitud)
     {
+
+        Log::info('Ver Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+        if (Gate::allows('consultar_solicitudes_del')) {
+
+            $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
+            $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
+            $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
+            $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
+            $rechazos = Rechazo::all();
+
+            Log::info('Ver Solicitud-Delegación: '.$solicitud->id.' Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            return view(
+                'ctas.solicitudes.edit', [
+                'sol_original' => $solicitud,
+                'movimientos' => $movimientos,
+                'subdelegaciones' => $subdelegaciones,
+                'gruposNuevo' => $gruposNuevo,
+                'gruposActual' => $gruposActual,
+                'rechazos' => $rechazos,
+            ]);
+        }
+        else {
+            Log::warning('Sin permiso-Ver Solicitud. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            abort(403,'No tiene permitido ver ésta solicitud');
+        }
+
+    }
+
+    public function show_for_editNC(Solicitud $solicitud)
+    {
         $user = Auth::user()->name;
 
         $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'asc')->get();
@@ -91,6 +132,65 @@ class SolicitudesController extends Controller
             'gruposActual' => $gruposActual,
             'rechazos' => $rechazos,
         ]);
+    }
+
+    public function edit(CreateSolicitudRequest $request, $id)
+    {
+        $user = Auth::user();
+
+        $solicitud_original = Solicitud::find($id);
+
+        $solicitud_hist = Hist_solicitud::create([
+            'solicitud_id'          => $solicitud_original->id,
+            'valija_id'             => $solicitud_original->valija_id,
+            'fecha_solicitud_del'   => $solicitud_original->fecha_solicitud_del,
+            'lote_id'               => $solicitud_original->lote_id,
+            'delegacion_id'         => $solicitud_original->delegacion_id,
+            'subdelegacion_id'      => $solicitud_original->subdelegacion_id,
+            'nombre'                => $solicitud_original->nombre,
+            'primer_apellido'       => $solicitud_original->primer_apellido,
+            'segundo_apellido'      => $solicitud_original->segundo_apellido,
+            'matricula'             => $solicitud_original->matricula,
+            'curp'                  => $solicitud_original->curp,
+            'cuenta'                => $solicitud_original->cuenta,
+            'movimiento_id'         => $solicitud_original->movimiento_id,
+            'gpo_nuevo_id'          => $solicitud_original->gpo_nuevo_id,
+            'gpo_actual_id'         => $solicitud_original->gpo_actual_id,
+            'comment'               => $solicitud_original->comment,
+            'rechazo_id'            => $solicitud_original->rechazo_id,
+            'archivo'               => $solicitud_original->archivo,
+            'user_id'               => $solicitud_original->user_id,
+        ]);
+
+        Log::info('Nva Solicitud Hist:' . $solicitud_hist->id . '| Usuario:' . $user->username );
+
+        $solicitud = Solicitud::find($id);
+        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+        $archivo = $request->file('archivo');
+
+//        $solicitud->valija_id               = $request->input('valija');
+        $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
+        $solicitud->delegacion_id           = $delegacion;
+        $solicitud->subdelegacion_id        = $request->input('subdelegacion');
+        $solicitud->nombre                  = strtoupper($request->input('nombre'));
+        $solicitud->primer_apellido         = strtoupper($request->input('primer_apellido'));
+        $solicitud->segundo_apellido        = strtoupper($request->input('segundo_apellido'));
+        $solicitud->matricula               = $request->input('matricula');
+        $solicitud->curp                    = strtoupper($request->input('curp'));
+        $solicitud->cuenta                  = strtoupper($request->input('cuenta'));
+        $solicitud->movimiento_id           = $request->input('tipo_movimiento');
+        $solicitud->gpo_nuevo_id            = $request->input('gpo_nuevo');
+        $solicitud->gpo_actual_id           = $request->input('gpo_actual');
+        $solicitud->comment                 = $request->input('comment');
+        $solicitud->rechazo_id              = $request->input('rechazo');
+        $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        $solicitud->user_id                 = $user->id;
+
+        $solicitud->save();
+
+        Log::info('Solicitud ' . $solicitud->id . ' editada. Usuario:' . $user->name);
+
+        return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
     public function editNC(CreateSolicitudNCRequest $request, $id)
@@ -157,7 +257,7 @@ class SolicitudesController extends Controller
         $user = $request->user();
         $archivo = $request->file('archivo');
 
-        Log::info('Creando Solicitud. Usuario:' . $user->username );
+        Log::info('Creando Solicitud-Delegación. Usuario:' . $user->username );
 
         $solicitud = Solicitud::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
@@ -224,4 +324,35 @@ class SolicitudesController extends Controller
             'solicitud_hasBeenModified' => $solicitud_hasBeenModified,
         ]);
     }
+
+    public function solicitudes_status()
+    {
+        Log::info('Ver status solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+        if (Gate::allows('ver_status_solicitudes')) {
+
+            $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
+                'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
+                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
+                'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
+                ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
+                    'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
+                ->where('delegacion_id', Auth::user()->delegacion_id)
+                ->orderby('created_at', 'desc')->limit(50)->get();
+//                ->paginate(10);
+
+//            dd($listado_solicitudes[1]);
+            return view(
+                'ctas.solicitudes.listado_status', [
+                'listado_solicitudes' => $listado_solicitudes,
+            ]);
+        }
+        else {
+            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            abort(403,'No tiene permitido ver este listado');
+        }
+
+    }
+
 }

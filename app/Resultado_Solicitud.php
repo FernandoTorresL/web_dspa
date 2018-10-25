@@ -16,7 +16,7 @@ class Resultado_Solicitud extends Model
 
     public function solicitud()
     {
-        return $this->belongsTo(Solicitud::class);
+        return $this->hasMany(Solicitud::class);
     }
 
     public function grupo()

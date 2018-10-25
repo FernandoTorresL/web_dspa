@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'PagesController@home');
+Route::get('/home', 'PagesController@home');
 
 Route::get('/messages/{message}', 'MessagesController@show');
 
@@ -34,8 +35,14 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
     Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
     Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
-    Route::get('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@show_for_edit');
+
+    Route::get('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@show_for_edit');
+    Route::post('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@edit');
+
+    Route::get('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@show_for_editNC');
     Route::post('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@editNC');
+
+    Route::get('/ctas/status/solicitudes', 'SolicitudesController@solicitudes_status');
 
     Route::get('/ctas', 'CuentasController@home');
     Route::get('/ctas/inventario', 'InventarioController@home');
