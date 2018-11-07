@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Lote;
 use App\Solicitud;
+use App\Valija;
 use App\Subdelegacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -114,10 +115,12 @@ class CuentasController extends Controller
             $solicitudes_sin_lote = DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
-                ->select('valijas.origen_id', 'solicitudes.delegacion_id', 'movimientos.name', DB::raw('COUNT(valijas.origen_id) as total_solicitudes'))
+                ->select('valijas.origen_id', 'movimientos.name', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
                 ->where('solicitudes.lote_id','=', NULL)
-                ->groupBy('valijas.origen_id', 'solicitudes.delegacion_id', 'movimientos.name')
-                ->orderBy('origen_id')->orderBy('name')->orderBy('delegacion_id')->get();
+                ->groupBy('valijas.origen_id', 'movimientos.name')
+                ->orderBy('origen_id')->orderBy('name')
+//                ->orderBy('delegacion_id')
+                ->get();
 
 
             $listado_lotes = DB::table('lotes')
@@ -128,10 +131,13 @@ class CuentasController extends Controller
                                 ->orderBy('lotes.id', 'desc')->limit(20)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
+                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
-                ->where('lote_id', NULL)
-                ->orderBy('cuenta', 'asc')->get();
+//                ->where('lote_id', NULL)
+                ->orderBy('id', 'desc')
+                ->orderBy('valija_id', 'asc')
+                ->limit(800)
+                ->get();
 
             return view(
                 'ctas.admin.show_resume', [
@@ -163,13 +169,34 @@ class CuentasController extends Controller
                 ->where('solicitudes.rechazo_id', NULL)
                 ->where('solicitudes.lote_id', NULL)
                 ->where('valijas.origen_id', 2)
+                //                ->where('solicitudes.id', '<>', 5203)
+//                ->where('solicitudes.id', '<>', 5203)
+//                ->where('valijas.id', '<>', 5237)
+//                ->where('valijas.id', '<>', 5248)
+//                ->where('valijas.id', '<>', 5243)
+//                ->whereIN('valijas.id', [4927, 5105, 5121, 5132])
                 ->orderBy('solicitudes.movimiento_id')
+//                ->orderBy('valijas.num_oficio_ca')
 				->orderBy('solicitudes.cuenta')
+                ->get();
+
+            $listado_valijas =
+                DB::table('solicitudes')
+                ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
+                ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
+                ->where('solicitudes.lote_id', NULL)
+                ->where('valijas.origen_id', 2)
+//                ->where('valijas.id', '<>', 5237)
+//                ->where('valijas.id', '<>', 5248)
+//                ->where('valijas.id', '<>', 5243)
+                ->orderBy('valijas.num_oficio_ca')
+                ->distinct()
                 ->get();
 
             return view(
                 'ctas.admin.show_tabla', [
                 'tabla_movimientos' => $tabla_movimientos,
+                'listado_valijas' => $listado_valijas,
             ]);
         }
         else {

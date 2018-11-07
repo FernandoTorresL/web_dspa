@@ -36,6 +36,7 @@
     @endphp
             <tr>
                 <th scope="row">{{ $var }}</th>
+                {{--<th scope="row">{{ $row_tabla_mov->sol_id.',' }}</th>--}}
                 <td class="small">{{ $row_tabla_mov->primer_apellido}}</td>
                 <td class="small">{{ $row_tabla_mov->segundo_apellido }}</td>
                 <td class="small">{{ $row_tabla_mov->nombre }}</td>
@@ -55,6 +56,46 @@
             </tbody>
 
 @if(count($tabla_movimientos))
+        </table>
+    </div>
+@endif
+
+{{----Valijas--}}
+
+@if(count($listado_valijas))
+    Total de valijas: {{ $listado_valijas->count() }}
+    <div class="table table-sm">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">[Delegación solicitante (Delegación origen)- # Oficio Delegación - # Gestión DSPA] (AÑO:YYYY)</th>
+            </tr>
+            </thead>
+@endif
+
+@php
+    $var = 0;
+@endphp
+
+            <tbody class="text-monospace">
+@forelse($listado_valijas as $row_valija)
+    @php
+        $var += 1;
+        $del_valija = str_pad($row_valija->delegacion_id,2,"0",STR_PAD_LEFT);
+        $del_sol = str_pad($row_valija->sol_id,2,"0",STR_PAD_LEFT);
+    @endphp
+            <tr>
+                <th scope="row">{{ $var }}</th>
+{{--                <th scope="row">{{ $row_valija->id }}</th>--}}
+                <td class="small">{{ $row_valija->id.' ('. $del_valija.')  ['.$del_sol.'-'.$row_valija->num_oficio_del.'|'.$row_valija->num_oficio_ca.']' }}</td>
+            </tr>
+@empty
+    <p>No hay valijas</p>
+@endforelse
+            </tbody>
+
+@if(count($listado_valijas))
         </table>
     </div>
 @endif

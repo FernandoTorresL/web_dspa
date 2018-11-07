@@ -34,7 +34,7 @@
 
         <div class="row">
             @can('ver_status_solicitudes')
-                @include('ctas.card_status_solicitudes')
+                    @include('ctas.card_status_solicitudes')
             @endcan
         </div>
 

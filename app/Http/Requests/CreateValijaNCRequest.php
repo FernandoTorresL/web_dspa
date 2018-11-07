@@ -31,7 +31,7 @@ class CreateValijaNCRequest extends FormRequest
             'num_oficio_del' => ['required', 'max:32'],
             'fecha_valija_del' => ['required', 'before_or_equal:today'],
             'delegacion' => ['required'],
-            'comment' => ['max:190'],
+            'comment' => ['max:450'],
         ];
     }
 

@@ -113,7 +113,9 @@ class SolicitudesController extends Controller
     {
         $user = Auth::user()->name;
 
-        $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'asc')->get();
+        $valijas = Valija::with('delegacion')
+//            ->where('created_at', '>', '2018-10-16')
+            ->orderBy('num_oficio_ca', 'desc')->get();
         $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
         $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
         $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
@@ -319,10 +321,17 @@ class SolicitudesController extends Controller
 
         Log::info('Consultando Solicitud ID:' . $solicitud->id );
 
-        return view('ctas.solicitudes.show', [
-            'solicitud' => $solicitud,
-            'solicitud_hasBeenModified' => $solicitud_hasBeenModified,
-        ]);
+        if (Auth::user()->delegacion_id == 9 || Auth::user()->delegacion_id == $solicitud->delegacion_id) {
+            return view('ctas.solicitudes.show', [
+                'solicitud' => $solicitud,
+                'solicitud_hasBeenModified' => $solicitud_hasBeenModified,
+            ]);
+        }
+        else {
+            Log::warning('Sin permiso-Consultar solicitudes de otra del. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+            abort(403,'No tiene permitido ver solicitudes de otra delegación');
+        }
     }
 
     public function solicitudes_status()
@@ -330,17 +339,26 @@ class SolicitudesController extends Controller
         Log::info('Ver status solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
         if (Gate::allows('ver_status_solicitudes')) {
-
-            $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
-                'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
-                'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
-                ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
-                    'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
-                ->where('delegacion_id', Auth::user()->delegacion_id)
-                ->orderby('created_at', 'desc')->limit(50)->get();
-//                ->paginate(10);
-
+            if (Auth::user()->delegacion_id == 9) {
+                $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
+                    'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
+                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
+                    'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
+                    ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
+                        'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
+                    ->orderby('created_at', 'desc')->limit(200)->get();
+            }
+            else {
+                $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
+                    'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
+                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
+                    'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
+                    ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
+                        'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
+                    ->where('delegacion_id', Auth::user()->delegacion_id)
+                    ->orderby('created_at', 'desc')->limit(100)->get();
+    //                ->paginate(10);
+            }
 //            dd($listado_solicitudes[1]);
             return view(
                 'ctas.solicitudes.listado_status', [

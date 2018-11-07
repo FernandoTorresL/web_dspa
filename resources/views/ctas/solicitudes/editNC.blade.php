@@ -41,11 +41,17 @@
                     <div class="form-group">
                         <label for="valija">Valija/Oficio</label>
                         <select class="form-control @if($errors->has('valija')) is-invalid @endif" id="valija" name="valija">
-                            <option value="" selected>Selecciona...</option>
+                            <option value="0" selected>Selecciona...</option>
                             @forelse($valijas as $valija)
+                                @if(isset($sol_original->valija))
                                     @php
                                         $valija->id == old('valija', $sol_original->valija->id) ? $str_check = 'selected' : $str_check = '';
                                     @endphp
+                                @else
+                                    @php
+                                        $str_check = '';
+                                    @endphp
+                                @endif
                                 <option value="{{ $valija->id }}" {{ $str_check }}>{{ $valija->num_oficio_ca }}: {{ $valija->delegacion->id }} - {{ $valija->delegacion->name }}</option>
                             @empty
                             @endforelse

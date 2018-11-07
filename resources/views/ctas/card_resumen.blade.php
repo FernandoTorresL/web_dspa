@@ -51,12 +51,12 @@
                     <small class="text-muted">{{ $mensaje }}</small>
                 </li>
 
-                @if($total_ctas_SSJDAV == count($subdelegaciones) )
+                @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
                     @php
                         $color = 'success';
                         $mensaje = '';
                     @endphp
-                @elseif($total_ctas_SSJDAV <= count($subdelegaciones) )
+                @elseif($total_ctas_SSJDAV < count($subdelegaciones) - 1 )
                     @php
                         $guion = '-';
                         $color = 'warning';

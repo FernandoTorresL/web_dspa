@@ -33,7 +33,7 @@ class CreateSolicitudRequest extends FormRequest
             'segundo_apellido' => ['max:32'],
             'nombre' => ['required', 'max:32'],
             'matricula' => ['required_if:tipo_movimiento,==,1,3', 'max:9', 'regex:/^(SIN DATO|\d{7,10}|INFONAVIT|TTD)$/'],
-            'curp' => ['regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/',],
+            'curp' => ['regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U|X)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/',],
             'cuenta' => ['required', 'max:7'],
             'gpo_actual' => ['required_if:tipo_movimiento,==,2,3'],
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],

@@ -5,7 +5,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Origen</th>
-                <th scope="col">Delegación</th>
+                {{--<th scope="col">Delegación</th>--}}
                 <th scope="col">Tipo Movimiento</th>
                 <th scope="col"># Solicitudes</th>
             </tr>
@@ -23,8 +23,8 @@
             <tbody>
             <tr>
                 <th scope="row">{{ $var }}</th>
-                <td class="small">{{ $solicitud_sin_lote->origen_id}}</td>
-                <td class="small">{{ $solicitud_sin_lote->delegacion_id }}</td>
+                <td class="small">{{ isset($solicitud_sin_lote->origen_id) ? $solicitud_sin_lote->origen_id : 'Sin valija'}}</td>
+{{--                <td class="small">{{ $solicitud_sin_lote->delegacion_id }}</td>--}}
                 <td class="small">{{ $solicitud_sin_lote->name }}</td>
                 <td class="small">{{ $solicitud_sin_lote->total_solicitudes }}</td>
             </tr>
@@ -90,8 +90,9 @@
                 <th scope="col">Última modificación por</th>
                 <th scope="col">Delegación - Subdelegación</th>
                 <th scope="col">Nombre completo</th>
-                <th scope="col">Usuario (Mov)</th>
+                <th scope="col">Usuario (Mov) Lote</th>
                 <th scope="col">Grupo Actual->Nuevo</th>
+                <th scope="col">Matrícula CURP</th>
                 <th scope="col">Causa Rechazo</th>
                 <th scope="col">Estatus</th>
                 <th scope="col">Comentarios</th>
@@ -109,15 +110,21 @@
                     $var += 1;
                 @endphp
                 <tbody>
-                <tr>
+                <tr class="small @if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) table-danger @else @if(!isset($solicitud->resultado_solicitud)) table-warning @else table-success @endif @endif">
                     <th scope="row">{{ $var }}</th>
                     @php
-                        if ( !empty( $solicitud->valija ) )
-                            $archivoPDF = '<a href="' . $solicitud->valija->name . '"  target="_new">PDF</a>';
+                        if ( isset( $solicitud->valija ) )
+                        {
+                            $valija_text1 = $solicitud->valija->id;
+                        }
                         else
-                            $archivoPDF = '(Sin PDF)';
+                        {
+                            $valija_text1 = '';
+                        }
                     @endphp
-                    <td class="small"><a target="_blank" href="/ctas/valijas/{{ $solicitud->valija->id }}">{{ $solicitud->valija->num_oficio_ca }} </a></td>
+                    <td class="small">
+                        <a target="_blank" href="/ctas/valijas/{{ $valija_text1 }}">{{ isset( $solicitud->valija) ? $solicitud->valija->num_oficio_ca . ' ('.$solicitud->valija->num_oficio_del .')' : '' }}</a>
+                    </td>
 
                     @php
                         $columna_fecha_usuario = $solicitud->created_at;
@@ -130,12 +137,15 @@
                     @endphp
                     <td class="small">{{ $columna_fecha_usuario }} <br> {{ $columna_fecha_usuario2 }} </td>
                     <td class="small">{{ $solicitud->user->name }}</td>
-                    <td class="small">{{ $solicitud->valija->delegacion_id }}({{ $solicitud->delegacion->id }}){{ $solicitud->delegacion->name }} - ({{ $solicitud->subdelegacion->num_sub }}){{ $solicitud->subdelegacion->name }}</td>
+                    <td class="small">{{ isset($solicitud->valija) ? $solicitud->valija->delegacion_id : '' }}({{ $solicitud->delegacion->id }}){{ $solicitud->delegacion->name }} - ({{ $solicitud->subdelegacion->num_sub }}){{ $solicitud->subdelegacion->name }}</td>
                     <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
-                    <td class="small"><a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">{{ $solicitud->cuenta }} ({{ $solicitud->movimiento->name }})</a></td>
+                    <td class="small"><a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">{{ $solicitud->cuenta }} ({{ $solicitud->movimiento->name }})</a> Lote: {{ isset($solicitud->lote) ? $solicitud->lote->num_lote : '--' }}</td>
                     <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
-                    <td class="small">{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '-' }}</td>
-                    <td class="small">{{ isset($solicitud->rechazo) ? 'Rechazada' : 'OK' }}</td>
+                    <td class="small">{{ $solicitud->matricula . ' ' . $solicitud->curp }}</td>
+                    <td class="small @if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) text-danger @else @if(isset($solicitud->lote) && (!isset($solicitud->resultado_solicitud))) text-warning @else text-success @endif @endif">
+                        {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}</td>
+                    <td class="small @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
+                        {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}</td>
                     <td class="small">{{ $solicitud->comment }}</td>
                     <td class="small"><a target="_blank" href="{{ $solicitud->archivo }}">{{$solicitud->id}}-PDF</a></td>
                 </tr>
