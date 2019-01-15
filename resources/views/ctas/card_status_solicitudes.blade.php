@@ -9,7 +9,7 @@
         </div>
         <div class="card-body">
                 <p class="card-text">Consulta el listado de Solicitudes</p>
-                <a href="ctas/status/solicitudes" class="btn btn-warning">Consultar estatus</a>
+                <a href="ctas/solicitudes/view/status" class="btn btn-warning">Ver listado</a>
         </div>
     </div>
 </div>

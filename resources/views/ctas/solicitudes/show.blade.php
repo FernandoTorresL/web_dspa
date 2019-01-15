@@ -4,7 +4,8 @@
 
 @section('content')
     <div class="row">
-        <a class="nav-link" href="{{ url('/ctas') }}">Regresar</a>
+        <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
+        <a class="nav-link" href="{{ url()->previous() }}">Regresar</a>
     </div>
     @if(session()->has('message'))
         <div class="alert alert-success">

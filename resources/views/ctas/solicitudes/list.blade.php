@@ -14,23 +14,63 @@
 @endif
 
 @forelse($list_sol as $solicitud)
-    <tr class="small @if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) table-danger @else @if(!isset($solicitud->resultado_solicitud)) table-warning @else table-success @endif @endif">
-        @php
-            $columna_fecha_usuario = date('d-M-Y', strtotime($solicitud->created_at));
-        @endphp
-        <td>{{ $columna_fecha_usuario }}</td>
+
+    {{-- Setting the color row by the result of the solicitud --}}
+    @if( isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe) )
+            {{-- Solicitud was denny... --}}
+            <tr class="small table-danger">
+    @else
+        @if( !isset($solicitud->resultado_solicitud) )
+            {{-- There's not response for the solicitud --}}
+            <tr class="small table-warning">
+        {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
+            <tr class="small table-warning">--}}
+        @else
+            {{-- There's an OK response for the solicitud --}}
+            <tr class="small table-success">
+        @endif
+    @endif
+
+        <td>{{ date('d-M-Y', strtotime($solicitud->created_at)) }}</td>
         <td>{{ $solicitud->primer_apellido }}</td>
         <td>{{ $solicitud->segundo_apellido }}</td>
         <td>{{ $solicitud->nombre }}</td>
         <td>
-            <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
-                {{ isset($solicitud->rechazo) ? $solicitud->cuenta : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->cuenta : $solicitud->resultado_solicitud->cuenta) : $solicitud->cuenta )  }}
+            <a target="_self" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
+                @if( isset($solicitud->resultado_solicitud) )
+                    {{--If solicitud has a response ... --}}
+                    {{ $solicitud->resultado_solicitud->cuenta }}
+                @else
+                    {{--  ...show the captured value --}}
+                    {{ $solicitud->cuenta }}
+                @endif
             </a>
         </td>
         <td>{{ $solicitud->movimiento->name }}</td>
-        <td>{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
-        <td class="@if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) text-danger @else @if(isset($solicitud->lote) && (!isset($solicitud->resultado_solicitud))) text-warning @else text-success @endif @endif">
-            {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}</td>
+        <td>
+            @if( $solicitud->movimiento->id == 2 )
+                {{--If solicitud is BAJA show the actual group --}}
+                {{ $solicitud->gpo_actual->name }}
+            @else
+                {{-- any other case, show the new group --}}
+                {{ $solicitud->gpo_nuevo->name }}
+            @endif
+        </td>
+        {{-- Setting the solicitud status --}}
+        @if( isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe) )
+            {{-- Solicitud was denny... --}}
+            <td class="text-danger">NO PROCEDE</td>
+        @else
+            @if( !isset($solicitud->resultado_solicitud) )
+                {{-- There's not response for the solicitud --}}
+                <td class="text-warning">EN ESPERA DE RESPUESTA</td>
+            {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
+                --}}{{-- There's an response, but we have to send again the solicitud --}}{{--
+                <td class="text-warning">PENDIENTE</td>--}}
+            @else
+                <td class="text-success">ATENDIDA</td>
+            @endif
+        @endif
         {{--<td class="small">
             <small>
                 Capturado por: {{ $solicitud->user->name }}
