@@ -65,6 +65,11 @@ class Solicitud extends Model
         return $this->hasOne(Resultado_Solicitud::class);
     }
 
+    public function res_sol_mainframe()
+    {
+        return $this->hasOne(Rechazo_mainframe::class);
+    }
+
     public function hasBeenModified(Solicitud $solicitud) {
         return !$solicitud->hist_solicitudes->isEmpty();
     }
