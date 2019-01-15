@@ -19,15 +19,17 @@ class SolicitudesDelController extends Controller
 
         if (Gate::allows('ver_status_solicitudes')) {
 
-            $list_sol = Solicitud::where('delegacion_id', $del)
+            $list_sol =
+                Solicitud::sortable()
                     ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                    ->where('delegacion_id', $del)
                     ->latest()
-                    ->paginate(10);
+                    ->paginate(20);
 
             return view('ctas.solicitudes.delegacion_list', compact('list_sol'));
         }
         else {
-            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . $del);
 
             abort(403,'No tiene permitido ver este listado');
         }

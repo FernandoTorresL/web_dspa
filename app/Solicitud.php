@@ -4,11 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Kyslik\ColumnSortable\Sortable;
 
 class Solicitud extends Model
 {
+    use Sortable;
+
     protected $table = 'solicitudes';
     protected $guarded = [];
+
+    public $sortable = ['created_at', 'nombre', 'primer_apellido', 'segundo_apellido', 'cuenta', 'movimiento_id', 'gpo_nuevo_id', 'rechazo_id'];
 
     public function valija()
     {

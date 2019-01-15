@@ -1,20 +1,20 @@
 @if(count($list_sol))
     <div class="table">
         <table class="table">
-            <tr>
-                <th scope="col">Fecha captura</th>
-                <th scope="col">Primer Apellido</th>
-                <th scope="col">Segundo Apellido</th>
-                <th scope="col">Nombre(s)</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">Movimiento</th>
+            <tr class="small">
+                <th scope="col">@sortablelink('created_at', 'Fecha captura')</th>
+                <th scope="col">@sortablelink('primer_apellido', 'Primer Apellido')</th>
+                <th scope="col">@sortablelink('segundo_apellido', 'Segundo Apellido')</th>
+                <th scope="col">@sortablelink('nombre', 'Nombre(s)')</th>
+                <th scope="col">@sortablelink('cuenta', 'Usuario')</th>
+                <th scope="col">@sortablelink('movimiento_id', 'Movimiento')</th>
                 <th scope="col">Grupo</th>
                 <th scope="col">Estatus</th>
             </tr>
 @endif
 
 @forelse($list_sol as $solicitud)
-    <tr class="@if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) table-danger @else @if(!isset($solicitud->resultado_solicitud)) table-warning @else table-success @endif @endif">
+    <tr class="small @if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) table-danger @else @if(!isset($solicitud->resultado_solicitud)) table-warning @else table-success @endif @endif">
         @php
             $columna_fecha_usuario = date('d-M-Y', strtotime($solicitud->created_at));
         @endphp
@@ -47,7 +47,7 @@
         </table>
     </div>
 
-    <div class="mt-2 mx-auto">
-        {{ $list_sol->links() }}
+    <div class="mt-2 mx-auto justify-content-center">
+        {!! $list_sol->appends(\Request::except('page'))->render() !!}
     </div>
 @endif

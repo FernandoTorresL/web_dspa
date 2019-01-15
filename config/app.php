@@ -153,6 +153,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
 //        Laravel\Socialite\SocialiteServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
 
         /*
          * Application Service Providers...
