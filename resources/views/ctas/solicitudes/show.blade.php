@@ -3,10 +3,10 @@
 @section('title', 'Consultar Solicitud')
 
 @section('content')
-    <div class="row">
+    <p>
         <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
-        <a class="nav-link" href="{{ url()->previous() }}">Regresar</a>
-    </div>
+        <a class="btn btn-default" href="{{ url()->previous() }}">Regresar</a>
+    </p>
     @if(session()->has('message'))
         <div class="alert alert-success">
             {{ session()->get('message') }}

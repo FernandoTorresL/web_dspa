@@ -35,7 +35,7 @@
         @endif
     @endif
 
-        <td class="small text-left">{{ date('d-M-Y', strtotime($solicitud->created_at)) }}<p>{{ $solicitud->created_at->diffForHumans() }}</p></td>
+        <td class="small text-left">{{ $solicitud->created_at }} {{ date('d-M-Y', strtotime($solicitud->created_at )) }}<p>{{ $solicitud->created_at->diffForHumans() }}</p></td>
         <td>{{ $solicitud->primer_apellido }}</td>
         <td>{{ $solicitud->segundo_apellido }}</td>
         <td>{{ $solicitud->nombre }}</td>
