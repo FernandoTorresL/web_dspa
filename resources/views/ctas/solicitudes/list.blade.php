@@ -9,7 +9,7 @@
                 <th scope="col">@sortablelink('cuenta', 'Usuario')</th>
                 <th scope="col">@sortablelink('movimiento_id', 'Movimiento')</th>
                 <th scope="col">Grupo</th>
-                <th scope="col">Estatus</th>
+                <th scope="col">Estatus de solicitud</th>
             </tr>
 @endif
 
@@ -22,16 +22,20 @@
     @else
         @if( !isset($solicitud->resultado_solicitud) )
             {{-- There's not response for the solicitud --}}
-            <tr class="small table-warning">
-        {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
-            <tr class="small table-warning">--}}
+            @if( isset($solicitud->lote) )
+                {{-- This solicitud has a lote and we're waiting for response --}}
+                <tr class="small table-warning">
+            @else
+                {{-- We're analizing your solicitud --}}
+                <tr class="small table-light">
+            @endif
         @else
             {{-- There's an OK response for the solicitud --}}
             <tr class="small table-success">
         @endif
     @endif
 
-        <td>{{ date('d-M-Y', strtotime($solicitud->created_at)) }}</td>
+        <td class="small text-left">{{ date('d-M-Y', strtotime($solicitud->created_at)) }}<p>{{ $solicitud->created_at->diffForHumans() }}</p></td>
         <td>{{ $solicitud->primer_apellido }}</td>
         <td>{{ $solicitud->segundo_apellido }}</td>
         <td>{{ $solicitud->nombre }}</td>
@@ -46,7 +50,7 @@
                 @endif
             </a>
         </td>
-        <td>{{ $solicitud->movimiento->name }}</td>
+        <td class="text-center">{{ $solicitud->movimiento->name }}</td>
         <td>
             @if( $solicitud->movimiento->id == 2 )
                 {{--If solicitud is BAJA show the actual group --}}
@@ -59,18 +63,26 @@
         {{-- Setting the solicitud status --}}
         @if( isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe) )
             {{-- Solicitud was denny... --}}
-            <td class="text-danger">NO PROCEDE</td>
+            <td class="small text-right text-danger">No procede<p></p></td>
         @else
             @if( !isset($solicitud->resultado_solicitud) )
                 {{-- There's not response for the solicitud --}}
-                <td class="text-warning">EN ESPERA DE RESPUESTA</td>
+                @if( isset($solicitud->lote) )
+                    {{-- This solicitud has a lote and we're waiting for response --}}
+                    <td class="small text-right text-warning">Enviada a Mainframe<p>En espera de respuesta</p></td>
+                @else
+                    {{-- We're analizing your solicitud --}}
+                    <td class="small text-right text-primary">En revisión por<p>personal CA-DSPA</p></td>
+                @endif
+
             {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
                 --}}{{-- There's an response, but we have to send again the solicitud --}}{{--
                 <td class="text-warning">PENDIENTE</td>--}}
             @else
-                <td class="text-success">ATENDIDA</td>
+                <td class="small text-right text-success">Atendida<p></p></td>
             @endif
         @endif
+
         {{--<td class="small">
             <small>
                 Capturado por: {{ $solicitud->user->name }}
