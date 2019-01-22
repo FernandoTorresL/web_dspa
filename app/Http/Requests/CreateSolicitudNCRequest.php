@@ -25,7 +25,7 @@ class CreateSolicitudNCRequest extends FormRequest
     public function rules()
     {
         return [
-            'archivo' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
+            'archivo' => ['required', 'file', 'mimes:pdf', 'between:1,9000'],
             'valija' => ['required'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
             'tipo_movimiento' => ['required', Rule::in(['1', '2', '3'])],
@@ -35,7 +35,7 @@ class CreateSolicitudNCRequest extends FormRequest
             'nombre' => ['required', 'max:32'],
             'matricula' => ['required_if:tipo_movimiento,==,1,3', 'max:9', 'regex:/^(SIN DATO|\d{7,10}|INFONAVIT|TTD)$/'],
             'curp' => ['regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U|X)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/',],
-            'cuenta' => ['required', 'max:7'],
+            'cuenta' => ['required', 'min:6', 'max:7'],
             'gpo_actual' => ['required_if:tipo_movimiento,==,2,3'],
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
             'comment' => ['max:190'],
@@ -67,6 +67,7 @@ class CreateSolicitudNCRequest extends FormRequest
             'curp.regex' => 'CURP inválida. Para BAJA, puede capturar SIN DATO',
             'cuenta.required' => 'User-ID es un campo obligatorio',
             'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
+            'cuenta.min' => 'User-ID debe tener al menos :min caracteres',
             'gpo_actual.required_if' => 'Elija un valor cuando Tipo de Movimiento es BAJA o CAMBIO.',
             'gpo_nuevo.required_if' => 'Elija un valor cuando Tipo de Movimiento es ALTA o CAMBIO.',
             'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',

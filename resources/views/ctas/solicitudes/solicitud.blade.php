@@ -2,7 +2,7 @@
     <strong>
         @php
             use Carbon\Carbon;
-            setlocale(LC_TIME, 'es_ES');
+            setlocale(LC_TIME, 'es-ES');
             \Carbon\Carbon::setUtf8(false);
         @endphp
         Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}

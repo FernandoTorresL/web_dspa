@@ -1,3 +1,8 @@
+@php
+    use Carbon\Carbon;
+    setlocale(LC_TIME, 'es-ES');
+    \Carbon\Carbon::setUtf8(false);
+@endphp
 @if(count($list_sol))
     <div class="table">
         <table class="table">
@@ -35,7 +40,10 @@
         @endif
     @endif
 
-        <td class="small text-left">{{ $solicitud->created_at }} {{ date('d-M-Y', strtotime($solicitud->created_at )) }}<p>{{ $solicitud->created_at->diffForHumans() }}</p></td>
+        <td class="small text-left">
+            {{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%d-%b-%Y') }}
+            <p>{{ $solicitud->created_at->diffForHumans() }}</p>
+        </td>
         <td>{{ $solicitud->primer_apellido }}</td>
         <td>{{ $solicitud->segundo_apellido }}</td>
         <td>{{ $solicitud->nombre }}</td>
