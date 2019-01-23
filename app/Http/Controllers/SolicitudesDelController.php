@@ -21,7 +21,7 @@ class SolicitudesDelController extends Controller
             if (Auth::user()->delegacion_id == 9) {
                 $list_sol =
                     Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe'])
+                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
                         ->where('id', '>=', 3815)
                         ->latest()
                         ->paginate(50);
@@ -29,7 +29,7 @@ class SolicitudesDelController extends Controller
             else {
                 $list_sol =
                     Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe'])
+                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
                         ->where('delegacion_id', $del)
                         ->where('id', '>=', 3815)
                         ->latest()
