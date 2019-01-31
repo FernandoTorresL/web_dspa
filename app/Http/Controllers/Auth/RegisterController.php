@@ -78,7 +78,7 @@ class RegisterController extends Controller
 
             $user                             = app(User::class)->create($validatedData);
 
-            Log::info('Creando usuario:'. array_get($validatedData, 'username') . ' Email:'. array_get($validatedData, 'email') . ' Del:' . array_get($validatedData, 'delegacion'));
+            Log::warning('Creando usuario:'. array_get($validatedData, 'username') . ' Email:'. array_get($validatedData, 'email') . ' Del:' . array_get($validatedData, 'delegacion'));
         } catch (\Exception $exception) {
             logger()->error($exception);
             Log::error('Error al Registrar Usuario|' . $exception);
@@ -106,7 +106,7 @@ class RegisterController extends Controller
     {
         try {
 
-            Log::info('Activando Usuario');
+            Log::warning('Activando Usuario');
             $user = app(User::class)->where('activation_code', $activationCode)->first();
             if (!$user) {
                 Log::error('Activando usuario. Código no existe o ya ha sido utilizado.');
@@ -166,7 +166,7 @@ class RegisterController extends Controller
         $delegaciones = Delegacion::where('status', 1)->orderBy('id', 'asc')->get();
         $puestos = Job::whereBetween('id', [2, 4])->orWhere('id', 12)->orderBy('id', 'asc')->get();
 
-        Log::info('Registrar nuevo usuario.');
+        Log::warning('Registrar nuevo usuario.');
 
         return view('auth.register', [
             'delegaciones' => $delegaciones,

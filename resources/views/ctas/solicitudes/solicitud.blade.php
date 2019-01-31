@@ -1,11 +1,11 @@
 <h4 class="card-title">
     <strong>
-        {{--@php--}}
-            {{--setlocale(LC_ALL, 'es-ES');--}}
-            {{--echo strftime("%A %e %B %Y", mktime(0, 0, 0, 12, 22, 1978));--}}
-            {{--// jeuves 22 diciembre 1978--}}
-        {{--@endphp--}}
-        Fecha: {{ date('D, d \d\e M, Y', strtotime($solicitud->fecha_solicitud_del)) }}
+        @php
+            use Carbon\Carbon;
+            setlocale(LC_TIME, 'es-ES');
+            \Carbon\Carbon::setUtf8(false);
+        @endphp
+        Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
     </strong>
     <span class="text-muted float-right">
         @if (isset($solicitud->archivo))
@@ -18,13 +18,24 @@
     <div class="card-header">
         <h4 class="card-title">
             <strong>
-                {{ $solicitud->movimiento->name }} - {{ $solicitud->cuenta }} ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})</strong>
+                @if( isset($solicitud->resultado_solicitud) )
+                    {{--If solicitud has a response ... --}}
+                    @php
+                        $cuenta = $solicitud->resultado_solicitud->cuenta;
+                    @endphp
+                @else
+                    {{--  ...show the captured value --}}
+                    @php
+                        $cuenta = $solicitud->cuenta;
+                    @endphp
+                @endif
+                {{ $solicitud->movimiento->name }} - {{ $cuenta }} ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})</strong>
             <span class="text-muted float-right">
                 {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
             </span>
         </h4>
         <h4 class="card-title">
-            <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin Valija)' }} </strong>
+            <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
             <span class="text-muted float-right">
                 @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
                     @can('consultar_solicitudes_nc')
@@ -64,11 +75,28 @@
 
                     <li class="list-group-item">
                         <strong>Status: </strong>
-                        <span class="card-text float-right @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @else @if(!isset($solicitud->resultado_solicitud)) text-warning @else text-success @endif @endif">
-                            {{--{{ isset($solicitud->rechazo) ? 'Revisado/Atendido' : 'En espera de respuesta' }}--}}
-                            {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}
-                        </span>
-                        {{--</strong><span class="badge badge-pill badge-info">En revisión</span>--}}
+                        {{-- Setting the solicitud status --}}
+                        @if( isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe) )
+                            {{-- Solicitud was denny... --}}
+                            <span class="card-text float-right text-danger">No procede</span>
+                        @else
+                            @if( !isset($solicitud->resultado_solicitud) )
+                                {{-- There's not response for the solicitud --}}
+                                @if( isset($solicitud->lote) )
+                                    {{-- This solicitud has a lote and we're waiting for response --}}
+                                    <span class="card-text float-right text-warning">Enviada a Mainframe. En espera de respuesta</span>
+                                @else
+                                    {{-- We're analizing your solicitud --}}
+                                    <span class="card-text float-right text-primary">En revisión por personal CA-DSPA</span>
+                                @endif
+
+                                {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
+                                    --}}{{-- There's an response, but we have to send again the solicitud --}}{{--
+                                    <td class="text-warning">PENDIENTE</td>--}}
+                            @else
+                                <span class="card-text float-right text-success">Atendida</span>
+                            @endif
+                        @endif
                         <div>
                             <strong>Causa de rechazo: </strong>
                             <span class="card-text float-right @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
@@ -90,9 +118,10 @@
                             {{ $solicitud_hasBeenModified ? $solicitud->hist_solicitudes->first()->user->name : $solicitud->user->name }}
                         </span>
                         <div>
-                            <strong>Fecha de captura: </strong>
+                            <strong></strong>
                             <span class="card-text float-right">
-                                {{ date('D, d-M-Y, H:i', strtotime($solicitud->created_at)) }}
+                                {{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%A, %d de %B, %Y %H:%Mh') }}
+                                <span class="small">({{ $solicitud->created_at->diffForHumans() }})</span>
                             </span>
                         </div>
                     </li>
@@ -103,22 +132,24 @@
                             {{ $solicitud_hasBeenModified ? $solicitud->user->name : ''}}
                         </span>
                         <div>
-                            <strong>Fecha de última modificación: </strong>
+                            <strong></strong>
                             <span class="card-text float-right">
-                                {{ $solicitud_hasBeenModified ? date('D, d-M-Y, H:i', strtotime($solicitud->updated_at)) : '' }}
+                                <span class="small">
+                                    {{ $solicitud_hasBeenModified ? $solicitud->updated_at->diffForHumans() : '--' }}
+                                </span>
                             </span>
                         </div>
                     </li>
 
                     <li class="list-group-item">
                         <strong>Lote: </strong>
-                        <span class="card-text float-right @if(isset($solicitud->lote->num_lote)) text-info @else text-warning @endif">
+                        <span class="card-text float-right @if(isset($solicitud->lote->num_lote)) text-info @else text-primary @endif">
                             {{ isset($solicitud->lote) ? $solicitud->lote->num_lote : 'Sin lote asignado' }}
                         </span>
                         <div>
                             <strong>Fecha de envío a Mainframe: </strong>
                             <span class="card-text float-right @if(isset($solicitud->lote)) text-info @endif">
-                                {{ isset($solicitud->lote) ? date('D, d-M-Y', strtotime($solicitud->lote->fecha_oficio_lote)) : '' }}
+                                {{ isset($solicitud->lote) ? \Carbon\Carbon::parse($solicitud->lote->fecha_oficio_lote)->formatLocalized('%d de %B, %Y') : '' }}
                             </span>
                         </div>
                     </li>

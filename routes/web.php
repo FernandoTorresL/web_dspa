@@ -44,6 +44,10 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
 
     Route::get('/ctas/status/solicitudes', 'SolicitudesController@solicitudes_status');
 
+    //Route to view table for solicitudes using pagination
+    Route::get('/ctas/solicitudes/view/status', 'SolicitudesDelController@view_status');
+    Route::get('/ctas/solicitudes/view/detail_status', 'SolicitudesDelController@view_detail_status');
+
     Route::get('/ctas', 'CuentasController@home');
     Route::get('/ctas/inventario', 'InventarioController@home');
 
