@@ -6,9 +6,11 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 @forelse($subdelegaciones as $subdelegacion)
-                    <li class="list-group-item text-truncate">
-                        {{ $subdelegacion->num_sub }} - {{ $subdelegacion->name }}<span class="badge badge-pill badge-success"></span>
-                    </li>
+                    @if ($subdelegacion->num_sub <> 0)
+                        <li class="list-group-item text-truncate">
+                            {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $subdelegacion->name }}<span class="badge badge-pill badge-success"></span>
+                    @endif
+                        </li>
                 @empty
                     <li class="list-group-item">
                         No hay subdelegaciones registradas
@@ -162,7 +164,9 @@
         </div>
 
         <div class="card-footer">
-            <small class="text-muted">Total de cuentas <span class="float-right badge badge-pill badge-info">{{ $total_ctas->count() }}</span></small>
+            <small class="text-muted">Total de cuentas
+                <span class="badge badge-pill badge-info">{{ number_format($total_ctas->count()) }}</span>
+            </small>
         </div>
     </div>
 </div>

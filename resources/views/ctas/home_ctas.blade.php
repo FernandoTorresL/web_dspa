@@ -29,6 +29,9 @@
             @can('ver_inventario_del')
                 @include('ctas.card_inventario')
             @endcan
+            @can('ver_inventario_gral')
+                @include('ctas.card_inventario')
+            @endcan
 
             @include('ctas.card_solicitudes')
         </div>
