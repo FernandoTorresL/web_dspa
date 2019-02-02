@@ -20,9 +20,12 @@ class CuentasController extends Controller
 
     public function home()
     {
+        //Get user
         $user = Auth::user();
+        //Get delegation_id
+        $del = Auth::user()->delegacion_id;
 
-        Log::warning('Visitando Ctas-Home. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+        Log::warning('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
 
         if ($user->hasRole('capturista_dspa')) {
             $primer_renglon = 'Nivel Central - DSPA';
@@ -41,7 +44,7 @@ class CuentasController extends Controller
         {
             $del_id = Auth::user()->delegacion_id;
 
-            $primer_renglon = 'Delegación ' . Auth::user()->delegacion_id .'-' . Auth::user()->delegacion->name;
+            $primer_renglon = 'Delegación ' . $del . ' ' . $user->delegacion->name;
             $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
 
             $total_ctas =
