@@ -46,6 +46,26 @@ class SolicitudesDelController extends Controller
 
     }
 
+    public function view_timeline($id)
+    {
+        $del = Auth::user()->delegacion_id;
+
+        Log::info('Ver timeline solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);
+
+        if (Gate::allows('ver_timeline_solicitudes')) {
+            $datos_timeline = Solicitud::find($id);
+
+            //dd($datos_timeline);
+
+            return view('ctas.solicitudes.timeline', compact('datos_timeline'));
+        }
+        else {
+            Log::info('Sin permiso-Consultar timeline solicitudes. Usuario:' . Auth::user()->name . '|Del:' . $del);
+
+            abort(403,'No tiene permitido ver este timeline');
+        }
+    }
+
     public function view_detail_status()
     {
         $del = Auth::user()->delegacion_id;

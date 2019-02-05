@@ -9,6 +9,11 @@ class Resultado_Solicitud extends Model
     protected $table = 'resultado_solicitudes';
     protected $guarded = [];
 
+    public function resultado_lote()
+    {
+        return $this->belongsTo(Resultado_Lote::class);
+    }
+
     public function lote()
     {
         return $this->belongsTo(Lote::class);
