@@ -60,7 +60,7 @@ class SolicitudesDelController extends Controller
     {
         setlocale(LC_TIME, 'es_ES');
         Carbon::setUtf8(false);
-
+      
         $del = Auth::user()->delegacion_id;
 
         Log::info('Ver timeline solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);

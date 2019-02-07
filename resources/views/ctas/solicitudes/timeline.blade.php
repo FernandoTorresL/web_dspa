@@ -10,7 +10,6 @@
 
     <h4>Timeline detallado, solicitud {{ $cuenta_sol }}</h4>
 
-<div class="justify-content-center">
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
             <h5>Solicitud<span class="float-right">{{ $fecha_sol }}</span></h5>
