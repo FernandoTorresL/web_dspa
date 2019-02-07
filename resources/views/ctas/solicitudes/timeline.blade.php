@@ -3,182 +3,80 @@
 @section('title', 'Timeline Solicitud')
 
 @section('content')
-    @php
-        use Carbon\Carbon;
-        setlocale(LC_TIME, 'es_ES');
-        \Carbon\Carbon::setUtf8(false);
-    @endphp
-
     <p>
         <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
         <a class="btn btn-default" href="{{ url()->previous() }}">Regresar</a>
     </p>
 
-    <div class="card border-info">
-        <div class="card-header">
-            <h4 class="card-title">
-                <strong>
-                    Timeline detallado, solicitud {{ $datos_timeline->cuenta }}
-                <span class="text-muted float-right">
-                </span>
-            </h4>
+    <h4>Timeline detallado, solicitud {{ $cuenta_sol }}</h4>
+
+<div class="justify-content-center">
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Solicitud<span class="float-right">{{ $fecha_sol }}</span></h5>
         </div>
-
-        <div class="card-group">
-            <div class="card">
-                <div class="card-body border-light">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong class="text-success">
-                                @if( isset($datos_timeline->resultado_solicitud) )
-                                    {{--If solicitud has a response ... --}}
-                                    @php
-                                        $cuenta = $datos_timeline->resultado_solicitud->cuenta;
-                                    @endphp
-                                @else
-                                    {{--  ...show the captured value --}}
-                                    @php
-                                        $cuenta = $datos_timeline->cuenta;
-                                    @endphp
-                                @endif
-                                Solicitud
-                            </strong>
-                            <span class="card-text float-right">
-                                {{ \Carbon\Carbon::parse($datos_timeline->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
-                            </span>
-                            <div>
-                                {{ $datos_timeline->movimiento->name }} - {{ $datos_timeline->cuenta }} ({{ isset($datos_timeline->gpo_actual) ? $datos_timeline->gpo_actual->name : '' }} {{ isset($datos_timeline->gpo_nuevo) ? ' -> ' . $datos_timeline->gpo_nuevo->name : '' }})
-                                Matrícula: {{ $datos_timeline->matricula }}
-                                CURP: {{ $datos_timeline->curp }}
-                            </div>
-                            <div>
-                                Nombre: {{ $datos_timeline->nombre }} {{ $datos_timeline->primer_apellido }} {{ $datos_timeline->segundo_apellido }}
-                            </div>
-                            @if( !isset($datos_timeline->valija) )
-                                <div>
-                                    Sin valija
-                                </div>
-                            @endif
-                        </li>
-
-                        @if( isset($datos_timeline->valija) )
-                            <li class="list-group-item">
-                                <div>
-                                    <strong class="text-success">
-                                        Valija
-                                    </strong>
-                                    <span class="card-text float-right">
-                                    {{ \Carbon\Carbon::parse($datos_timeline->valija->fecha_valija_del)->formatLocalized('%d de %B, %Y') }}
-                                </span>
-                                    <div>
-                                        Número oficio: {{ $datos_timeline->valija->num_oficio_del }}
-                                    </div>
-                                </div>
-                                <div>
-                                    Delegación: {{ $datos_timeline->delegacion->name }}
-                                </div>
-                            </li>
-
-                            <li class="list-group-item">
-                                <div>
-                                    <strong class="text-success">
-                                        Recepción Gestión
-                                    </strong>
-                                    <span class="card-text float-right">
-                                        {{ \Carbon\Carbon::parse($datos_timeline->valija->fecha_recepcion_ca)->formatLocalized('%d de %B, %Y') }}
-                                    </span>
-                                    <div>
-                                        Núm. gestión: {{ $datos_timeline->valija->num_oficio_ca }}
-                                    </div>
-                                </div>
-                                <div>
-                                    Comentario: {{ $datos_timeline->valija->comment }}
-                                </div>
-                            </li>
-                        @endif
-
-                        <li class="list-group-item">
-                            <div>
-                                <strong class="text-success">
-                                    Captura Solicitud
-                                </strong>
-                                <span class="card-text float-right">
-                                    {{ \Carbon\Carbon::parse($datos_timeline->created_at)->formatLocalized('%d de %B, %Y. %H:%M') }}
-                                </span>
-                                <div>
-                                    Capturado por: {{ $datos_timeline->user->name }}
-                                </div>
-                            </div>
-                            <div>
-                                {{-- Setting the solicitud status --}}
-                                @if( isset($datos_timeline->rechazo) )
-                                    Status:
-                                    {{-- Solicitud was denny... --}}
-                                    <span class="card-text text-danger">No procede. {{ $datos_timeline->rechazo->full_name }}</span>
-                                @endif
-                            </div>
-                            <div>
-                                Comentario: {{ $datos_timeline->comment }}
-                            </div>
-                        </li>
-
-                        @if( isset($datos_timeline->lote) )
-                            <li class="list-group-item">
-                                <div>
-                                    <strong class="text-success">
-                                        Envío Mainframe
-                                    </strong>
-                                    <span class="card-text float-right">
-                                        {{ \Carbon\Carbon::parse($datos_timeline->lote->fecha_oficio_lote)->formatLocalized('%d de %B, %Y') }}
-                                    </span>
-                                    <div>
-                                        Lote: {{ $datos_timeline->lote->num_lote }}
-                                    </div>
-                                </div>
-                                <div>
-                                    Comentario: {{ $datos_timeline->lote->comment }}
-                                </div>
-                            </li>
-                        @endif
-
-                        @if( isset($datos_timeline->resultado_solicitud) )
-                            <li class="list-group-item">
-                                <div>
-                                    <strong class="text-success">
-                                        Respuesta Mainframe
-                                    </strong>
-
-                                    <span class="card-text float-right">
-                                        {{ \Carbon\Carbon::parse($datos_timeline->resultado_solicitud->resultado_lote->attended_at)->formatLocalized('%d de %B, %Y. %H:%M') }}
-                                    </span>
-
-                                    @if( isset($datos_timeline->resultado_solicitud->rechazo_mainframe) )
-                                        <div>
-                                            Causa Rechazo:
-                                            {{-- Solicitud was denny... --}}
-                                            <span class="card-text text-danger">No procede. {{ $datos_timeline->resultado_solicitud->rechazo_mainframe->name }}</span>
-                                        </div>
-                                    @else
-                                        <div>
-                                            <span class="card-text text-success">Atendida. {{ $cuenta }}</span>
-                                        </div>
-                                        <div>
-                                            Nombre Mainframe: {{ $datos_timeline->resultado_solicitud->name }}
-                                        </div>
-                                    @endif
-
-                                    Comentario: {{ $datos_timeline->resultado_solicitud->comment }}
-                                </div>
-                            </li>
-                        @endif
-
-
-                    </ul>
-                </div>
-            </div>
-
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">{{ $subt_val }}</h6>
+            <p class="card-text">Trámite: {{ $titulo_sol }}</p>
+            <p class="card-text">CURP: {{ $curp_sol }}</p>
+            <p class="card-text">Matrícula: {{ $matricula_sol }}</p>
+            <p class="card-text">Nombre: {{ $nombre_sol }}</p>
         </div>
-
     </div>
 
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Valija<span class="float-right">{{ $fecha_val }}</span></h5>
+        </div>
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted"></h6>
+            <p class="card-text">Núm. de oficio origen: {{ $of_val }}</p>
+            <p class="card-text">Remitente: {{ $del_val }}</p>
+        </div>
+    </div>
+
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Recepción Gestión CA<span class="float-right">{{ $fecha_gestion }}</span></h5>
+        </div>
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted"></h6>
+            <p class="card-text">Núm. del área de gestión: {{ $num_gestion }}</p>
+            <p class="card-text">Comentario del área de gestión: {{ $comment_gestion }}</p>
+        </div>
+    </div>
+
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Captura de datos Solicitud<span class="float-right">{{ $fecha_sol_cap }}</span></h5>
+        </div>
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted"></h6>
+            <p class="card-text">Capturado por: {{ $user_sol_cap }}</p>
+            <p class="card-text">Causa del rechazo: <span class="{{ $color_sol_cap }}">{{ $rechazo_sol_cap }}</span></p>
+            <p class="card-text">Comentario: {{ $comment_sol_cap }}</p>
+        </div>
+    </div>
+
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Envío a Mainframe<span class="float-right">{{ $fecha_lote }}</span></h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">Lote: {{ $num_lote }}</p>
+            <p class="card-text">Comentario: {{ $comment_lote }}</p>
+        </div>
+    </div>
+
+    <div class="card border-primary w-50">
+        <div class="card-header text-primary">
+            <h5>Respuesta Mainframe<span class="float-right">{{ $fecha_resp }}</span></h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">Resultado: <span class="{{ $color_resp }}">{{ $rechazo_resp }}</span></p>
+            <p class="card-text">Cuenta final: {{ $cta_resp }}</p>
+            <p class="card-text">Nombre en Mainframe: {{ $nombre_resp }}</p>
+            <p class="card-text">Comentario: {{ $comment_resp }}</p>
+        </div>
+    </div>
 @endsection
