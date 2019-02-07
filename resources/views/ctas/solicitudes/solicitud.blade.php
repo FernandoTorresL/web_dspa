@@ -5,7 +5,13 @@
             setlocale(LC_TIME, 'es-ES');
             \Carbon\Carbon::setUtf8(false);
         @endphp
+
+        @can('ver_timeline_solicitudes')
+            <a class="nav-link" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
+        @endcan
+
         Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
+
     </strong>
     <span class="text-muted float-right">
         @if (isset($solicitud->archivo))
