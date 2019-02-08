@@ -57,9 +57,9 @@ class SolicitudesDelController extends Controller
         return Carbon:: parse($pdatetime)->formatLocalized('%d de %B, %Y %H:%M');
     }
 
-    private function fdif_dias_horas($pdatetime1, $pdatetime2)
+    private function fdif_dias($pdatetime1, $pdatetime2)
     {
-        return date_diff( $pdatetime1, $pdatetime2 )->format('%d día(s) %h hora(s)');
+        return date_diff( $pdatetime1, $pdatetime2 )->format('%d día(s)');
     }
 
     public function view_timeline($id)
@@ -118,11 +118,11 @@ class SolicitudesDelController extends Controller
                 $comment_gestion    = $datos_timeline->valija->comment;
 
                 $date_diff_sol_val =
-                    $this->fdif_dias_horas( date_create($datos_timeline->fecha_solicitud_del), date_create($datos_timeline->valija->fecha_valija_del) );
+                    $this->fdif_dias( date_create($datos_timeline->fecha_solicitud_del), date_create($datos_timeline->valija->fecha_valija_del) );
                 $date_diff_val_gestion =
-                    $this->fdif_dias_horas( date_create($datos_timeline->valija->fecha_valija_del), date_create($datos_timeline->valija->fecha_recepcion_ca) );
+                    $this->fdif_dias( date_create($datos_timeline->valija->fecha_valija_del), date_create($datos_timeline->valija->fecha_recepcion_ca) );
                 $date_diff_gestion_cap =
-                    $this->fdif_dias_horas( date_create($datos_timeline->valija->fecha_recepcion_ca), $datos_timeline->created_at );
+                    $this->fdif_dias( date_create($datos_timeline->valija->fecha_recepcion_ca), $datos_timeline->created_at );
             }
             else
             {
@@ -147,7 +147,7 @@ class SolicitudesDelController extends Controller
                 $num_lote       = $datos_timeline->lote->num_lote;
                 $comment_lote   = $datos_timeline->lote->comment;
                 $date_diff_cap_lote =
-                    $this->fdif_dias_horas( $datos_timeline->created_at, date_create($datos_timeline->lote->fecha_oficio_lote) );
+                    $this->fdif_dias( $datos_timeline->created_at, date_create($datos_timeline->lote->fecha_oficio_lote) );
             }
             else {
                 $fecha_lote = $num_lote = $comment_lote = $date_diff_cap_lote = $sin_dato;
@@ -159,7 +159,7 @@ class SolicitudesDelController extends Controller
                 $fecha_resp     = $this->formatdatetime($datos_timeline->resultado_solicitud->resultado_lote->attended_at);
                 $comment_resp   = $datos_timeline->resultado_solicitud->comment;
                 $date_diff_lote_resp =
-                    $this->fdif_dias_horas( date_create($datos_timeline->lote->fecha_oficio_lote), date_create($datos_timeline->resultado_solicitud->resultado_lote->attended_at) );
+                    $this->fdif_dias( date_create($datos_timeline->lote->fecha_oficio_lote), date_create($datos_timeline->resultado_solicitud->resultado_lote->attended_at) );
 
                 if( isset($datos_timeline->resultado_solicitud->rechazo_mainframe) ) {
 
