@@ -17,9 +17,9 @@ class CreateSubdelegacionesTable extends Migration
 //            $table->increments('id');
             $table->unsignedTinyInteger('id', true);
 
+            $table->string('name');
             $table->unsignedTinyInteger('delegacion_id');
             $table->unsignedTinyInteger('num_sub');
-            $table->string('name');
             $table->string('status', 1);
 
             $table->timestamps();

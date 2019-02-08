@@ -15,8 +15,8 @@ class CreateRechazosTable extends Migration
     {
         Schema::create('rechazos', function (Blueprint $table) {
             $table->unsignedTinyInteger('id', true);
-            $table->string('short_name', 32)->nullable();
             $table->string('full_name', 128);
+            $table->string('short_name', 32)->nullable();
             $table->boolean('status')->default(1);
 
             $table->timestamps();
