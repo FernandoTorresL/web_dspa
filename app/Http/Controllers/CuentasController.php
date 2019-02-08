@@ -171,7 +171,7 @@ class CuentasController extends Controller
                     'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
                 ->where('solicitudes.rechazo_id', NULL)
-                ->where('solicitudes.lote_id', 390)
+                ->where('solicitudes.lote_id', NULL)
 //                ->where('valijas.origen_id', 12)
                 //                ->where('solicitudes.id', '<>', 5203)
 //                ->where('solicitudes.id', '<=', 15416)
@@ -189,7 +189,7 @@ class CuentasController extends Controller
                 DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
-                ->where('solicitudes.lote_id', 390)
+                ->where('solicitudes.lote_id', NULL)
 //                ->where('valijas.origen_id', 12)
 //                ->where('solicitudes.id', '<=', 15416)
 //                ->where('valijas.id', '<=', 5362)
