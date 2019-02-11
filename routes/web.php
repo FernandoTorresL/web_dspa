@@ -55,8 +55,15 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/inventario', 'InventarioController@home');
 
     Route::get('/ctas/admin/resumen', 'CuentasController@show_resume');
-    Route::get('/ctas/admin/generatablas', 'CuentasController@show_admin_tabla');
+    Route::get('/ctas/admin/generatabla', 'CuentasController@show_admin_tabla');
 
+    Route::get('/ctas/admin/show_create_file_valijas', 'CuentasAdminController@show_create_file_valijas');
+    Route::post('/ctas/admin/create_file_valijas', 'CuentasAdminController@create_file_valijas');
+
+    Route::get('/ctas/admin/preview_valijas/{file}', 'CuentasAdminController@preview_valijas');
+
+
+    Route::get('/ctas/admin', 'CuentasAdminController@home');
 }
 
 );

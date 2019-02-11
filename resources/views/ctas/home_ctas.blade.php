@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ctas Delegación')
+@section('title', 'Módulo Gestión de Cuentas')
 
 @section('content')
     <div class="container">
@@ -21,9 +21,17 @@
             </div>
         </div>
 
-        @can('ver_resumen_del')
-            @include('ctas.card_resumen')
-        @endcan
+        <div class="row">
+            @can('ver_modulo_admin')
+                @include('ctas.card_admin')
+            @endcan
+        </div>
+
+        <div class="row">
+            @can('ver_resumen_del')
+                @include('ctas.card_resumen')
+            @endcan
+        </div>
 
         <div class="row">
             @can('ver_inventario_del')

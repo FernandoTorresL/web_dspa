@@ -1,3 +1,7 @@
+<div class="col-10 col-md-12">
+    <br>
+</div>
+
 <div class="col-6">
     <div class="card">
         <div class="card-header">
