@@ -14,7 +14,7 @@ class AddUsernameAndAvatarToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('username')->after('id')->unique();
+            $table->string('username')->after('name')->unique();
             $table->string('avatar')->after('email')->nullable();
         });
     }

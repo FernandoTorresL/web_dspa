@@ -3,25 +3,27 @@
 @section('title', 'Inventario')
 
 @section('content')
+
+@php
+    use Carbon\Carbon;
+    setlocale(LC_TIME, 'es-ES');
+    \Carbon\Carbon::setUtf8(false);
+@endphp
     <p>
         <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </p>
 
     @if(Auth::check())
-        @can('ver_inventario_del')
-            <div class="card text-white bg-primary">
-                <div class="card-header">
-                    <p class="h4">Delegación {{ Auth::user()->delegacion->id }} - {{ Auth::user()->delegacion->name }} | Inventario</p>
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Total de cuentas: {{ $listado_detalle_ctas->count() }}</p>
-                    <p class="card-text">Fecha de corte: {{ date('d-M-Y', strtotime($listado_detalle_ctas->first()->inventory->cut_off_date)) }}</p>
-                </div>
+        <div class="card text-white bg-primary">
+            <div class="card-header">
+                <p class="h4">Inventario - Delegación {{ str_pad(Auth::user()->delegacion->id, 2, '0', STR_PAD_LEFT) }} {{ Auth::user()->delegacion->name }}</p>
             </div>
-            @include('ctas.inventario.inventario')
-        @else
-            <p>No tienes permiso para ver esta página</p>
-        @endcan
+            <div class="card-body">
+                <p class="card-title">Total de cuentas: {{ number_format($list_inventario->total()) }} </p>
+                <p class="card-text">Fecha de corte: {{ \Carbon\Carbon::parse($list_inventario->first()->inventory->cut_off_date)->formatLocalized('%d de %B, %Y') }}</p>
+            </div>
+        </div>
+        @include('ctas.inventario.inventario')
     @endif
 
 @endsection

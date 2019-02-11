@@ -16,8 +16,8 @@ class CreateDetalleCtasTable extends Migration
         Schema::create('detalle_ctas', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->unsignedInteger('inventory_id');
             $table->string('cuenta', 12);
+            $table->unsignedInteger('inventory_id');
             $table->unsignedTinyInteger('ciz_id');
             $table->unsignedTinyInteger('delegacion_id');
             $table->unsignedInteger('gpo_owner_id');

@@ -5,7 +5,8 @@
 @section('content')
     <div class="container">
         <div class="row">
-                <a class="nav-link" href="{{ url('/') }}">Regresar</a>
+            <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
+            <a class="nav-link" href="{{ url()->previous() }}">Regresar</a>
         </div>
 
         @if(session()->has('message'))
@@ -34,6 +35,9 @@
 
         <div class="row">
             @can('ver_inventario_del')
+                @include('ctas.card_inventario')
+            @endcan
+            @can('ver_inventario_gral')
                 @include('ctas.card_inventario')
             @endcan
 

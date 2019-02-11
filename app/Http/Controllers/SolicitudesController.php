@@ -229,7 +229,10 @@ class SolicitudesController extends Controller
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
         $archivo = $request->file('archivo');
 
-        $solicitud->valija_id               = $request->input('valija');
+        if ($request->input('valija') <> 0) {
+            $solicitud->valija_id           = $request->input('valija');
+        }
+
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
         $solicitud->delegacion_id           = $delegacion;
         $solicitud->subdelegacion_id        = $request->input('subdelegacion');
@@ -259,7 +262,7 @@ class SolicitudesController extends Controller
         $user = $request->user();
         $archivo = $request->file('archivo');
 
-        Log::info('Creando Solicitud-Delegación. Usuario:' . $user->username );
+        Log::info('Creando Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
         $solicitud = Solicitud::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
@@ -319,7 +322,7 @@ class SolicitudesController extends Controller
 
         $solicitud->load('user');
 
-        Log::info('Consultando Solicitud ID:' . $solicitud->id );
+        Log::info('Consultando Solicitud ID:' . $solicitud->id . ' Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
         if (Auth::user()->delegacion_id == 9 || Auth::user()->delegacion_id == $solicitud->delegacion_id) {
             return view('ctas.solicitudes.show', [

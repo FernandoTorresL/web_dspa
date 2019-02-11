@@ -30,7 +30,7 @@ class HomeController extends Controller
 
     public function home()
     {
-        Log::info('Visitando HOME');
+        Log::warning('Visitando HOME' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
         return view('cahome', [
 //            'messages' => $messages,

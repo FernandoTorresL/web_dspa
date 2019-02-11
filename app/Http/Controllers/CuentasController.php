@@ -20,9 +20,12 @@ class CuentasController extends Controller
 
     public function home()
     {
+        //Get user
         $user = Auth::user();
+        //Get delegation_id
+        $del = Auth::user()->delegacion_id;
 
-        Log::info('Visitando Ctas-Home. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+        Log::warning('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
 
         if ($user->hasRole('capturista_dspa')) {
             $primer_renglon = 'Nivel Central - DSPA';
@@ -41,7 +44,7 @@ class CuentasController extends Controller
         {
             $del_id = Auth::user()->delegacion_id;
 
-            $primer_renglon = 'Delegación ' . Auth::user()->delegacion_id .'-' . Auth::user()->delegacion->name;
+            $primer_renglon = 'Delegación ' . $del . ' ' . $user->delegacion->name;
             $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
 
             $total_ctas =
@@ -133,10 +136,11 @@ class CuentasController extends Controller
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
-//                ->where('lote_id', NULL)
+                //->whereIN('lote_id', [378, NULL])
+                //->orderBy('cuenta')
                 ->orderBy('id', 'desc')
-                ->orderBy('valija_id', 'asc')
-                ->limit(800)
+                //->orderBy('valija_id', 'asc')
+                ->limit(250)
                 ->get();
 
             return view(
@@ -168,12 +172,13 @@ class CuentasController extends Controller
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
                 ->where('solicitudes.rechazo_id', NULL)
                 ->where('solicitudes.lote_id', NULL)
-                ->where('valijas.origen_id', 2)
+//                ->where('valijas.origen_id', 12)
                 //                ->where('solicitudes.id', '<>', 5203)
-//                ->where('solicitudes.id', '<>', 5203)
-//                ->where('valijas.id', '<>', 5237)
-//                ->where('valijas.id', '<>', 5248)
-//                ->where('valijas.id', '<>', 5243)
+//                ->where('solicitudes.id', '<=', 15416)
+//                ->where('valijas.id', '=', 5291)
+//                ->where('valijas.id', '=', 5287)
+//                ->where('valijas.id', '=', 5285)
+//                ->where('valijas.id', '<=', 5362)
 //                ->whereIN('valijas.id', [4927, 5105, 5121, 5132])
                 ->orderBy('solicitudes.movimiento_id')
 //                ->orderBy('valijas.num_oficio_ca')
@@ -185,10 +190,12 @@ class CuentasController extends Controller
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
                 ->where('solicitudes.lote_id', NULL)
-                ->where('valijas.origen_id', 2)
-//                ->where('valijas.id', '<>', 5237)
-//                ->where('valijas.id', '<>', 5248)
-//                ->where('valijas.id', '<>', 5243)
+//                ->where('valijas.origen_id', 12)
+//                ->where('solicitudes.id', '<=', 15416)
+//                ->where('valijas.id', '<=', 5362)
+//                ->where('valijas.id', '<>', 5287)
+//                ->where('valijas.id', '<>', 5285)
+//                ->where('valijas.id', '<>', 5286)
                 ->orderBy('valijas.num_oficio_ca')
                 ->distinct()
                 ->get();
