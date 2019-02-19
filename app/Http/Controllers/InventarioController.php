@@ -27,7 +27,7 @@ class InventarioController extends Controller
         if (Gate::allows('ver_inventario_del')) {
             $list_inventario =
                 Detalle_cta::sortable()
-                    ->select('cuenta', 'ciz_id', 'inventory_id', 'name', 'gpo_owner_id', 'work_area_id', 'install_data')
+                    //->select('cuenta', 'ciz_id', 'inventory_id', 'name', 'gpo_owner_id', 'work_area_id', 'install_data')
                     ->with(['gpo_owner', 'inventory', 'work_area'])
                     ->where('inventory_id', 30)
                     ->where('delegacion_id', $del)
@@ -39,7 +39,7 @@ class InventarioController extends Controller
         elseif (Gate::allows('ver_inventario_gral')) {
             $list_inventario =
                 Detalle_cta::sortable()
-                    ->select('cuenta', 'ciz_id', 'inventory_id', 'name', 'gpo_owner_id', 'work_area_id', 'install_data')
+                    //->select('cuenta', 'ciz_id', 'inventory_id', 'name', 'gpo_owner_id', 'work_area_id', 'install_data')
                     ->with(['gpo_owner', 'inventory', 'work_area'])
                     ->where('inventory_id', 30)
                     ->orderby('work_area_id', 'desc')
