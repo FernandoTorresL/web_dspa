@@ -20,12 +20,27 @@ class SolicitudesDelController extends Controller
 
         if (Gate::allows('ver_status_solicitudes')) {
             if (Auth::user()->delegacion_id == 9) {
-                $list_sol =
-                    Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                        ->where('id', '>=', 3815)
-                        ->latest()
-                        ->paginate(50);
+
+                if (Auth::user()->job_id == 3) {
+
+                    $list_sol =
+                        Solicitud::sortable()
+                            ->select('solicitudes.*')
+                            ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                            ->leftJoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
+                            ->where('solicitudes.id', '>=', 3815)
+                            ->where('valijas.origen_id', 12)
+                            ->latest('solicitudes.created_at')
+                            ->paginate(50);
+                }
+                else {
+                    $list_sol =
+                        Solicitud::sortable()
+                            ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                            ->where('id', '>=', 3815)
+                            ->latest()
+                            ->paginate(50);
+                }
             }
             else {
                 $list_sol =
