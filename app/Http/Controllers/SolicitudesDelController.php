@@ -21,7 +21,7 @@ class SolicitudesDelController extends Controller
         if (Gate::allows('ver_status_solicitudes')) {
             if (Auth::user()->delegacion_id == 9) {
 
-                if (Auth::user()->job_id == 3) {
+                if (Auth::user()->job_id == 12) {
 
                     $list_sol =
                         Solicitud::sortable()
@@ -29,6 +29,7 @@ class SolicitudesDelController extends Controller
                             ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
                             ->leftJoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                             ->where('solicitudes.id', '>=', 3815)
+//                            ->where('solicitudes.user_id', 37)
                             ->where('valijas.origen_id', 12)
                             ->latest('solicitudes.created_at')
                             ->paginate(50);
