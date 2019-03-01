@@ -44,6 +44,11 @@ return [
             'level' => 'debug',
         ],
 
+        'custom' => [
+            'driver' => 'custom',
+            'via' => \App\Services\Logs\LogMonolog::class,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

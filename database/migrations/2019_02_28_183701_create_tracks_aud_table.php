@@ -16,7 +16,22 @@ class CreateTracksAudTable extends Migration
         Schema::create('tracks_aud', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->unsignedTinyInteger('type_aud_id');
+            $table->text('description')->nullable();
+            $table->string('origin', 200)->nullable();
+            $table->enum('type', ['log', 'store', 'change', 'delete']);
+            $table->enum('result', ['success', 'neutral', 'failure']);
+            $table->enum('level', ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug']);
+            $table->string('token', 100)->nullable();
+            $table->ipAddress('ip');
+            $table->string('user_agent', 200)->nullable();
+            $table->string('session', 100)->nullable();
+            $table->unsignedInteger('user_id')->default(null)->nullable();
+
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+
+            /* $table->unsignedTinyInteger('type_aud_id');
             $table->unsignedTinyInteger('action_aud_id');
             $table->unsignedTinyInteger('operation_aud_id');
             $table->unsignedTinyInteger('table_aud_id')->default(null)->nullable();
@@ -24,6 +39,7 @@ class CreateTracksAudTable extends Migration
             $table->unsignedInteger('ip_aud_id')->default(null)->nullable();
             $table->unsignedInteger('user_id')->default(null)->nullable();
             $table->string('information')->default(null)->nullable();
+
             $table->timestamps();
 
             $table->foreign('type_aud_id')->references('id')->on('types_aud');
@@ -33,6 +49,7 @@ class CreateTracksAudTable extends Migration
             $table->foreign('ip_aud_id')->references('id')->on('ips_aud');
             $table->foreign('user_id')->references('id')->on('users');
 
+            */
 
         });
     }
