@@ -33,6 +33,6 @@ class CreateFilesValijasTable extends Migration
      */
     public function down()
     {
-//        Schema::dropIfExists('files_valijas');
+        Schema::dropIfExists('files_valijas');
     }
 }

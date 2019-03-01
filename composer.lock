@@ -639,25 +639,25 @@
         },
         {
             "name": "kyslik/column-sortable",
-            "version": "5.7.0",
+            "version": "5.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Kyslik/column-sortable.git",
-                "reference": "db597b886cefc0cadb21b0fa5c9350fc44577bfb"
+                "reference": "4c3291b51a8b19e278b96703bc31439a13cdbe04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Kyslik/column-sortable/zipball/db597b886cefc0cadb21b0fa5c9350fc44577bfb",
-                "reference": "db597b886cefc0cadb21b0fa5c9350fc44577bfb",
+                "url": "https://api.github.com/repos/Kyslik/column-sortable/zipball/4c3291b51a8b19e278b96703bc31439a13cdbe04",
+                "reference": "4c3291b51a8b19e278b96703bc31439a13cdbe04",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "5.5.*|5.6.*|5.7.*",
-                "illuminate/support": "5.5.*|5.6.*|5.7.*",
+                "illuminate/database": "5.5.*|5.6.*|5.7.*|5.8.*",
+                "illuminate/support": "5.5.*|5.6.*|5.7.*|5.8.*",
                 "php": ">=7.0"
             },
             "require-dev": {
-                "orchestra/testbench": "3.5.*|3.6.*|3.7.*",
+                "orchestra/testbench": "3.5.*|3.6.*|3.7.*|3.8.*",
                 "phpunit/phpunit": "^6.0|^7.0"
             },
             "type": "package",
@@ -692,7 +692,7 @@
                 "sortable",
                 "sorting"
             ],
-            "time": "2018-09-04T15:41:33+00:00"
+            "time": "2019-02-28T13:56:07+00:00"
         },
         {
             "name": "laravel/framework",
@@ -1065,7 +1065,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "Developer"
+                    "role": "developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
