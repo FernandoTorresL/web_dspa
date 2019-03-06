@@ -13,11 +13,6 @@ class PagesController extends Controller
     {
         Log::info('WELCOME');
 
-        if ( Auth::check() )
-            $user_id = Auth::user()->id;
-        else
-            $user_id = NULL;
-
         /*
         $track_audit = Track_aud::create([
             'type_aud_id' => 1, //INFO

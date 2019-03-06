@@ -20,13 +20,17 @@ class LogHandler extends AbstractProcessingHandler
     }
     protected function write(array $record)
     {
+        // Queue implementation
+        event(new LogMonologEvent($record));
+
+        /*
         // Simple store implementation
         $log = new Track_aud();
         $log->fill($record['formatted']);
         //dd($log);
         $log->save();
-// Queue implementation
-// event(new LogMonologEvent($record));
+        */
+
     }
     /**
      * {@inheritDoc}

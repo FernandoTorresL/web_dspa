@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Track_aud extends Model
 {
     protected $table = 'tracks_aud';
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     public function type()
     {
