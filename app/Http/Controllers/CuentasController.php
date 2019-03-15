@@ -122,7 +122,6 @@ class CuentasController extends Controller
                 ->where('solicitudes.lote_id','=', NULL)
                 ->groupBy('valijas.origen_id', 'movimientos.name')
                 ->orderBy('origen_id')->orderBy('name')
-//                ->orderBy('delegacion_id')
                 ->get();
 
 
@@ -134,12 +133,9 @@ class CuentasController extends Controller
                                 ->orderBy('lotes.id', 'desc')->limit(20)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
+                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'final_remark', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
-                //->whereIN('lote_id', [378, NULL])
-                //->orderBy('cuenta')
                 ->orderBy('id', 'desc')
-                //->orderBy('valija_id', 'asc')
                 ->limit(250)
                 ->get();
 
@@ -172,14 +168,6 @@ class CuentasController extends Controller
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
                 ->where('solicitudes.rechazo_id', NULL)
                 ->where('solicitudes.lote_id', NULL)
-//                ->where('valijas.origen_id', 12)
-                //                ->where('solicitudes.id', '<>', 5203)
-//                ->where('solicitudes.id', '<=', 15416)
-//                ->where('valijas.id', '=', 5291)
-//                ->where('valijas.id', '=', 5287)
-//                ->where('valijas.id', '=', 5285)
-//                ->where('valijas.id', '<=', 5362)
-//                ->whereIN('valijas.id', [4927, 5105, 5121, 5132])
                 ->orderBy('solicitudes.movimiento_id')
 //                ->orderBy('valijas.num_oficio_ca')
 				->orderBy('solicitudes.cuenta')
@@ -190,12 +178,6 @@ class CuentasController extends Controller
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
                 ->where('solicitudes.lote_id', NULL)
-//                ->where('valijas.origen_id', 12)
-//                ->where('solicitudes.id', '<=', 15416)
-//                ->where('valijas.id', '<=', 5362)
-//                ->where('valijas.id', '<>', 5287)
-//                ->where('valijas.id', '<>', 5285)
-//                ->where('valijas.id', '<>', 5286)
                 ->orderBy('valijas.num_oficio_ca')
                 ->distinct()
                 ->get();

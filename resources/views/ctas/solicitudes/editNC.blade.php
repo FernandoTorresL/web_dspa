@@ -285,6 +285,17 @@
             </div>
 
             <div class="row">
+                <div class="col-sm-8">
+                    <div class="input-group mb-4">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Comentario</span>
+                        </div>
+                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="2">{{ old('comment', $sol_original->comment) }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="rechazo">Causa de Rechazo</label>
@@ -320,9 +331,9 @@
                 <div class="col-sm-8">
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Comentario</span>
+                            <span class="input-group-text">Observaciones sobre rechazo</span>
                         </div>
-                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="1">{{ old('comment', $sol_original->comment) }}</textarea>
+                        <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark', $sol_original->final_remark) }}</textarea>
                     </div>
                 </div>
             </div>

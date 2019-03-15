@@ -164,6 +164,9 @@
         </div>
     </div>
     <div class="card-footer">
+        <div class="text-danger">
+            Observaciones a causa de rechazo: {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }}
+        </div>
         <div class="text-muted">
             Comentario: {{ $solicitud->comment }}
         </div>

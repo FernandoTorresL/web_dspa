@@ -114,7 +114,6 @@ class SolicitudesController extends Controller
         $user = Auth::user()->name;
 
         $valijas = Valija::with('delegacion')
-//            ->where('created_at', '>', '2018-10-16')
             ->orderBy('num_oficio_ca', 'desc')->get();
         $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
         $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
@@ -122,7 +121,7 @@ class SolicitudesController extends Controller
         $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
         $rechazos = Rechazo::all();
 
-        Log::info('Editando Solicitud desde Nivel Central. Usuario:' . $user);
+        Log::info('Editando Solicitud NC. Usuario:' . $user);
 
         return view(
             'ctas.solicitudes.editNC', [
@@ -219,6 +218,7 @@ class SolicitudesController extends Controller
             'gpo_actual_id'         => $solicitud_original->gpo_actual_id,
             'comment'               => $solicitud_original->comment,
             'rechazo_id'            => $solicitud_original->rechazo_id,
+            'final_remark'          => $solicitud_original->final_remark,
             'archivo'               => $solicitud_original->archivo,
             'user_id'               => $solicitud_original->user_id,
         ]);
@@ -247,6 +247,7 @@ class SolicitudesController extends Controller
         $solicitud->gpo_actual_id           = $request->input('gpo_actual');
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
+        $solicitud->final_remark            = $request->input('final_remark');
         $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
         $solicitud->user_id                 = $user->id;
 
@@ -325,6 +326,7 @@ class SolicitudesController extends Controller
         Log::info('Consultando Solicitud ID:' . $solicitud->id . ' Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
         if (Auth::user()->delegacion_id == 9 || Auth::user()->delegacion_id == $solicitud->delegacion_id) {
+
             return view('ctas.solicitudes.show', [
                 'solicitud' => $solicitud,
                 'solicitud_hasBeenModified' => $solicitud_hasBeenModified,

@@ -15,17 +15,15 @@
         <div class="container">
             <br>
             <div class="row">
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="archivo">PDF de la Solicitud</label>
-                        <div class="input-group">
-                            <input type="file" name="archivo" class="form-control-file @if($errors->has('archivo')) is-invalid @else is-valid @endif">
-                            @if ($errors->has('archivo'))
-                                @foreach($errors->get('archivo') as $error)
-                                    <div class="invalid-feedback">{{ $error }}</div>
-                                @endforeach
-                            @endif
-                        </div>
+                        <label for="archivo">Archivo PDF de la Solicitud</label>
+                        <input type="file" name="archivo" class="form-control-file @if($errors->has('archivo')) is-invalid @else is-valid @endif">
+                        @if ($errors->has('archivo'))
+                            @foreach($errors->get('archivo') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -285,10 +283,21 @@
             </div>
 
             <div class="row">
+                <div class="col-sm-8">
+                    <div class="input-group mb-4">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Comentario</span>
+                        </div>
+                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="2">{{ old('comment') }}</textarea>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="rechazo">Causa de Rechazo</label>
-                        <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
+                        <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo" width="100%">
                             <option value="" selected>0 - Sin rechazo</option>
                             @forelse($rechazos as $rechazo)
                                 @if ($rechazo->id == old('rechazo'))
@@ -317,9 +326,9 @@
                 <div class="col-sm-8">
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Comentario</span>
+                            <span class="input-group-text">Observaciones sobre rechazo</span>
                         </div>
-                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="1">{{ old('comment') }}</textarea>
+                        <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark') }}</textarea>
                     </div>
                 </div>
             </div>

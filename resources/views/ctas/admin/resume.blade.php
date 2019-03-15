@@ -93,9 +93,9 @@
                 <th scope="col">Usuario (Mov) Lote</th>
                 <th scope="col">Grupo Actual->Nuevo</th>
                 <th scope="col">Matrícula CURP</th>
-                <th scope="col">Causa Rechazo</th>
+                <th scope="col">Observaciones | Causa Rechazo</th>
                 <th scope="col">Estatus</th>
-                <th scope="col">Comentarios</th>
+                <th scope="col">Comentario</th>
                 <th scope="col">PDF</th>
             </tr>
             </thead>
@@ -146,12 +146,12 @@
                         </a> Lote: {{ isset($solicitud->lote) ? $solicitud->lote->num_lote : '--' }}
                     <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
                     <td class="small">{{ $solicitud->matricula . ' ' . $solicitud->curp }}</td>
+                    <td class="small @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
+                        {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }} {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}</td>
                     <td class="small @if(isset($solicitud->rechazo) || (isset($solicitud->resultado_solicitud->rechazo_mainframe))) text-danger @else @if(isset($solicitud->lote) && (!isset($solicitud->resultado_solicitud))) text-warning @else text-success @endif @endif">
                         {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}</td>
-                    <td class="small @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
-                        {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}</td>
-                    {{--<td class="small">{{ $solicitud->comment }}</td>--}}
                     <td class="small">{{ $solicitud->comment . (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->comment) ? '/ ' : '').$solicitud->resultado_solicitud->comment : '') }}</td>
+                    {{--<td class="small">{{ $solicitud->comment }}</td>--}}
                     <td class="small"><a target="_blank" href="{{ $solicitud->archivo }}">{{$solicitud->id}}-PDF</a></td>
                 </tr>
                 </tbody>
