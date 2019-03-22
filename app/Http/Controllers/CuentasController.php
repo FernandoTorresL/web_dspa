@@ -25,7 +25,7 @@ class CuentasController extends Controller
         //Get delegation_id
         $del = Auth::user()->delegacion_id;
 
-        Log::warning('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
+        Log::info('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
 
         if ($user->hasRole('capturista_dspa')) {
             $primer_renglon = 'Nivel Central - DSPA';

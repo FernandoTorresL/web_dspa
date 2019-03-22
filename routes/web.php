@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //Route to view one solicitud
     Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
 
+    //Route to edit solicitud
     Route::get('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@show_for_edit');
     Route::post('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@edit');
 

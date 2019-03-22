@@ -44,9 +44,7 @@
             <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
             <span class="text-muted float-right">
                 @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
-                    @can('consultar_solicitudes_nc')
-                        <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
-                    @else
+                    @can('editar_solicitudes')
                         <a class="nav-link" href="{{ url('/ctas/solicitudes/edit/'.$solicitud->id) }}">Editar</a>
                     @endcan
                 @else
@@ -164,11 +162,11 @@
         </div>
     </div>
     <div class="card-footer">
-        <div class="text-danger">
-            Observaciones a causa de rechazo: {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }}
-        </div>
         <div class="text-muted">
             Comentario: {{ $solicitud->comment }}
+        </div>
+        <div class="text-danger">
+            Observaciones a causa de rechazo: {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }}
         </div>
     </div>
 
