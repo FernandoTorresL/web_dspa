@@ -19,61 +19,112 @@ class SolicitudesController extends Controller
 {
     public function home()
     {
+        Auth::LoginUsingID(2);
+        $user_name = Auth::user()->name;
+        $user_del_id = Auth::user()->delegacion_id;
+        $user_del_name = Auth::user()->delegacion->name;
 
-        if (Gate::allows('capture_sol_del')) {
+        $texto_log = 'Usuario:' . $user_name . '|Del:' . $user_del_id;
 
-            Log::info('Capturar Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+        if (Gate::allows('capture_sol_nc') || Gate::allows('capture_sol_del') ) {
+            Log::info('Capturar Solicitud. ' . $texto_log);
 
+            //Get the common information
             $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-            $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
             $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
             $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
 
-            Log::info('Vista Capturar Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:(' . Auth::user()->delegacion_id . ')-' . Auth::user()->delegacion->name);
-
-            return view(
-                'ctas.solicitudes.create', [
-                'del_id' => Auth::user()->delegacion_id,
-                'del_name' => Auth::user()->delegacion->name,
-                'movimientos' => $movimientos,
-                'subdelegaciones' => $subdelegaciones,
-                'gruposNuevo' => $gruposNuevo,
-                'gruposActual' => $gruposActual,
-            ]);
+            //Get the particular information
+            if (Gate::allows('capture_sol_del')) {
+                $valijas = '';
+                $subdelegaciones = Subdelegacion::where('delegacion_id', $user_del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
+                $rechazos = '';
+            }
+            elseif (Gate::allows('capture_sol_nc')) {
+                $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'desc')->get();
+                $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
+                $rechazos = Rechazo::all();
+            }
         }
         else {
-            Log::warning('Sin permiso-Capturar Solicitud. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-
-            return "No estas autorizado a ver esta página";
+            Log::warning('Sin permiso-Capturar Solicitud. Usuario:' . $user_name . '|Del:' . $user_del_id);
+            return redirect('ctas')->with('message', 'No tiene permitido capturar solicitudes.');
         }
-    }
-
-    public function homeNC()
-    {
-        $user = Auth::user()->name;
-        $del_id = Auth::user()->delegacion_id;
-        $del_name = Auth::user()->delegacion->name;
-
-        $valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'desc')->get();
-        $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-        $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
-
-        $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
-        $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
-
-        $rechazos = Rechazo::all();
-
-        Log::info('Visitando Crear Solicitud desde Nivel Central. Usuario:' . $user . '|Del:(' . $del_id . ')-' . $del_name);
 
         return view(
-            'ctas.solicitudes.createNC', [
-                    'valijas' => $valijas,
-                    'movimientos' =>  $movimientos,
-                    'subdelegaciones' =>  $subdelegaciones,
-                    'gruposNuevo' =>  $gruposNuevo,
-                    'gruposActual' =>  $gruposActual,
-                    'rechazos' => $rechazos,
+            'ctas.solicitudes.create', [
+            'del_id' => $user_del_id,
+            'del_name' => $user_del_name,
+            'valijas' => $valijas,
+            'movimientos' => $movimientos,
+            'subdelegaciones' => $subdelegaciones,
+            'gruposNuevo' => $gruposNuevo,
+            'gruposActual' => $gruposActual,
+            'rechazos' => $rechazos,
         ]);
+    }
+
+    public function create(CreateSolicitudRequest $request)
+    {
+        $user = $request->user();
+        $archivo = $request->file('archivo');
+        $texto_log = 'Usuario:' . $user->name . '|Del:' . $user->delegacion_id;
+
+        Log::info('Creando Solicitud. ' . $texto_log);
+
+        $solicitud = Solicitud::create([
+            'fecha_solicitud_del' => $request->input('fecha_solicitud'),
+            'delegacion_id' => $user->delegacion_id,
+            'subdelegacion_id' => $request->input('subdelegacion'),
+            'nombre' => strtoupper($request->input('nombre')),
+            'primer_apellido' => strtoupper($request->input('primer_apellido')),
+            'segundo_apellido' => strtoupper($request->input('segundo_apellido')),
+            'matricula' => $request->input('matricula'),
+            'curp' => strtoupper($request->input('curp')),
+            'cuenta' => strtoupper($request->input('cuenta')),
+            'movimiento_id' => $request->input('tipo_movimiento'),
+            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
+            'gpo_actual_id' => $request->input('gpo_actual'),
+            'comment' => $request->input('comment'),
+            'rechazo_id' => $request->input('rechazo'),
+            'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
+            'user_id' => $user->id,
+        ]);
+
+        return redirect('ctas/solicitudes/' . $solicitud->id)->with('message', '¡Solicitud creada!');
+    }
+
+    public function createNC(CreateSolicitudNCRequest $request)
+    {
+        $user = $request->user();
+        $archivo = $request->file('archivo');
+        $del_id = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+        $texto_log = 'Usuario:' . $user->name . '|Del:' . $user->delegacion_id;
+
+        Log::info('Creando Solicitud desde Nivel Central. ' . $texto_log);
+
+        $solicitud = Solicitud::create([
+            'valija_id' => $request->input('valija'),
+            'fecha_solicitud_del' => $request->input('fecha_solicitud'),
+            'delegacion_id' => $del_id,
+            'subdelegacion_id' => $request->input('subdelegacion'),
+            'nombre' => strtoupper($request->input('nombre')),
+            'primer_apellido' => strtoupper($request->input('primer_apellido')),
+            'segundo_apellido' => strtoupper($request->input('segundo_apellido')),
+            'matricula' => $request->input('matricula'),
+            'curp' => strtoupper($request->input('curp')),
+            'cuenta' => strtoupper($request->input('cuenta')),
+            'movimiento_id' => $request->input('tipo_movimiento'),
+            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
+            'gpo_actual_id' => $request->input('gpo_actual'),
+            'comment' => $request->input('comment'),
+            'rechazo_id' => $request->input('rechazo'),
+            'final_remark' => $request->input('final_remark'),
+            'archivo' => $archivo->store('solicitudes/' . $del_id, 'public'),
+            'user_id' => $user->id,
+        ]);
+
+        return redirect('ctas/solicitudes/'.$solicitud->id)->with('message', '¡Solicitud creada!');
     }
 
     public function show_for_edit(Solicitud $solicitud)
@@ -256,65 +307,6 @@ class SolicitudesController extends Controller
         Log::info('Solicitud ' . $solicitud->id . ' editada. Usuario:' . $user->name);
 
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
-    }
-
-    public function create(CreateSolicitudRequest $request)
-    {
-        $user = $request->user();
-        $archivo = $request->file('archivo');
-
-        Log::info('Creando Solicitud-Delegación. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-
-        $solicitud = Solicitud::create([
-            'fecha_solicitud_del' => $request->input('fecha_solicitud'),
-            'delegacion_id' => $user->delegacion_id,
-            'subdelegacion_id' => $request->input('subdelegacion'),
-            'nombre' => strtoupper($request->input('nombre')),
-            'primer_apellido' => strtoupper($request->input('primer_apellido')),
-            'segundo_apellido' => strtoupper($request->input('segundo_apellido')),
-            'matricula' => $request->input('matricula'),
-            'curp' => strtoupper($request->input('curp')),
-            'cuenta' => strtoupper($request->input('cuenta')),
-            'movimiento_id' => $request->input('tipo_movimiento'),
-            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
-            'gpo_actual_id' => $request->input('gpo_actual'),
-            'comment' => $request->input('comment'),
-            'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
-            'user_id' => $user->id,
-        ]);
-
-        return redirect('ctas/solicitudes/'.$solicitud->id)->with('message', '¡Solicitud creada!');
-    }
-
-    public function createNC(CreateSolicitudNCRequest $request)
-    {
-        $user = $request->user();
-        $archivo = $request->file('archivo');
-        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
-
-        Log::info('Creando Solicitud desde Nivel Central. Usuario:' . $user->username );
-
-        $solicitud = Solicitud::create([
-            'valija_id' => $request->input('valija'),
-            'fecha_solicitud_del' => $request->input('fecha_solicitud'),
-            'delegacion_id' => $delegacion,
-            'subdelegacion_id' => $request->input('subdelegacion'),
-            'nombre' => strtoupper($request->input('nombre')),
-            'primer_apellido' => strtoupper($request->input('primer_apellido')),
-            'segundo_apellido' => strtoupper($request->input('segundo_apellido')),
-            'matricula' => $request->input('matricula'),
-            'curp' => strtoupper($request->input('curp')),
-            'cuenta' => strtoupper($request->input('cuenta')),
-            'movimiento_id' => $request->input('tipo_movimiento'),
-            'gpo_nuevo_id' => $request->input('gpo_nuevo'),
-            'gpo_actual_id' => $request->input('gpo_actual'),
-            'comment' => $request->input('comment'),
-            'rechazo_id' => $request->input('rechazo'),
-            'archivo' => $archivo->store('solicitudes/' . $delegacion, 'public'),
-            'user_id' => $user->id,
-        ]);
-
-        return redirect('ctas/solicitudes/'.$solicitud->id)->with('message', '¡Solicitud creada!');
     }
 
     public function show(Solicitud $solicitud)

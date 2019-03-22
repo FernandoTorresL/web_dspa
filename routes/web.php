@@ -30,11 +30,13 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/valijas/{valija}', 'ValijasController@show');
     Route::get('/ctas/valijas/editNC/{valija}', 'ValijasController@show_for_edit');
     Route::post('/ctas/valijas/editNC/{valija}', 'ValijasController@editNC');
-    Route::get('/ctas/solicitudes', 'SolicitudesController@home');
+
 
     //Create solicitud by admin members
-    Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
+    //Route::get('/ctas/solicitudesNC', 'SolicitudesController@homeNC');
 
+    //Create 'solicitudes'
+    Route::get('/ctas/solicitudes', 'SolicitudesController@home');
     Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
     Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
 
