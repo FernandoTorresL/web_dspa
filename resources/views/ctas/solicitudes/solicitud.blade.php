@@ -44,7 +44,9 @@
             <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
             <span class="text-muted float-right">
                 @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
-                    @can('editar_solicitudes')
+                    @can('editar_solicitudes_user_nc')
+                        <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
+                    @elsecan('editar_solicitudes_del')
                         <a class="nav-link" href="{{ url('/ctas/solicitudes/edit/'.$solicitud->id) }}">Editar</a>
                     @endcan
                 @else

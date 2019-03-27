@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="archivo">Archivo PDF de la Solicitud</label>
+                        <label for="archivo">Archivo PDF actual:</label>
                         <input type="file" name="archivo" class="form-control-file @if($errors->has('archivo')) is-invalid @else is-valid @endif">
                         @if ($errors->has('archivo'))
                             @foreach($errors->get('archivo') as $error)

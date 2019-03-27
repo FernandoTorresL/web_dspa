@@ -212,40 +212,41 @@ class SolicitudesController extends Controller
 
     public function show_for_edit(Solicitud $solicitud)
     {
-        //Auth::LoginUsingID(1);
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_del_id = Auth::user()->delegacion_id;
-
         $texto_log = '|ID:' . $solicitud->id . '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
 
-        if (Gate::allows('editar_solicitudes')) {
-            Log::info('Editando Solicitud ID' . $texto_log);
+        if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
+            if ((Gate::allows('editar_solicitudes_user_nc') || Gate::allows('editar_solicitudes_del'))) {
+                //Get the common information
+                $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
+                $gruposNuevo = Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
+                $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
+                $rechazos = Rechazo::all();
 
-            //Get the common information
-            $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-            $gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
-            $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
-            $rechazos = Rechazo::all();
-
-            //Get the particular information
-            if (Gate::allows('consultar_solicitudes_nc')) {
-                $valijas = Valija::with('delegacion')
-                    ->orderBy('num_oficio_ca', 'desc')->get();
-                $subdelegaciones = Subdelegacion::with('delegacion')
-                    ->where('status', '<>', 0)
-                    ->orderBy('id', 'asc')->get();
+                //Get the particular information
+                if (Gate::allows('editar_solicitudes_user_nc')) {
+                    Log::info('Editando Solicitud NC' . $texto_log);
+                    $valijas = Valija::with('delegacion')
+                        ->orderBy('num_oficio_ca', 'desc')->get();
+                    $subdelegaciones = Subdelegacion::with('delegacion')
+                        ->where('status', '<>', 0)
+                        ->orderBy('id', 'asc')->get();
+                } elseif (Gate::allows('editar_solicitudes_del')) {
+                    Log::info('Editando Solicitud Del' . $texto_log);
+                    $valijas = '';
+                    $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)
+                        ->where('status', '<>', 0)
+                        ->orderBy('num_sub', 'asc')->get();
+                }
+            } else {
+                Log::warning('Sin permiso-Editar Solicitud' . $texto_log);
+                return redirect('ctas')->with('message', 'No tiene permitido editar solicitudes.');
             }
-            elseif (Gate::allows('consultar_solicitudes_del')) {
-                $valijas = '';
-                $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)
-                    ->where('status', '<>', 0)
-                    ->orderBy('num_sub', 'asc')->get();
-            }
-        }
         else {
-            Log::warning('Sin permiso-Editar Solicitud' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido editar solicitudes.');
+            Log::warning('Sin condiciones para editar Solicitud' . $texto_log);
+            return redirect('ctas')->with('message', 'La solicitud ya no se puede editar.');
         }
 
         return view(
@@ -258,15 +259,18 @@ class SolicitudesController extends Controller
             'gruposActual' => $gruposActual,
             'rechazos' => $rechazos,
         ]);
-
     }
 
     public function edit(CreateSolicitudRequest $request, $id)
     {
-        $user = Auth::user();
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_del_id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+
+        Log::info('Editando Solicitud Del|ID:' . $id . $texto_log);
 
         $solicitud_original = Solicitud::find($id);
-
         $solicitud_hist = Hist_solicitud::create([
             'solicitud_id'          => $solicitud_original->id,
             'valija_id'             => $solicitud_original->valija_id,
@@ -289,20 +293,19 @@ class SolicitudesController extends Controller
             'user_id'               => $solicitud_original->user_id,
         ]);
 
-        Log::info('Nva Solicitud Hist:' . $solicitud_hist->id . '| Usuario:' . $user->name );
+        Log::info('Nva Solicitud Hist. Del:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($id);
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
         $archivo = $request->file('archivo');
 
-//        $solicitud->valija_id               = $request->input('valija');
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
         $solicitud->delegacion_id           = $delegacion;
         $solicitud->subdelegacion_id        = $request->input('subdelegacion');
         $solicitud->nombre                  = strtoupper($request->input('nombre'));
         $solicitud->primer_apellido         = strtoupper($request->input('primer_apellido'));
         $solicitud->segundo_apellido        = strtoupper($request->input('segundo_apellido'));
-        $solicitud->matricula               = $request->input('matricula');
+        $solicitud->matricula               = strtoupper($request->input('matricula'));
         $solicitud->curp                    = strtoupper($request->input('curp'));
         $solicitud->cuenta                  = strtoupper($request->input('cuenta'));
         $solicitud->movimiento_id           = $request->input('tipo_movimiento');
@@ -311,21 +314,25 @@ class SolicitudesController extends Controller
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
-        $solicitud->user_id                 = $user->id;
+        $solicitud->user_id                 = $user_id;
 
         $solicitud->save();
 
-        Log::info('Solicitud ' . $solicitud->id . ' editada. Usuario:' . $user->name);
+        Log::info('Solicitud editada Del|ID:' . $solicitud->id . $texto_log);
 
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
     public function editNC(CreateSolicitudNCRequest $request, $id)
     {
-        $user = Auth::user();
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_del_id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+
+        Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log);
 
         $solicitud_original = Solicitud::find($id);
-
         $solicitud_hist = Hist_solicitud::create([
             'solicitud_id'          => $solicitud_original->id,
             'valija_id'             => $solicitud_original->valija_id,
@@ -349,7 +356,7 @@ class SolicitudesController extends Controller
             'user_id'               => $solicitud_original->user_id,
         ]);
 
-        Log::info('Nva Solicitud Hist:' . $solicitud_hist->id . '| Usuario:' . $user->name );
+        Log::info('Nva Solicitud Hist. Nivel Central:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($id);
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
@@ -375,11 +382,11 @@ class SolicitudesController extends Controller
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->final_remark            = $request->input('final_remark');
         $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
-        $solicitud->user_id                 = $user->id;
+        $solicitud->user_id                 = $user_id;
 
         $solicitud->save();
 
-        Log::info('Solicitud ' . $solicitud->id . ' editada. Usuario:' . $user->name);
+        Log::info('Solicitud editada Nivel Central|ID:' . $solicitud->id . $texto_log);
 
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
@@ -407,9 +414,7 @@ class SolicitudesController extends Controller
                         'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
                     ->where('delegacion_id', Auth::user()->delegacion_id)
                     ->orderby('created_at', 'desc')->limit(100)->get();
-    //                ->paginate(10);
             }
-//            dd($listado_solicitudes[1]);
             return view(
                 'ctas.solicitudes.listado_status', [
                 'listado_solicitudes' => $listado_solicitudes,
