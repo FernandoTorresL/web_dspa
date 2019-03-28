@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Lote;
 use App\Solicitud;
-use App\Valija;
 use App\Subdelegacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -159,7 +157,13 @@ class CuentasController extends Controller
     public function show_admin_tabla() {
         if (Gate::allows('genera_tabla_oficio')) {
 
-            Log::info('Genera Tabla para Oficio. Usuario id:' . Auth::id() . '|Nombre:|Del:' . Auth::user()->delegacion_id);
+            //Auth::LoginUsingID(1);
+            $user_id = Auth::user()->id;
+            $user_name = Auth::user()->name;
+            $user_del_id = Auth::user()->delegacion_id;
+            $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+
+            Log::info('Genera Tabla' . $texto_log);
 
             $tabla_movimientos = DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
@@ -171,32 +175,20 @@ class CuentasController extends Controller
                     'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
                 ->where('solicitudes.rechazo_id', NULL)
-                ->where('solicitudes.lote_id', NULL)
-//                ->where('valijas.origen_id', 12)
-                //                ->where('solicitudes.id', '<>', 5203)
-//                ->where('solicitudes.id', '<=', 15416)
-//                ->where('valijas.id', '=', 5291)
-//                ->where('valijas.id', '=', 5287)
-//                ->where('valijas.id', '=', 5285)
-//                ->where('valijas.id', '<=', 5362)
-//                ->whereIN('valijas.id', [4927, 5105, 5121, 5132])
+                ->where('solicitudes.lote_id', 407)
                 ->orderBy('solicitudes.movimiento_id')
-//                ->orderBy('valijas.num_oficio_ca')
 				->orderBy('solicitudes.cuenta')
+                ->orderBy('valijas.num_oficio_ca')
                 ->get();
 
             $listado_valijas =
                 DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
-                ->where('solicitudes.lote_id', NULL)
-//                ->where('valijas.origen_id', 12)
-//                ->where('solicitudes.id', '<=', 15416)
-//                ->where('valijas.id', '<=', 5362)
-//                ->where('valijas.id', '<>', 5287)
-//                ->where('valijas.id', '<>', 5285)
-//                ->where('valijas.id', '<>', 5286)
+                ->where('solicitudes.lote_id', 407)
+                ->orderBy('valijas.origen_id')
                 ->orderBy('valijas.num_oficio_ca')
+                ->orderBy('valijas.delegacion_id')
                 ->distinct()
                 ->get();
 
@@ -207,7 +199,7 @@ class CuentasController extends Controller
             ]);
         }
         else {
-            Log::info('Sin permiso-Generar Tabla. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+            Log::info('Sin permiso-Generar Tabla' . $texto_log);
 
             abort(403,'No tiene permitido ver esta tabla');
         }
