@@ -120,7 +120,6 @@ class CuentasController extends Controller
                 ->where('solicitudes.lote_id','=', NULL)
                 ->groupBy('valijas.origen_id', 'movimientos.name')
                 ->orderBy('origen_id')->orderBy('name')
-//                ->orderBy('delegacion_id')
                 ->get();
 
 
@@ -134,10 +133,7 @@ class CuentasController extends Controller
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
-                //->whereIN('lote_id', [378, NULL])
-                //->orderBy('cuenta')
                 ->orderBy('id', 'desc')
-                //->orderBy('valija_id', 'asc')
                 ->limit(250)
                 ->get();
 
@@ -157,7 +153,6 @@ class CuentasController extends Controller
     public function show_admin_tabla() {
         if (Gate::allows('genera_tabla_oficio')) {
 
-            //Auth::LoginUsingID(1);
             $user_id = Auth::user()->id;
             $user_name = Auth::user()->name;
             $user_del_id = Auth::user()->delegacion_id;
@@ -175,7 +170,7 @@ class CuentasController extends Controller
                     'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
                 ->where('solicitudes.rechazo_id', NULL)
-                ->where('solicitudes.lote_id', 407)
+                ->where('solicitudes.lote_id', NULL)
                 ->orderBy('solicitudes.movimiento_id')
 				->orderBy('solicitudes.cuenta')
                 ->orderBy('valijas.num_oficio_ca')
@@ -185,7 +180,7 @@ class CuentasController extends Controller
                 DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
                 ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
-                ->where('solicitudes.lote_id', 407)
+                ->where('solicitudes.lote_id', NULL)
                 ->orderBy('valijas.origen_id')
                 ->orderBy('valijas.num_oficio_ca')
                 ->orderBy('valijas.delegacion_id')
