@@ -23,7 +23,7 @@ class CuentasController extends Controller
         //Get delegation_id
         $del = Auth::user()->delegacion_id;
 
-        Log::warning('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
+        Log::info('Visitando Ctas-Home. User:' . $user->name . '|Del:' . $del);
 
         if ($user->hasRole('capturista_dspa')) {
             $primer_renglon = 'Nivel Central - DSPA';
@@ -131,7 +131,7 @@ class CuentasController extends Controller
                                 ->orderBy('lotes.id', 'desc')->limit(20)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
+                'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'final_remark', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
                 ->with('user', 'valija', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo')
                 ->orderBy('id', 'desc')
                 ->limit(250)

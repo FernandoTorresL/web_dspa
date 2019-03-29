@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Solicitud-Delegación')
+@section('title', 'Editar Solicitud')
 
 @section('content')
     <div class="row">
@@ -8,16 +8,20 @@
     </div>
     <br>
 
-    <h5>Edita la solicitud</h5>
+    <h5>Edita los datos de la solicitud</h5>
 
-    <form action="{{ $sol_original->id }}" method="POST" enctype="multipart/form-data">
+    @can('editar_solicitudes_user_nc')
+        <form action="{{ $sol_original->id }}" method="POST" enctype="multipart/form-data">
+    @else
+        <form action="{{ $sol_original->id }}" method="POST" enctype="multipart/form-data">
+    @endcan
         {{ csrf_field() }}
         <div class="container">
             <br>
             <div class="row">
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <div class="form-group">
-                        <p>Archivo Actual:
+                        <p>Archivo PDF actual:
                             @if (isset($sol_original->archivo))
                                 <a href="{{ $sol_original->archivo }}" target="_new">PDF Valija</a>
                             @else
@@ -36,28 +40,36 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-6">
-                    {{--<div class="form-group">--}}
-                        {{--<label for="valija">Valija/Oficio</label>--}}
-                        {{--<select class="form-control @if($errors->has('valija')) is-invalid @endif" id="valija" name="valija">--}}
-                            {{--<option value="" selected>Selecciona...</option>--}}
-                            {{--@forelse($valijas as $valija)--}}
-                                    {{--@php--}}
-                                        {{--$valija->id == old('valija', $sol_original->valija->id) ? $str_check = 'selected' : $str_check = '';--}}
-                                    {{--@endphp--}}
-                                {{--<option value="{{ $valija->id }}" {{ $str_check }}>{{ $valija->num_oficio_ca }}: {{ $valija->delegacion->id }} - {{ $valija->delegacion->name }}</option>--}}
-                            {{--@empty--}}
-                            {{--@endforelse--}}
-                        {{--</select>--}}
-                        {{--@if ($errors->has('valija'))--}}
-                            {{--@foreach($errors->get('valija') as $error)--}}
-                                {{--<div class="invalid-feedback">{{ $error }}</div>--}}
-                            {{--@endforeach--}}
-                        {{--@endif--}}
-                    {{--</div>--}}
+            @can('editar_solicitudes_user_nc')
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="valija">Valija/Oficio</label>
+                            <select class="form-control @if($errors->has('valija')) is-invalid @endif" id="valija" name="valija">
+                                <option value="0" selected>Selecciona...</option>
+                                @forelse($valijas as $valija)
+                                    @if(isset($sol_original->valija))
+                                        @php
+                                            $valija->id == old('valija', $sol_original->valija->id) ? $str_check = 'selected' : $str_check = '';
+                                        @endphp
+                                    @else
+                                        @php
+                                            $str_check = '';
+                                        @endphp
+                                    @endif
+                                    <option value="{{ $valija->id }}" {{ $str_check }}>{{ $valija->num_oficio_ca }}: {{ $valija->delegacion->id }} - {{ $valija->delegacion->name }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                            @if ($errors->has('valija'))
+                                @foreach($errors->get('valija') as $error)
+                                    <div class="invalid-feedback">{{ $error }}</div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endcan
 
             <div class="row">
 
@@ -279,47 +291,61 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="rechazo">Causa de Rechazo</label>
-                        <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
-                            <option value="" selected>0 - Sin rechazo</option>
-                            @if (!isset($sol_original->rechazo->id))
-                                @php
-                                    $id_rechazo = 0;
-                                @endphp
-                            @else
-                                @php
-                                    $id_rechazo = $sol_original->rechazo->id;
-                                @endphp
-                            @endif
-                            @forelse($rechazos as $rechazo)
-                                @php
-                                    $rechazo->id == old('rechazo', $id_rechazo) ? $str_check = 'selected' : $str_check = '';
-                                @endphp
-                                <option value="{{ $rechazo->id }}" {{ $str_check }}>{{ $rechazo->id }} - {{ $rechazo->full_name }}</option>
-                            @empty
-                            @endforelse
-                        </select>
-                        @if ($errors->has('rechazo'))
-                            @foreach($errors->get('rechazo') as $error)
-                                <div class="invalid-feedback">{{ $error }}</div>
-                            @endforeach
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-sm-8">
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Comentario</span>
                         </div>
-                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="1">{{ old('comment', $sol_original->comment) }}</textarea>
+                        <textarea class="form-control" id="comment" name="comment" placeholder="(Opcional)" rows="2">{{ old('comment', $sol_original->comment) }}</textarea>
                     </div>
                 </div>
             </div>
+
+            @can('editar_solicitudes_user_nc')
+                <br>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="rechazo">Causa de Rechazo</label>
+                            <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
+                                <option value="" selected>0 - Sin rechazo</option>
+                                @if (!isset($sol_original->rechazo->id))
+                                    @php
+                                        $id_rechazo = 0;
+                                    @endphp
+                                @else
+                                    @php
+                                        $id_rechazo = $sol_original->rechazo->id;
+                                    @endphp
+                                @endif
+                                @forelse($rechazos as $rechazo)
+                                    @php
+                                        $rechazo->id == old('rechazo', $id_rechazo) ? $str_check = 'selected' : $str_check = '';
+                                    @endphp
+                                    <option value="{{ $rechazo->id }}" {{ $str_check }}>{{ $rechazo->id }} - {{ $rechazo->full_name }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                            @if ($errors->has('rechazo'))
+                                @foreach($errors->get('rechazo') as $error)
+                                    <div class="invalid-feedback">{{ $error }}</div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="input-group mb-4">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Observaciones sobre rechazo</span>
+                            </div>
+                            <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark', $sol_original->final_remark) }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @endcan
 
             <div class="input-group text-right">
                 <button type="submit" class="btn btn-primary">Enviar cambios</button>

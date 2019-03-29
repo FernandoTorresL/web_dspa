@@ -39,6 +39,7 @@ class CreateSolicitudNCRequest extends FormRequest
             'gpo_actual' => ['required_if:tipo_movimiento,==,2,3'],
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
             'comment' => ['max:190'],
+            'final_remark' => ['max:190'],
         ];
     }
 
@@ -73,6 +74,7 @@ class CreateSolicitudNCRequest extends FormRequest
             'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',
             'gpo_nuevo.min' => 'Requerido si Tipo de Movimiento es ALTA o CAMBIO.',
             'comment.max' => 'Comentario debe tener menos de :max caracteres',
+            'final_remark.max' => 'Observaciones para el rechazo debe tener menos de :max caracteres',
         ];
     }
 
