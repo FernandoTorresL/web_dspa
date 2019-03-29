@@ -20,7 +20,7 @@
 
                 @can('capture_sol_nc')
                     <p class="card-text">
-                        <a href="ctas/solicitudesNC" class="btn btn-primary">Crear Solicitud</a>
+                        <a href="ctas/solicitudes" class="btn btn-primary">Crear Solicitud</a>
                     </p>
                 @endcan
             @endcan
