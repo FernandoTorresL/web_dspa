@@ -6,42 +6,45 @@
             \Carbon\Carbon::setUtf8(false);
         @endphp
 
-        @can('ver_timeline_solicitudes')
-            <a class="nav-link" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
-        @endcan
-
-        Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
-
-    </strong>
-    <span class="text-muted float-right">
-        @if (isset($solicitud->archivo))
-            <a href="{{ $solicitud->archivo }}" target="_blank">Ver PDF</a>
+        @if( isset($solicitud->resultado_solicitud) )
+            {{--If solicitud has a response ... --}}
+            @php
+                $cuenta = $solicitud->resultado_solicitud->cuenta;
+            @endphp
+        @else
+            {{--  ...show the captured value --}}
+            @php
+                $cuenta = $solicitud->cuenta;
+            @endphp
         @endif
-    </span>
+
+        SOLICITUD {{ $solicitud->movimiento->name }}
+        <span class="text-success">{{ $cuenta }}</span>
+        ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
+        {{ isset($solicitud->gpo_nuevo)&&isset($solicitud->gpo_actual) ? '->' : '' }}
+        {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})
+        -
+        <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
+        </strong>
+        @can('ver_timeline_solicitudes')
+            <a class="" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
+        @endcan
+        <span class="text-muted float-right">
+            @if (isset($solicitud->archivo))
+                <a href="{{ $solicitud->archivo }}" target="_blank">Ver PDF</a>
+            @endif
+        </span>
 </h4>
 
 <div class="card border-info">
     <div class="card-header">
         <h4 class="card-title">
-            <strong>
-                @if( isset($solicitud->resultado_solicitud) )
-                    {{--If solicitud has a response ... --}}
-                    @php
-                        $cuenta = $solicitud->resultado_solicitud->cuenta;
-                    @endphp
-                @else
-                    {{--  ...show the captured value --}}
-                    @php
-                        $cuenta = $solicitud->cuenta;
-                    @endphp
-                @endif
-                {{ $solicitud->movimiento->name }} - {{ $cuenta }} ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})</strong>
-            <span class="text-muted float-right">
+            <span class="text-muted">
                 {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
             </span>
         </h4>
         <h4 class="card-title">
-            <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
+                Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
             <span class="text-muted float-right">
                 @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
                     @can('editar_solicitudes_user_nc')
@@ -126,7 +129,7 @@
                         <div>
                             <strong></strong>
                             <span class="card-text float-right">
-                                {{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%A, %d de %B, %Y %H:%Mh') }}
+                                {{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%d de %B, %Y %H:%Mh') }}
                                 <span class="small">({{ $solicitud->created_at->diffForHumans() }})</span>
                             </span>
                         </div>
@@ -165,10 +168,14 @@
     </div>
     <div class="card-footer">
         <div class="text-muted">
-            Comentario: {{ $solicitud->comment }}
+            Comentario: {{ isset($solicitud->comment) ? $solicitud->comment : '--' }}
+        </div>
+        <div class="@if( isset($solicitud->rechazo) && isset($solicitud->final_remark) ) text-danger @else text-primary @endif">
+            Observaciones DSPA: {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
         </div>
         <div class="text-danger">
-            Observaciones a causa de rechazo: {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }}
+            Observaciones Mainframe:
+            @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
         </div>
     </div>
 
