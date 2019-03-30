@@ -12,9 +12,6 @@
             {{ session()->get('message') }}
         </div>
     @endif
-    <br>
-    <h3 class="card-title"><strong>Datos de la Solicitud</strong></h3>
-    <br>
 
     @can('consultar_solicitudes_del')
         @include('ctas.solicitudes.solicitud')
