@@ -55,6 +55,13 @@
             @endif
         </div>
     @else
+
+        @if(session()->has('message'))
+            <div class="alert alert-danger">
+                {{ session()->get('message') }}
+            </div>
+        @endif
+
         <div class="row">
             @can('ver_modulo_ctas')
                 <div class="col-6">
@@ -69,9 +76,22 @@
                         </a>
                     </p>
                 </div>
-            @else
-                No estás autorizado a ver este Módulo
             @endcan
+
+                @can('ver_modulo_reto_dspa')
+                    <div class="col-6">
+                        <h1 class="h3">Módulo Reto DSPA</h1>
+                        <a href="reto_dspa">
+                            <img class="img-thumbnail" src="{{ url('storage/img/05.jpg') }}">
+                        </a>
+                        <p class="text-muted">
+                            Revisa la tabla de registros de DSPA
+                            <a href="reto_dspa">
+                                <span class="card-text">Entrar</span>
+                            </a>
+                        </p>
+                    </div>
+                @endcan
         </div>
     @endguest
 
