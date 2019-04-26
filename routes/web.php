@@ -61,6 +61,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
         //Route to view timeline details for solicitudes
         Route::get('/ctas/solicitudes/timeline/{solicitud_id}', 'SolicitudesDelController@view_timeline');
 
+        //Route to view tables and graphs on Reto DSPA
+        Route::get('/reto_dspa', 'Reto_DSPA@home');
+
 
     Route::get('/ctas', 'CuentasController@home');
     Route::get('/ctas/inventario', 'InventarioController@home');
