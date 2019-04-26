@@ -63,6 +63,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
 
         //Route to view tables and graphs on Reto DSPA
         Route::get('/reto_dspa', 'Reto_DSPA@home');
+        Route::get('/reto_dspa2', 'Reto_DSPA@todos');
 
 
     Route::get('/ctas', 'CuentasController@home');

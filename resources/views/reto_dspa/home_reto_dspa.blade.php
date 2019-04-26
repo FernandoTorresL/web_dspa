@@ -294,10 +294,198 @@
             </tbody>
         </table>
 
-        <h4 class="text-danger">Próximo día de pesaje: Viernes 26 de abril, 2019</h4>
+        <h4>Viernes 26 Abril 2019</h4>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Participante</th>
+                <th scope="col">Posición</th>
+                <th scope="col">Altura (cm)</th>
+                <th scope="col">Peso (kg)</th>
+                <th scope="col">Variación (kg)</th>
+                <th scope="col">% Variación</th>
+                <th scope="col">IMC</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td class="left">{{ $persona_reto_3 }}</td>
+                <td class="center">1</td>
+                <td class="right">172</td>
+                <td class="right">74.05</td>
+                <td class="right">-1.90</td>
+                <td class="right">-2.50%</td>
+                <td class="right">25.03</td>
+            </tr>
+            <tr>
+                <td class="left">{{ $persona_reto_4 }}</td>
+                <td class="center">2</td>
+                <td class="right">165</td>
+                <td class="right">75.00</td>
+                <td class="right">+1.55</td>
+                <td class="right">2.11%</td>
+                <td class="right">27.55</td>
+            </tr>
+            <tr>
+                <td class="left">{{ $persona_reto_1 }}</td>
+                <td class="center">3</td>
+                <td class="right">153</td>
+                <td class="right">54.60</td>
+                <td class="right">+1.40</td>
+                <td class="right">+2.63</td>
+                <td class="right">23.32</td>
+            </tr>
+            <tr>
+                <td class="left">{{ $persona_reto_2 }}</td>
+                <td class="center">4</td>
+                <td class="right">162</td>
+                <td class="right">88.50</td>
+                <td class="right">+5.95</td>
+                <td class="right">+7.21%</td>
+                <td class="right">33.72</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="field" data-field-id="{{ $persona_reto_2 }}" ></div>
+
+        <canvas id="canvas" height="280" width="600"></canvas>
+
+        <h4 class="text-danger">Próximo día de pesaje: Lunes 14 de mayo, 2019</h4>
     </div>
 
     </div>
 
-    <script src="{{asset('js/chart.js')}}"></script>
+    <script>
+        window.onload = function() {
+            var context = document.getElementById('canvas').getContext('2d');
+
+            var canvas = new Chart(context, {
+                type: 'bar',
+                data: {
+                    labels: [{!! json_encode($persona_reto_1) !!}, {!! json_encode($persona_reto_3) !!}, {!! json_encode($persona_reto_2) !!}, {!! json_encode($persona_reto_4) !!}],
+                    datasets: [
+                        {
+                            label: '07 Jul 2017',
+                            data: [55.00, 77.80, 80.40, 81.80],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 99, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        },
+
+                        {
+                            label: '28 Jul 2017',
+                            data: [55.20, 76.50, 81.75, 77.50],
+                            backgroundColor: [
+                                'rgba(0,0,255,0.3)',
+                                'rgba(0,0,255,0.3)',
+                                'rgba(0,0,255,0.3)',
+                                'rgba(0,0,255,0.3)',
+                            ],
+                            borderColor: [
+                                'rgba(0, 0, 255, 1)',
+                                'rgba(0, 0, 255, 1)',
+                                'rgba(0, 0, 255, 1)',
+                                'rgba(0, 0, 255, 1)',
+                            ],
+                            borderWidth: 1
+                        },
+
+                        {
+                            label: '29 Ago 2017',
+                            data: [55.40, 74.70, 81.00, 77.30],
+                            backgroundColor: [
+                                'rgba(0,255,0,0.3)',
+                                'rgba(0,255,0,0.3)',
+                                'rgba(0,255,0,0.3)',
+                                'rgba(0,255,0,0.3)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        },
+
+                        {
+                            label: '08 Dic 2017',
+                            data: [52.80, 74.70, 83.50, 73.65],
+                            backgroundColor: [
+                                'rgba(255,255,0,0.3)',
+                                'rgba(255,255,0,0.3)',
+                                'rgba(255,255,0,0.3)',
+                                'rgba(255,255,0,0.3)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                                'rgba(255, 199, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        },
+
+                        {
+                            label: '15 Dic 2017',
+                            data: [53.20, 75.95, 82.55, 73.45],
+                            backgroundColor: [
+                                'rgba(41,119,255,0.51)',
+                                'rgba(41,119,255,0.51)',
+                                'rgba(41,119,255,0.51)',
+                                'rgba(41,119,255,0.51)',
+                            ],
+                            borderColor: [
+                                'rgba(41,119,255,1)',
+                                'rgba(41,119,255,1)',
+                                'rgba(41,119,255,1)',
+                                'rgba(41,119,255,1)',
+                            ],
+                            borderWidth: 1
+                        },
+
+                        {
+                            label: '26 Abr 2019',
+                            data: [54.60, 74.05, 88.5, 75.00],
+                            backgroundColor: [
+                                'rgba(41,19,5,0.51)',
+                                'rgba(41,19,5,0.51)',
+                                'rgba(41,19,5,0.51)',
+                                'rgba(41,19,5,0.51)',
+                            ],
+                            borderColor: [
+                                'rgba(41,19,5,1)',
+                                'rgba(41,19,5,1)',
+                                'rgba(41,19,5,1)',
+                                'rgba(41,19,5,1)',
+                            ],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            })
+        }
+    </script>
+
 @endsection

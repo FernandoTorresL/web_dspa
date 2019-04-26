@@ -29,4 +29,25 @@ class Reto_DSPA extends Controller
             return redirect('/home')->with('message', 'Su rol o usuario no tiene permitido consultar éste módulo');
         }
     }
+
+    public function todos()
+    {
+        if (Gate::allows('ver_modulo_reto_dspa')) {
+            //Get user
+            $user = Auth::user();
+
+            Log::info('Visitando Reto_DSPA-Todos|User:' . $user->name );
+
+            return view('reto_dspa.todos', [
+                'persona_reto_1' => env('PERSONA_RETO_1', 'Persona V'),
+                'persona_reto_2' => env('PERSONA_RETO_2', 'Persona W'),
+                'persona_reto_3' => env('PERSONA_RETO_3', 'Persona Y'),
+                'persona_reto_4' => env('PERSONA_RETO_4', 'Persona Z')
+            ]);
+        }
+        else {
+            Log::warning('Sin permiso-Ver Módulo Reto_DSPA-Todos|Usuario:' . Auth::user()->name );
+            return redirect('/home')->with('message', 'Su rol o usuario no tiene permitido consultar éste módulo');
+        }
+    }
 }
