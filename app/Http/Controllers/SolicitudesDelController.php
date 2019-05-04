@@ -12,53 +12,50 @@ class SolicitudesDelController extends Controller
 {
 
     //New function to show a sortable and simple table with pagination
-    public function view_status()
+    public function index(Solicitud $solicitud)
     {
-        $del = Auth::user()->delegacion_id;
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_job_id = Auth::user()->job_id;
+        $user_del_id = Auth::user()->delegacion_id;
 
-        Log::info('Ver status solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);
+        $texto_log = ' User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         if (Gate::allows('ver_status_solicitudes')) {
-            if (Auth::user()->delegacion_id == 9) {
+            if ($user_del_id == 9) {
 
-                if (Auth::user()->job_id == 12) {
-
-                    $list_sol =
-                        Solicitud::sortable()
-                            ->select('solicitudes.*')
-                            ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                            ->leftJoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
-                            ->where('solicitudes.id', '>=', 3815)
-//                            ->where('solicitudes.user_id', 37)
-                            ->where('valijas.origen_id', 12)
-                            ->latest('solicitudes.created_at')
+                if ($user_job_id == 12) {
+                    $solicitudes =
+                        $solicitud
+                            ->with(['valija_oficio', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                            ->sortable(['created_at' => 'desc'])
+                            ->where('valijas.origen_id', 12)->where('solicitudes.id', '>=', 3815)
                             ->paginate(50);
                 }
                 else {
-                    $list_sol =
-                        Solicitud::sortable()
-                            ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                            ->where('id', '>=', 3815)
-                            ->latest()
+                    $solicitudes =
+                        $solicitud
+                            ->with(['valija_oficio', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                            ->sortable(['created_at' => 'desc'])
+                            ->where('solicitudes.id', '>=', 3815)
                             ->paginate(50);
                 }
             }
             else {
-                $list_sol =
-                    Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                        ->where('delegacion_id', $del)
-                        ->where('id', '>=', 3815)
-                        ->latest()
+                $solicitudes =
+                    $solicitud
+                        ->with(['valija_oficio', 'movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
+                        ->sortable(['created_at' => 'desc'])
+                        ->where('solicitudes.delegacion_id', $user_del_id)->where('solicitudes.id', '>=', 3815)
                         ->paginate(20);
             }
 
-            return view('ctas.solicitudes.delegacion_list', compact('list_sol'));
+            Log::info('Ver status solicitudes' . $texto_log);
+            return view('ctas.solicitudes.delegacion_list', ['list_sol' => $solicitudes]);
         }
         else {
-            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . $del);
-
-            abort(403,'No tiene permitido ver este listado');
+            Log::warning('Sin permisos-Consultar status solicitudes' . $texto_log);
+            return redirect('ctas')->with('message', 'No tiene permitido consultar status de solicitudes.');
         }
 
     }

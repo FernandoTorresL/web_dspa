@@ -8,6 +8,7 @@
         <table class="table">
             <tr class="small">
                 <th scope="col">@sortablelink('created_at', 'Fecha captura')</th>
+                <th scope="col">@sortablelink('valija_oficio.num_oficio_del', 'Oficio')</th>
                 <th scope="col">@sortablelink('primer_apellido', 'Primer Apellido')</th>
                 <th scope="col">@sortablelink('segundo_apellido', 'Segundo Apellido')</th>
                 <th scope="col">@sortablelink('nombre', 'Nombre(s)')</th>
@@ -44,6 +45,7 @@
             {{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%d-%b-%Y') }}
             <p>{{ $solicitud->created_at->diffForHumans() }}</p>
         </td>
+        <td>{{ isset($solicitud->valija_oficio) ? $solicitud->valija_oficio->num_oficio_del : '--' }}</td>
         <td>{{ $solicitud->primer_apellido }}</td>
         <td>{{ $solicitud->segundo_apellido }}</td>
         <td>{{ $solicitud->nombre }}</td>

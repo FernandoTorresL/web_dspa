@@ -15,6 +15,11 @@ class Solicitud extends Model
 
     public $sortable = ['created_at', 'nombre', 'primer_apellido', 'segundo_apellido', 'cuenta', 'movimiento_id', 'gpo_nuevo_id', 'rechazo_id'];
 
+    public function valija_oficio()
+    {
+        return $this->hasOne(Valija::class, 'id', 'valija_id');
+    }
+
     public function valija()
     {
         return $this->belongsTo(Valija::class);
