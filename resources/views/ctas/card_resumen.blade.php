@@ -27,7 +27,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Cuentas por grupos</h5>
+            <h5 class="card-title">Cuentas por grupos <small>(Al último corte de inventario)</small></h5>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -45,7 +45,7 @@
                 @else
                     @php
                         $color = 'danger';
-                        $mensaje = 'Sólo debe existir un Supervisor';
+                        $mensaje = 'Sólo debe existir una cuenta';
                     @endphp
                 @endif
                 <li class="list-group-item">
@@ -67,7 +67,7 @@
                 @else
                     @php
                         $color = 'danger';
-                        $mensaje = 'Demasiados Jefes de Depto.';
+                        $mensaje = 'Demasiadas cuentas';
                     @endphp
                 @endif
                 <li class="list-group-item">
@@ -75,13 +75,13 @@
                     <small class="text-muted">{{ $mensaje }}</small>
                 </li>
 
-                @if($total_ctas_SSJOFA == count($subdelegaciones) )
+                @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
                     @php
                         $guion = '-';
                         $color = 'success';
                         $mensaje = '';
                     @endphp
-                @elseif($total_ctas_SSJOFA <= count($subdelegaciones) )
+                @elseif($total_ctas_SSJOFA <= count($subdelegaciones) - 1 )
                     @php
                         $guion = '-';
                         $color = 'warning';
@@ -91,7 +91,7 @@
                     @php
                         $guion = '-';
                         $color = 'danger';
-                        $mensaje = 'Demasiados Jefes de Oficina.';
+                        $mensaje = 'Demasiadas cuentas';
                     @endphp
                 @endif
                 <li class="list-group-item">
