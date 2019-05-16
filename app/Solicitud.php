@@ -13,12 +13,18 @@ class Solicitud extends Model
     protected $table = 'solicitudes';
     protected $guarded = [];
 
-    public $sortable = ['created_at', 'nombre', 'primer_apellido', 'segundo_apellido', 'cuenta', 'movimiento_id', 'gpo_nuevo_id', 'rechazo_id'];
-
-    public function valija_oficio()
-    {
-        return $this->hasOne(Valija::class, 'id', 'valija_id');
-    }
+    public $sortable = [
+        'created_at',
+        'lote_id',
+        'delegacion_id',
+        'subdelegacion_id',
+        'nombre',
+        'primer_apellido',
+        'segundo_apellido',
+        'cuenta',
+        'movimiento_id',
+        'rechazo_id',
+    ];
 
     public function valija()
     {
@@ -92,5 +98,19 @@ class Solicitud extends Model
         }
 
         return Storage::disk('public')->url($archivo);
+    }
+
+    public function grupo1()
+    {
+        return $this->hasOne(Group::class, 'id', 'gpo_actual_id');
+    }
+    public function grupo2()
+    {
+        return $this->hasOne(Group::class, 'id', 'gpo_nuevo_id');
+    }
+
+    public function valija_oficio()
+    {
+        return $this->hasOne(Valija::class, 'id', 'valija_id');
     }
 }
