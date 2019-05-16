@@ -143,7 +143,7 @@
                 <div class="col-sm-4">
                     <label for="primer_apellido">Primer Apellido</label>
                     <div class="input-group">
-                        <input type="text" name="primer_apellido" class="form-control @if($errors->has('primer_apellido')) is-invalid @else is-valid @endif" value="{{ strtoupper(old('primer_apellido', $sol_original->primer_apellido)) }}">
+                        <input type="text" name="primer_apellido" class="form-control @if($errors->has('primer_apellido')) @endif" value="{{ strtoupper(old('primer_apellido', $sol_original->primer_apellido)) }}">
                         @if ($errors->has('primer_apellido'))
                             @foreach($errors->get('primer_apellido') as $error)
                                 <div class="invalid-feedback">{{ $error }}</div>
