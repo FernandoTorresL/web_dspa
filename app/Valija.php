@@ -4,10 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Kyslik\ColumnSortable\Sortable;
 
 class Valija extends Model
 {
+    use Sortable;
+
     protected $guarded = [];
+
+    public $sortable = ['num_oficio_del'];
 
     public function delegacion()
     {
@@ -24,7 +29,7 @@ class Valija extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function solicitudes()
+    public function solicitud()
     {
         return $this->hasMany(Solicitud::class);
     }
