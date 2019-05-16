@@ -14,7 +14,7 @@
         <h4 class="card-title">
             <strong># del Área de Gestión: {{ $valija->num_oficio_ca }}</strong>
             <span class="text-muted float-right">
-                # de solicitudes en la valija: {{ $valija->solicitudes->count() }}
+                # de solicitudes en la valija: {{ isset($valija->solicitudes) ? $valija->solicitudes->count() : '0' }}
             </span>
         </h4>
         <h4 class="card-title">
