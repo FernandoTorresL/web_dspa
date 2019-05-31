@@ -15,6 +15,10 @@
     </div>
 
         @include('ctas.admin.genera_tabla')
+
+        @include('ctas.admin.genera_tabla_rechazos')
+
+        @include('ctas.admin.genera_tabla_valijas')
     @endif
 
 @endsection

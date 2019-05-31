@@ -187,10 +187,28 @@ class CuentasController extends Controller
                 ->distinct()
                 ->get();
 
+            $listado_mov_rechazados =
+                Solicitud::with([
+                    'valija',
+                    'delegacion',
+                    'subdelegacion',
+                    'movimiento',
+                    'rechazo',
+                    'gpo_actual',
+                    'gpo_nuevo',
+                    'lote'])
+                ->where('lote_id', NULL)
+                ->where('rechazo_id', '<>', NULL)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta')
+                ->orderBy('solicitudes.valija_id')
+                ->get();
+
             return view(
                 'ctas.admin.show_tabla', [
-                'tabla_movimientos' => $tabla_movimientos,
-                'listado_valijas' => $listado_valijas,
+                'tabla_movimientos'      => $tabla_movimientos,
+                'listado_valijas'        => $listado_valijas,
+                'listado_mov_rechazados' => $listado_mov_rechazados,
             ]);
         }
         else {
