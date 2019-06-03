@@ -217,7 +217,7 @@ class SolicitudesController extends Controller
         $user_del_id = Auth::user()->delegacion_id;
         $texto_log = '|ID:' . $solicitud->id . '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
 
-        if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
+        if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || $user_id == 1 ) )
             if ((Gate::allows('editar_solicitudes_user_nc') || Gate::allows('editar_solicitudes_del'))) {
                 //Get the common information
                 $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();

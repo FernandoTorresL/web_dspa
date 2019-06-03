@@ -46,7 +46,7 @@
         <h4 class="card-title">
                 Fecha solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d de %B, %Y') }}
             <span class="text-muted float-right">
-                @if(!isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)))
+                @if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || Auth::user()->id == 1 ) )
                     @can('editar_solicitudes_user_nc')
                         <a class="nav-link" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}">Editar</a>
                     @elsecan('editar_solicitudes_del')
