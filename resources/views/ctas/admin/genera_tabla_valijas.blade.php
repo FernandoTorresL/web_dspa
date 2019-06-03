@@ -7,8 +7,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Del:Delegación_valija [(Delegación_origen)-#Oficio_Delegación|#Gestión] {(AÑO:YYYY)}</th>
+                        <th class="align-text-top" scope="col">#</th>
+                        <th class="align-text-top" scope="col">Del_valija [(Del_origen)-#Oficio_Del|#Gestión] {(AÑO:YYYY)}</th>
+                        <th class="text-right" scope="col"># de solicitudes</th>
                     </tr>
                 </thead>
                 <tbody class="text-monospace">
@@ -23,7 +24,7 @@
         @php
             $var += 1;
             $del_valija = str_pad($row_valija->delegacion_id, 2, "0", STR_PAD_LEFT);
-            $del_sol = str_pad($row_valija->sol_id, 2, "0", STR_PAD_LEFT);
+            $del_sol = str_pad($row_valija->sol_del_id, 2, "0", STR_PAD_LEFT);
             $texto_renglon = ' [' . $del_sol . '-' . $row_valija->num_oficio_del . '|' . $row_valija->num_oficio_ca . '] ';
         @endphp
         <tr>
@@ -32,7 +33,7 @@
                 @if( $del_valija <> $del_sol )
                     @php
                         $color_no_match = 'text-danger';
-                        $texto_no_coincide = 'La delegación de ésta valija no coincide con la delegación del user-id en algunos formatos';
+                        $texto_no_coincide = 'La delegación de la valija no coincide con la delegación indicada en algunos formatos';
                     @endphp
                 @else
                     @php
@@ -40,17 +41,19 @@
                         $texto_no_coincide = '';
                     @endphp
                 @endif
-                <td class="small {{ $color_no_match }}">{{ 'Del:' . $del_valija . $texto_renglon . $texto_no_coincide }}</td>
+                <td class="small {{ $color_no_match }}">{{ 'Delegación: ' . $del_valija . $texto_renglon . $texto_no_coincide }}</td>
             @else
                 @php
                     $texto_renglon = '[' . $del_sol . '|' . env('APP_NAME') . ']';
                 @endphp
-                <td class="small text-success">{{ '(SIN VALIJA) ' . $texto_renglon }}</td>
+                <td class="small text-success">{{ '( SIN VALIJA ) ' . $texto_renglon }}</td>
             @endif
 
             @php
                 $lista_descargo .= ' ' . $texto_renglon;
+                $num_sol = str_pad($row_valija->soli_count, 4, "0", STR_PAD_LEFT);
             @endphp
+            <td class="text-right" scope="row">{{ $row_valija->soli_count }}</td>
         </tr>
 
     @empty
