@@ -5,7 +5,7 @@
         </div>
         <div class="card-body">
             <p class="card-text">Buscar solicitudes por USER-ID (Cuenta)</p>
-            <a href="ctas/solicitudes/search/cuenta" class="btn btn-info">Buscar Solicitudes</a>
+            <a href="ctas/solicitudes/search" class="btn btn-info">Buscar Solicitudes</a>
         </div>
     </div>
 </div>

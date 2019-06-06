@@ -40,6 +40,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
         Route::post('/ctas/solicitudes/create', 'SolicitudesController@create');
         Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
 
+        //Search 'solicitudes' by 'cuenta' (User-ID)
+        Route::get('/ctas/solicitudes/search', 'SearchSolicitudesController@home');
+
         //Route to view one solicitud
         Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
 
