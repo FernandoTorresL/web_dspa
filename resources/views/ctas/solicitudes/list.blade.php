@@ -4,29 +4,37 @@
     \Carbon\Carbon::setUtf8(false);
 @endphp
 
-@if(count($solicitudes))
-    <div class="table table-hover table-sm">
-        <table class="table">
-            <thead class="thead-info">
-                <tr>
-                    <th class="small align-text-top" scope="col">@sortablelink('created_at', 'Fecha captura')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('lote_id', 'Lote')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('valija_oficio.num_oficio_del', 'Oficio')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('delegacion_id', 'Delegación')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('subdelegacion_id', 'Subdelegación')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('primer_apellido', 'Primer apellido')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('segundo_apellido', 'Segundo apellido')</th>
-                    <th class="small align-text-top text-sm-left" scope="col">@sortablelink('nombre', 'Nombre(s)')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('cuenta', 'Usuario')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('movimiento_id', 'Movimiento')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('grupo1.name', 'Gpo actual')</th>
-                    <th class="small align-text-top" scope="col">@sortablelink('grupo2.name', 'Gpo nuevo')</th>
-                    <th class="small align-text-top text-sm-center" scope="col">@sortablelink('rechazo_id', 'Rechazo CA')</th>
-                    <th class="small align-text-top text-sm-center" scope="col">@sortablelink('resultado_solicitud.rechazo_mainframe_id', 'Rechazo Mainframe')</th>
-                </tr>
-            </thead>
-            <tbody>
-@endif
+<div class="container">
+    <h5 class="text-info">Solicitudes localizadas: {{ $solicitudes->total() }} </h5>
+    <div class="row" align="center">
+        <div class="mt-2 mx-auto justify-content-center">
+            {!! $solicitudes->appends(\Request::except('page'))->render() !!}
+        </div>
+    </div>
+</div>
+
+<div class="table table-hover table-sm">
+    <table class="table">
+        <thead class="thead-info">
+            <tr>
+                <th class="small align-text-top" scope="col">@sortablelink('created_at', 'Fecha captura')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('lote_id', 'Lote')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('valija_oficio.num_oficio_del', 'Oficio')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('delegacion_id', 'Delegación')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('subdelegacion_id', 'Subdelegación')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('primer_apellido', 'Primer apellido')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('segundo_apellido', 'Segundo apellido')</th>
+                <th class="small align-text-top text-sm-left" scope="col">@sortablelink('nombre', 'Nombre(s)')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('cuenta', 'Usuario')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('movimiento_id', 'Movimiento')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('grupo1.name', 'Gpo actual')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('grupo2.name', 'Gpo nuevo')</th>
+                <th class="small align-text-top text-sm-center" scope="col">@sortablelink('rechazo_id', 'Rechazo CA')</th>
+                <th class="small align-text-top text-sm-center" scope="col">@sortablelink('resultado_solicitud.rechazo_mainframe_id', 'Rechazo Mainframe')</th>
+            </tr>
+        </thead>
+        <tbody>
+
 
 @forelse($solicitudes as $clave_solicitud =>$solicitud)
 
@@ -137,14 +145,14 @@
     </tr>
     </tbody>
 @empty
-    <p>No hay solicitudes recientes</p>
+    <p>No hay solicitudes que coincidan con el criterio de búsqueda</p>
 @endforelse
 
-@if(count($solicitudes))
-        </table>
-    </div>
+    </table>
+</div>
 
-    <div class="mt-2 mx-auto justify-content-center">
+<div class="row" align="center">
+       <div class="mt-2 mx-auto justify-content-center">
         {!! $solicitudes->appends(\Request::except('page'))->render() !!}
     </div>
-@endif
+</div>

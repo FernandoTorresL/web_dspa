@@ -48,10 +48,6 @@
             @can('ver_status_solicitudes')
                 @include('ctas.card_status_solicitudes')
             @endcan
-
-            @can('ver_buscar_cta')
-                @include('ctas.card_buscar_cuentas')
-            @endcan
         </div>
 
     </div>

@@ -41,7 +41,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
         Route::post('/ctas/solicitudes/createNC', 'SolicitudesController@createNC');
 
         //Search 'solicitudes' by 'cuenta' (User-ID)
-        Route::get('/ctas/solicitudes/search', 'SearchSolicitudesController@home');
+        //Route::get('/ctas/solicitudes/search', 'SearchSolicitudesController@home');
+        //Route::get('/ctas/solicitudes/search/cta', 'SearchSolicitudesController@search');
+        Route::get('/ctas/solicitudes/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');
 
         //Route to view one solicitud
         Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
@@ -59,7 +61,8 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
         Route::get('/ctas/solicitudes/view/detail_status', 'SolicitudesDelController@view_detail_status');
 
         //Route to view table for solicitudes using pagination
-        Route::get('/ctas/solicitudes/view/status', 'SolicitudesDelController@index')->name('solicitudes-status.index');
+        //Route::get('/ctas/solicitudes/view/status', 'SolicitudesDelController@index')->name('solicitudes-status.index');
+        Route::get('/ctas/solicitudes/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');
 
         //Route to view timeline details for solicitudes
         Route::get('/ctas/solicitudes/timeline/{solicitud_id}', 'SolicitudesDelController@view_timeline');
