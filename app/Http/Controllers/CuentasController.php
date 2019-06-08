@@ -107,7 +107,15 @@ class CuentasController extends Controller
     }
 
     public function show_resume() {
+
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_del_id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+
         if (Gate::allows('ver_resumen_admin_ctas')) {
+            Log::info('Ver Resumen' . $texto_log);
+
             if (Auth::user()->hasRole('capturista_dspa'))
             {
                 $primer_renglon = 'Nivel Central - DSPA';
@@ -145,18 +153,19 @@ class CuentasController extends Controller
             ]);
         }
         else {
-            Log::info('Sin permiso-Ver Resumen-Admin. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-            abort(403,'No tiene permitido ver éste Resumen');
+            Log::info('Sin permiso-Ver Resumen-Admin' . $texto_log);
+
+            abort(403,'No tiene permitido ver esta tabla resumen');
         }
     }
 
     public function show_admin_tabla() {
-        if (Gate::allows('genera_tabla_oficio')) {
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_del_id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
 
-            $user_id = Auth::user()->id;
-            $user_name = Auth::user()->name;
-            $user_del_id = Auth::user()->delegacion_id;
-            $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        if (Gate::allows('genera_tabla_oficio')) {
 
             Log::info('Genera Tabla' . $texto_log);
 
@@ -172,25 +181,69 @@ class CuentasController extends Controller
                 ->where('solicitudes.rechazo_id', NULL)
                 ->where('solicitudes.lote_id', NULL)
                 ->orderBy('solicitudes.movimiento_id')
-				->orderBy('solicitudes.cuenta')
+                ->orderBy('solicitudes.cuenta')
                 ->orderBy('valijas.num_oficio_ca')
                 ->get();
 
+            $first_query =
+                DB::table('solicitudes')
+                    ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
+                    ->select('valijas.id',
+                        'valijas.num_oficio_del',
+                        'valijas.num_oficio_ca',
+                        'valijas.delegacion_id',
+                        'solicitudes.delegacion_id as sol_del_id',
+                        DB::raw('count(solicitudes.id) as soli_count') )
+                    ->where('solicitudes.lote_id', NULL)
+                    ->where('valijas.id', '<>', NULL)
+                    ->groupBy('valijas.id',
+                        'valijas.num_oficio_del',
+                        'valijas.num_oficio_ca',
+                        'valijas.delegacion_id',
+                        'solicitudes.delegacion_id')
+                    ->orderBy('valijas.num_oficio_ca');
+
             $listado_valijas =
                 DB::table('solicitudes')
-                ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
-                ->select('valijas.id', 'valijas.num_oficio_del', 'valijas.num_oficio_ca', 'valijas.delegacion_id', 'solicitudes.delegacion_id as sol_id')
-                ->where('solicitudes.lote_id', NULL)
-                ->orderBy('valijas.origen_id')
-                ->orderBy('valijas.num_oficio_ca')
-                ->orderBy('valijas.delegacion_id')
-                ->distinct()
+                    ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
+                    ->select('valijas.id',
+                        'valijas.num_oficio_del',
+                        'valijas.num_oficio_ca',
+                        'valijas.delegacion_id',
+                        'solicitudes.delegacion_id as sol_del_id',
+                        DB::raw('count(solicitudes.id) as soli_count') )
+                    ->where('solicitudes.lote_id', NULL)
+                    ->where('valijas.id',NULL)
+                    ->groupBy('valijas.id',
+                        'valijas.num_oficio_del',
+                        'valijas.num_oficio_ca',
+                        'valijas.delegacion_id',
+                        'solicitudes.delegacion_id')
+                    ->orderBy('valijas.delegacion_id')
+                    ->union($first_query)
+                    ->get();
+
+            $listado_mov_rechazados =
+                Solicitud::with([
+                    'valija',
+                    'delegacion',
+                    'subdelegacion',
+                    'movimiento',
+                    'rechazo',
+                    'gpo_actual',
+                    'gpo_nuevo',
+                    'lote'])
+                ->where('lote_id', 401)
+                ->where('rechazo_id', '<>', NULL)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta')
                 ->get();
 
             return view(
                 'ctas.admin.show_tabla', [
-                'tabla_movimientos' => $tabla_movimientos,
-                'listado_valijas' => $listado_valijas,
+                'tabla_movimientos'      => $tabla_movimientos,
+                'listado_valijas'        => $listado_valijas,
+                'listado_mov_rechazados' => $listado_mov_rechazados,
             ]);
         }
         else {
