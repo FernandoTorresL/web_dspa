@@ -21,6 +21,8 @@ class Solicitud extends Model
         'nombre',
         'primer_apellido',
         'segundo_apellido',
+        'curp',
+        'matricula',
         'cuenta',
         'movimiento_id',
         'rechazo_id',
