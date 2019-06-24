@@ -391,41 +391,4 @@ class SolicitudesController extends Controller
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
-    public function solicitudes_status()
-    {
-        Log::info('Ver status solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-
-        if (Gate::allows('ver_status_solicitudes')) {
-            if (Auth::user()->delegacion_id == 9) {
-                $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
-                    'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
-                    'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
-                    ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
-                        'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
-                    ->orderby('created_at', 'desc')->limit(200)->get();
-            }
-            else {
-                $listado_solicitudes = Solicitud::select('id', 'lote_id', 'valija_id',
-                    'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
-                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
-                    'rechazo_id', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id')
-                    ->with(['user', 'valija', 'delegacion', 'subdelegacion', 'movimiento',
-                        'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud', 'lote'])
-                    ->where('delegacion_id', Auth::user()->delegacion_id)
-                    ->orderby('created_at', 'desc')->limit(100)->get();
-            }
-            return view(
-                'ctas.solicitudes.listado_status', [
-                'listado_solicitudes' => $listado_solicitudes,
-            ]);
-        }
-        else {
-            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-
-            abort(403,'No tiene permitido ver este listado');
-        }
-
-    }
-
 }

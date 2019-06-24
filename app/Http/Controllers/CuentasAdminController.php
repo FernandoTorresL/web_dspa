@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class CuentasAdminController extends Controller
 {
-    public function show_create_file_valijas()
+    /*public function show_create_file_valijas()
     {
         $user = Auth::user();
 
@@ -61,6 +61,6 @@ class CuentasAdminController extends Controller
 
         Log::info('Visitando Admin Preview Valijas. Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
 
-    }
+    }*/
 
 }
