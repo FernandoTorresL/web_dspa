@@ -95,7 +95,7 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
-            'expire' => 60,
+            'expire' => env('TOKEN_EXPIRE_MIN'),
         ],
     ],
 
