@@ -21,9 +21,6 @@
 
     @php
         $var += 1;
-        //dd($list_inventario->items(2));
-        //dd($list_inventario->items(1));
-        //dd($list_inventario);
     @endphp
     <tr>
         <td class="small">{{ ($list_inventario->currentPage() * $list_inventario->perPage()) + $var - $list_inventario->perPage() }}</td>
