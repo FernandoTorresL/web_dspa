@@ -1,4 +1,4 @@
-@if(count($list_inventario))
+@if( count($list_inventario) )
     {{--Muestra encabezado de tabla--}}
     <div class="table">
         <table class="table">
@@ -17,25 +17,27 @@
     $var = 0;
 @endphp
 
-@forelse($list_inventario as $row_inventario)
+@forelse( $list_inventario as $row_inventario )
 
     @php
         $var += 1;
+        $ciz_activos = \App\Detalle_cta::ciz_activos($row_inventario->cuenta);
+        $ciz_activos = $ciz_activos[0]->CIZ_Activos;
     @endphp
     <tr>
         <td class="small">{{ ($list_inventario->currentPage() * $list_inventario->perPage()) + $var - $list_inventario->perPage() }}</td>
         <td class="small">{{ $row_inventario->cuenta }}</td>
-        <td class="small">{{ $row_inventario->ciz_id }}</td>
+        <td class="small">{{ $ciz_activos }}</td>
         <td class="small">{{ $row_inventario->name }}</td>
-        <td class="small">{{ $row_inventario->gpo_owner->name }}</td>
+        <td class="small">{{ $row_inventario->gpo_name }}</td>
         <td class="small">{{ $row_inventario->install_data }}</td>
-        <td class="small">{{ $row_inventario->work_area->name }}</td>
+        <td class="small">{{ $row_inventario->work_area_name }}</td>
     </tr>
 @empty
     <p>No hay cuentas registradas en esta delegación</p>
 @endforelse
 
-@if(count($list_inventario))
+@if( count($list_inventario) )
         </table>
     </div>
 
