@@ -26,9 +26,13 @@ class InventarioController extends Controller
         if ( Gate::allows( 'ver_inventario_del') || Gate::allows( 'ver_inventario_gral') )
         {
             $inventory_id = env('INVENTORY_ID');
+            $ca_group_01 = env('CA_GROUP_01');
+            $ca_group_01_eq = env('CA_GROUP_01_EQ');
+
             $list_inventario = DB::table('detalle_ctas AS D')
                 ->select('D.cuenta', 'D.name', 'D.install_data',
-                    'G1.name AS gpo_name', 'W.name AS work_area_name',
+                    DB::raw("CASE WHEN G1.name = '$ca_group_01_eq' THEN '$ca_group_01' ELSE G1.name END AS gpo_name"),
+                    'W.name AS work_area_name',
                     DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 1 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ1"),
                     DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 2 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ2"),
                     DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 3 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ3") )
@@ -46,7 +50,7 @@ class InventarioController extends Controller
                         ->orderby('D.cuenta')
                         ->paginate( env('ROWS_ON_PAGINATE'),
                             ['D.cuenta', 'D.name', 'D.install_data',
-                            'G1.name AS gpo_name', 'W.name AS work_area_name'] );
+                             'W.name AS work_area_name'] );
 
             $cut_off_date = Inventory::find( $inventory_id )->cut_off_date;
         }
