@@ -43,11 +43,6 @@ class SolicitudesDelController extends Controller
                 //if is a 'Delegational' user, add delegacion_id to the query
                 $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
             }
-            else {
-                //but if it's a CCEVyD user, then add origen_id to the query
-                if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') )
-                    $solicitudes = $solicitudes->where('valijas.origen_id', env('DSPA_USER_JOB_ID_CCEVyD') );
-            }
 
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
                 //And if there's a 'search word', add that word to the query and to the log
