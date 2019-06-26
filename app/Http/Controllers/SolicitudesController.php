@@ -111,8 +111,11 @@ class SolicitudesController extends Controller
             //If user's job is from CCEVyD, can show 'solicitudes' from some groups
             $is_ccevyd_user = true;
 
-            if ( $this->fntCheckGroupCCEVyD($solicitud) )
-                $allowToShowSolicitudes = true;
+            if ( ($this->fntCheckGroupCCEVyD($solicitud) ) ||
+                ( $solicitud->user->id == $user_id ) ||
+                ( $solicitud->user->job->id == env('DSPA_USER_JOB_ID_CCEVyD') ) )
+
+                    $allowToShowSolicitudes = true;
             else {
                 $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
                 Log::warning('Sin permiso-Consultar solicitudes de otros grupos' . $texto_log);
