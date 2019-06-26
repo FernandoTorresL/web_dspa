@@ -21,13 +21,11 @@
 
     @php
         $var += 1;
-        $ciz_activos = \App\Detalle_cta::ciz_activos($row_inventario->cuenta);
-        $ciz_activos = $ciz_activos[0]->CIZ_Activos;
     @endphp
     <tr>
         <td class="small">{{ ($list_inventario->currentPage() * $list_inventario->perPage()) + $var - $list_inventario->perPage() }}</td>
         <td class="small">{{ $row_inventario->cuenta }}</td>
-        <td class="small">{{ $ciz_activos }}</td>
+        <td class="small">{{ $row_inventario->CIZ1==1 ? 1 : '-'}}|{{ $row_inventario->CIZ2==1 ? 2 : '-' }}|{{ $row_inventario->CIZ3==1 ? 3 : '-' }}</td>
         <td class="small">{{ $row_inventario->name }}</td>
         <td class="small">{{ $row_inventario->gpo_name }}</td>
         <td class="small">{{ $row_inventario->install_data }}</td>
