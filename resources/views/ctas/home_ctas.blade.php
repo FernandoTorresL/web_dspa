@@ -33,21 +33,24 @@
             @endcan
         </div>
 
-        <div class="row">
-            @can('ver_inventario_del')
-                @include('ctas.card_inventario')
-            @endcan
-            @can('ver_inventario_gral')
-                @include('ctas.card_inventario')
-            @endcan
-
-            @include('ctas.card_solicitudes')
+        <div class="col-10 col-md-12">
+            <br>
         </div>
 
         <div class="row">
+            @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
+                @include('ctas.card_inventario')
+            @endcanany
+
+            @include('ctas.card_solicitudes')
+
             @can('ver_status_solicitudes')
-                    @include('ctas.card_status_solicitudes')
+                @include('ctas.card_status_solicitudes')
             @endcan
+        </div>
+
+        <div class="col-10 col-md-12">
+            <br>
         </div>
 
     </div>

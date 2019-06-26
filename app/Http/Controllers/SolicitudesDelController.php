@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Solicitud;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
@@ -12,45 +13,70 @@ class SolicitudesDelController extends Controller
 {
 
     //New function to show a sortable and simple table with pagination
-    public function index(Solicitud $solicitud)
+    public function search(Request $request)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;
         $user_del_id = Auth::user()->delegacion_id;
 
+        $search_word = $request->input('search_word');
         $texto_log = ' User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
-        if (Gate::allows('ver_status_solicitudes')) {
+        if ( Gate::allows('ver_status_solicitudes') ) {
+            //Base query
             $solicitudes = Solicitud::sortable()
-                ->with(['valija', 'valija_oficio', 'delegacion', 'subdelegacion', 'movimiento', 'rechazo', 'grupo1', 'grupo2', 'lote', 'resultado_solicitud'])
-                ->where('solicitudes.id', '>=', 3815);
+                ->with(['valija',
+                    'valija_oficio',
+                    'delegacion',
+                    'subdelegacion',
+                    'movimiento',
+                    'rechazo',
+                    'grupo1',
+                    'grupo2',
+                    'lote',
+                    'resultado_solicitud',
+                    'resultado_solicitud.rechazo_mainframe'])
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
-            if ($user_del_id == 9) {
-                if ($user_job_id == 12)
-                    $solicitudes = $solicitudes
-                        ->where('valijas.origen_id', 12)
-                        ->latest()
-                        ->paginate(25);
-                else
-                    $solicitudes = $solicitudes
-                        ->latest()
-                        ->paginate(50);
+            if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
+                //if is a 'Delegational' user, add delegacion_id to the query
+                $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
             }
-            else
-                $solicitudes = $solicitudes
-                        ->where('solicitudes.delegacion_id', $user_del_id)
-                        ->latest()
-                        ->paginate(20);
+            else {
+                //but if it's a CCEVyD user, then add origen_id to the query
+                if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') )
+                    $solicitudes = $solicitudes->where('valijas.origen_id', env('DSPA_USER_JOB_ID_CCEVyD') );
+            }
 
-            Log::info('Ver status solicitudes' . $texto_log);
-            return view('ctas.solicitudes.delegacion_list', ['solicitudes' => $solicitudes]);
+            if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
+                //And if there's a 'search word', add that word to the query and to the log
+                $query = '%' . $search_word . '%';
+                $solicitudes = $solicitudes->where(function ($list_where) use ($query) {
+                    $list_where
+                        ->where('solicitudes.cuenta', 'like', $query)
+                        ->orWhere('solicitudes.primer_apellido', 'like', $query)
+                        ->orWhere('solicitudes.segundo_apellido', 'like', $query)
+                        ->orWhere('solicitudes.nombre', 'like', $query)
+                        ->orWhere('solicitudes.matricula', 'like', $query)
+                        ->orWhere('solicitudes.curp', 'like', $query);
+                });
+                $texto_log .= 'Buscando:' . $search_word;
+            }
+
+            //Finally add these instructions to any query
+            $solicitudes = $solicitudes->latest()->paginate( env('ROWS_ON_PAGINATE') );
+
+            Log::info('Buscar solicitudes ' . $texto_log);
+            return view('ctas.solicitudes.delegacion_list',
+                    ['solicitudes' => $solicitudes,
+                     'search_word'      => $search_word]
+                );
         }
         else {
             Log::warning('Sin permisos-Consultar status solicitudes' . $texto_log);
             return redirect('ctas')->with('message', 'No tiene permitido consultar status de solicitudes.');
         }
-
     }
 
     private function formatdate($pdate)
@@ -210,41 +236,6 @@ class SolicitudesDelController extends Controller
 
             abort(403,'No tiene permitido ver este timeline');
         }
-    }
-
-    public function view_detail_status()
-    {
-        $del = Auth::user()->delegacion_id;
-
-        Log::info('Ver status solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);
-
-        if (Gate::allows('ver_detail_status_solicitudes')) {
-            if ($del == 9) {
-                $listado_solicitudes =
-                    Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                        ->where('id', '>=', 3815)
-                        ->latest()
-                        ->paginate(50);
-            }
-            else {
-                $listado_solicitudes =
-                    Solicitud::sortable()
-                        ->with(['movimiento', 'rechazo', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud.rechazo_mainframe', 'lote'])
-                        ->where('delegacion_id', $del)
-                        ->where('id', '>=', 3815)
-                        ->latest()
-                        ->paginate(20);
-            }
-
-            return view('ctas.solicitudes.listado_status', compact('listado_solicitudes'));
-        }
-        else {
-            Log::info('Sin permiso-Consultar estatus solicitudes. Usuario:' . Auth::user()->name . '|Del:' . $del);
-
-            abort(403,'No tiene permitido ver este listado');
-        }
-
     }
 
 }

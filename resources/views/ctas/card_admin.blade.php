@@ -1,4 +1,4 @@
-<div class="col-6">
+<div class="col-4">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Opciones administrativas</h5>
@@ -16,11 +16,11 @@
                 </a>
             @endcan
 
-            @can('leer_archivo_valijas')
+            {{--@can('leer_archivo_valijas')
                 <a href="ctas/admin/show_create_file_valijas" target="_blank" class="btn btn-outline-secondary">
                     Upload Archivo Valijas
                 </a>
-            @endcan
+            @endcan--}}
         </div>
     </div>
 </div>
