@@ -21,10 +21,6 @@
             </div>
         </div>
 
-        <div class="col-10 col-md-12">
-            <br>
-        </div>
-
         <div class="row">
             @can('ver_modulo_admin')
                 @include('ctas.card_admin')
