@@ -1,8 +1,4 @@
-<div class="col-10 col-md-12">
-    <br>
-</div>
-
-<div class="col-5">
+<div class="col-4">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Opciones administrativas</h5>
