@@ -286,7 +286,7 @@ class CuentasController extends Controller
                     'gpo_actual',
                     'gpo_nuevo',
                     'lote'])
-                ->where('lote_id', 401)
+                ->where('lote_id', NULL)
                 ->where('rechazo_id', '<>', NULL)
                 ->orderBy('solicitudes.movimiento_id')
                 ->orderBy('solicitudes.cuenta')
