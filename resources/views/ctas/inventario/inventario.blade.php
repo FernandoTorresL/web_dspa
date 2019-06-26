@@ -4,12 +4,12 @@
         <table class="table">
             <tr class="small">
                 <th scope="col">#</th>
-                <th scope="col">@sortablelink('cuenta', 'Usuario')</th>
-                <th scope="col">@sortablelink('ciz_id', 'CIZ')</th>
-                <th scope="col">@sortablelink('name', 'Nombre Completo')</th>
-                <th scope="col">@sortablelink('gpo_owner_id', 'Grupo')</th>
-                <th scope="col">@sortablelink('install_data', 'Info')</th>
-                <th scope="col">@sortablelink('work_area_id', 'Tipo Cuenta')</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">CIZ</th>
+                <th scope="col">Nombre Completo</th>
+                <th scope="col">Grupo</th>
+                <th scope="col">Info</th>
+                <th scope="col">Tipo Cuenta</th>
             </tr>
 @endif
 
