@@ -26,7 +26,6 @@ class SolicitudesDelController extends Controller
         if ( Gate::allows('ver_status_solicitudes') ) {
             //Base query
             $solicitudes = Solicitud::sortable()
-                ->join('valijas AS V', 'solicitudes.valija_id', '=', 'V.id')
                 ->with(['valija',
                     'valija_oficio',
                     'delegacion',
@@ -43,11 +42,6 @@ class SolicitudesDelController extends Controller
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
                 //if is a 'Delegational' user, add delegacion_id to the query
                 $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
-            }
-            else {
-                //but if it's a CCEVyD user, then add origen_id to the query
-                if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') )
-                    $solicitudes = $solicitudes->where('V.origen_id', env('DSPA_USER_JOB_ID_CCEVyD') );
             }
 
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
@@ -66,7 +60,7 @@ class SolicitudesDelController extends Controller
             }
 
             //Finally add these instructions to any query
-            $solicitudes = $solicitudes->latest('solicitudes.created_at')->paginate( env('ROWS_ON_PAGINATE') );
+            $solicitudes = $solicitudes->latest()->paginate( env('ROWS_ON_PAGINATE') );
 
             Log::info('Buscar solicitudes ' . $texto_log);
             return view('ctas.solicitudes.delegacion_list',
