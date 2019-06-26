@@ -1,7 +1,8 @@
-<div class="card-group">
+<div class="col-12 ">
+    <div class="card-group">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Subdelegaciones</h5>
+            <h5 class="card-title text-center">Subdelegaciones</h5>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -20,14 +21,14 @@
         </div>
         <div class="card-footer">
             <small class="text-muted">
-                Próximamente: Cifras de conteo por subdelegacion
+                <br>
             </small>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Cuentas por grupos <small>(Al último corte de inventario)</small></h5>
+            <h5 class="card-title text-center">Cuentas por grupos</h5>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -120,7 +121,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Cuentas por tipo</h5>
+            <h5 class="card-title text-center">Cuentas por tipo</h5>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -160,15 +161,19 @@
                 <li class="list-group-item">
                     Fiscalización <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_fisca }}</span>
                 </li>
+                    <li class="list-group-item">
+                        Cobranza <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_cobranza }}</span>
+                    </li>
             </ul>
         </div>
 
         <div class="card-footer">
             <small class="text-muted">Total de cuentas
-                <span class="badge badge-pill badge-info">{{ number_format($total_ctas->count()) }}</span>
+                <span class="badge badge-pill badge-info">{{ $total_ctas }}</span>
             </small>
         </div>
     </div>
+</div>
 </div>
 
 <div class="col-10 col-md-12">
