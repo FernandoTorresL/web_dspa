@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Inventory;
+use App\Detalle_cta;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,33 +31,18 @@ class InventarioController extends Controller
             $ca_group_01 = env('CA_GROUP_01');
             $ca_group_01_eq = env('CA_GROUP_01_EQ');
 
-            $list_inventario = DB::table('detalle_ctas AS D')
-                ->select('D.cuenta', 'D.name', 'D.install_data',
-                    DB::raw("CASE WHEN G1.name = '$ca_group_01_eq' THEN '$ca_group_01' ELSE G1.name END AS gpo_name"),
-                    'W.name AS work_area_name',
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 1 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ1"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 2 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ2"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 3 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ3") )
-                ->join('groups AS G1', 'D.gpo_owner_id', '=', 'G1.id')
-                ->join('work_areas AS W', 'D.work_area_id', '=', 'W.id')
-                ->where( 'D.inventory_id', $inventory_id );
-
-            //if is a 'Delegational' user, add delegacion_id to the query
-            if ( Gate::allows('ver_inventario_del') )
-                $list_inventario = $list_inventario->where('D.delegacion_id', $user_del_id);
-
-            $list_inventario = $list_inventario
-                        ->distinct()
-                        ->orderby('D.work_area_id', 'desc')
-                        ->orderby('D.cuenta')
-                        ->paginate( env('ROWS_ON_PAGINATE'),
-                            ['D.cuenta', 'D.name', 'D.install_data',
-                             'W.name AS work_area_name'] );
+            $list_inventario =
+                Detalle_cta::sortable()
+                    ->with(['gpo_owner', 'inventory', 'work_area'])
+                    ->where('inventory_id', $inventory_id)
+                    ->where('delegacion_id', $user_del_id)
+                    ->orderby('cuenta')
+                    ->orderby('ciz_id')
+                    ->paginate( env('ROWS_ON_PAGINATE') );
 
             $cut_off_date = Inventory::find( $inventory_id )->cut_off_date;
         }
         else {
-
             Log::warning('Sin permisos-Consultar Inventario ' . $texto_log);
             return redirect('ctas')->with('message', 'No tiene permitido consultar el inventario.');
         }
@@ -67,4 +54,5 @@ class InventarioController extends Controller
                     'user_del_id') );
 
     }
+    
 }
