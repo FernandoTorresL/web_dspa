@@ -23,7 +23,10 @@
                 <p class="card-text">Fecha de corte: {{ \Carbon\Carbon::parse($cut_off_date)->formatLocalized('%d de %B, %Y') }}</p>
             </div>
         </div>
-        @include('ctas.inventario.inventario')
+        
+        @include('ctas.inventario.list_new_ctas')
+
+        @include('ctas.inventario.list_inventario')
     @endif
 
 @endsection

@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas', 'CuentasController@home');
 
     //Route to show Inventario
-    Route::get('/ctas/inventario', 'InventarioController@home');
+    Route::get('/ctas/inventario', 'InventarioController@search_inventario');
 
     //Routes to admin options
     Route::get('/ctas/admin', 'CuentasAdminController@home');
