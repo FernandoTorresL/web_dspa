@@ -37,25 +37,14 @@ class InventarioController extends Controller
 
             //Base query new accounts
             $solicitudes = Solicitud::sortable()
-                ->with(['valija',
-                    'valija_oficio',
-                    'delegacion',
-                    'subdelegacion',
-                    'movimiento',
-                    'rechazo',
-                    'grupo1',
-                    'grupo2',
-                    'lote',
-                    'resultado_solicitud.rechazo_mainframe',
-                    'resultado_solicitud' => function ($query) {
-                        $query->where('rechazo_mainframe_id', NULL);
-                    }])
+                ->with( ['subdelegacion', 'movimiento', 'grupo1'] )
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
-                ->whereDate( 'solicitudes.created_at', '>', $cut_off_date )
-                ->where( 'solicitudes.movmiento_id', 1 )
-                ->whereHas('resultado_solicitud.resultado_lote');
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->whereDate( 'resultado_lotes.attended_at', '>', $cut_off_date ); } 
+                );
 
-                //
             $list_inventario =
                 Detalle_cta::sortable()
                     ->with(['gpo_owner', 'inventory', 'work_area'])
