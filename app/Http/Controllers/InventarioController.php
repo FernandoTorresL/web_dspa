@@ -47,17 +47,13 @@ class InventarioController extends Controller
                     'grupo2',
                     'lote',
                     'resultado_solicitud.rechazo_mainframe',
-                    'resultado_solicitud.resultado_lote' => function ($query) use ($cut_off_date) {
-                        $query->where('attended_at', '>=', $cut_off_date );
-                    },
                     'resultado_solicitud' => function ($query) {
                         $query->where('rechazo_mainframe_id', NULL);
                     }])
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
                 ->whereDate( 'solicitudes.created_at', '>', $cut_off_date )
-                ->where( 'solicitudes.movimiento_id', 1 )
-                ->whereHas('resultado_solicitud.resultado_lote')
-                ->whereHas('resultado_solicitud');
+                ->where( 'solicitudes.movmiento_id', 1 )
+                ->whereHas('resultado_solicitud.resultado_lote');
 
                 //
             $list_inventario =
