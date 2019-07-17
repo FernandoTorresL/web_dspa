@@ -48,6 +48,7 @@
                         <th scope="col">@sortablelink('grupo.name', 'Grupo')</th>
                         <th scope="col">@sortablelink('install_data', 'Información')</th>
                         <th scope="col">@sortablelink('tipo_cuenta.name', 'Área / Tipo Cuenta')</th>
+                        <th scope="col">Observaciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,7 +63,13 @@
         @php
             $var += 1;
         @endphp
-                    <tr class="text-monospace">
+
+        {{-- Setting row color in red for 'cuentas' deleted after inventory cutoffdate --}}
+        @if( $row_inventario->registros_en_baja->isNotEmpty() )
+                <tr class="table-danger text-monospace">
+        @else
+                <tr class="table-success text-monospace">
+        @endif
                         <td class="small"><strong>{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</strong></td>
                         <td class="small">{{ $row_inventario->cuenta }}</td>
                         <td class="small">{{ $row_inventario->ciz_1 ? 1 : '-' }}|{{ $row_inventario->ciz_2 ? 2 : '-' }}|{{ $row_inventario->ciz_3 ?  3 : '-' }}</td>
@@ -70,6 +77,7 @@
                         <td class="small">{{ $row_inventario->gpo_owner->name }}</td>
                         <td class="small">{{ $row_inventario->install_data }}</td>
                         <td class="small">{{ $row_inventario->work_area->name }}</td>
+                        <td class="small">{{ $row_inventario->registros_en_baja->isNotEmpty() ? 'BAJA después del corte' : '' }}</td>
                     </tr>
     @empty
             @if( isset($search_word) )

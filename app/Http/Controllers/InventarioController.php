@@ -37,11 +37,12 @@ class InventarioController extends Controller
                 ->where( 'solicitudes.movimiento_id', 1 )
                 ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
                     $list_where
-                        ->whereDate( 'resultado_lotes.attended_at', '>', $cut_off_date ); } 
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
                 );
 
             $new_inventory_list = Inventory_cta::sortable('cuenta')
-                ->with(['gpo_owner', 'work_area'])
+                ->with(['gpo_owner', 'work_area', 'registros_en_baja'])
                 ->where('inventory_id', $inventory_id);
 
             //if is a 'Delegational' user, add delegacion_id to the query
@@ -51,7 +52,7 @@ class InventarioController extends Controller
                 $new_inventory_list = $new_inventory_list->where('delegacion_id', $user_del_id);
             }
 
-            $total_inventario = $new_inventory_list->get()->count();
+            $total_inventario = $new_inventory_list->count();
 
             //And if there's a 'search word', add that word to the query and to the log
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta_inventario') ) {
