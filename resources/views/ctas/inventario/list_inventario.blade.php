@@ -1,9 +1,9 @@
 <div class="container">
 
-    <h5 class="text-primary">Listado (al corte)</h5>
+    <h5 class="text-primary">Listado (Inventario al corte)</h5>
     <br>
 
-    @if(count($list_inventario))
+    
         @can('ver_buscar_cta_inventario')
             <form action="/ctas/inventario">
                 {{ csrf_field() }}
@@ -27,12 +27,13 @@
             <br>
         @endcan
 
+    @if(count($new_inventory_list))
         <div class="row" align="center">
             @if( isset($search_word) )
-                <h5 class="text-success">Cuentas localizadas con '{{ strtoupper($search_word) }}': {{ $list_inventario->total() }} </h5>
+                <h5 class="text-success">Cuentas localizadas con '{{ strtoupper($search_word) }}': {{ $new_inventory_list->total() }} </h5>
             @endif
             <div class="mt-2 mx-auto justify-content-center">
-            {!! $list_inventario->appends(\Request::except('page'))->render() !!}
+            {!! $new_inventory_list->appends(\Request::except('page'))->render() !!}
             </div>
         </div>
 
@@ -42,11 +43,11 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@sortablelink('cuenta', 'Usuario')</th>
-                        <th scope="col">@sortablelink('ciz_id', 'CIZ')</th>
-                        <th scope="col">@sortablelink('name', 'Nombre Completo')</th>
-                        <th scope="col">@sortablelink('gpo_owner_id', 'Grupo')</th>
-                        <th scope="col">@sortablelink('install_data', 'Info')</th>
-                        <th scope="col">@sortablelink('work_area_id', 'Tipo Cuenta')</th>
+                        <th scope="col">@sortablelink('cizs', 'CIZs')</th>
+                        <th scope="col">@sortablelink('name', 'Nombre completo')</th>
+                        <th scope="col">@sortablelink('grupo.name', 'Grupo')</th>
+                        <th scope="col">@sortablelink('install_data', 'Información')</th>
+                        <th scope="col">@sortablelink('tipo_cuenta.name', 'Área / Tipo Cuenta')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,15 +57,15 @@
         $var = 0;
     @endphp
 
-    @forelse( $list_inventario as $row_inventario )
+    @forelse( $new_inventory_list as $row_inventario )
 
         @php
             $var += 1;
         @endphp
                     <tr class="text-monospace">
-                        <td class="small"><strong>{{ ($list_inventario->currentPage() * $list_inventario->perPage()) + $var - $list_inventario->perPage() }}</strong></td>
+                        <td class="small"><strong>{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</strong></td>
                         <td class="small">{{ $row_inventario->cuenta }}</td>
-                        <td class="small">{{ $row_inventario->ciz_id }}</td>
+                        <td class="small">{{ $row_inventario->ciz_1 ? 1 : '-' }}|{{ $row_inventario->ciz_2 ? 2 : '-' }}|{{ $row_inventario->ciz_3 ?  3 : '-' }}</td>
                         <td class="small">{{ $row_inventario->name }}</td>
                         <td class="small">{{ $row_inventario->gpo_owner->name }}</td>
                         <td class="small">{{ $row_inventario->install_data }}</td>
@@ -80,14 +81,14 @@
             <hr>
     @endforelse
 
-    @if(count($list_inventario))
+    @if(count($new_inventory_list))
                 </tbody>
             </table>
         </div>
 
         <div class="row" align="center">
             <div class="mt-2 mx-auto justify-content-center">
-            {!! $list_inventario->appends(\Request::except('page'))->render() !!}
+            {!! $new_inventory_list->appends(\Request::except('page'))->render() !!}
             </div>
         </div>
     @endif
