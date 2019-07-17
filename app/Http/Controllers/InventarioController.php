@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Inventory;
+use App\Inventory_cta;
+use App\Solicitud;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
 class InventarioController extends Controller
 {
 
-    public function home()
+    public function search_inventario(Request $request)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -19,52 +22,81 @@ class InventarioController extends Controller
         $user_del_id = Auth::user()->delegacion_id;
         $user_del_name = Auth::user()->delegacion->name;
 
+        $search_word = $request->input('search_word');
         $texto_log = ' User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
-
-        Log::info('Visitando Inventario ' . $texto_log);
 
         if ( Gate::allows( 'ver_inventario_del') || Gate::allows( 'ver_inventario_gral') )
         {
             $inventory_id = env('INVENTORY_ID');
-            $ca_group_01 = env('CA_GROUP_01');
-            $ca_group_01_eq = env('CA_GROUP_01_EQ');
-
-            $list_inventario = DB::table('detalle_ctas AS D')
-                ->select('D.cuenta', 'D.name', 'D.install_data',
-                    DB::raw("CASE WHEN G1.name = '$ca_group_01_eq' THEN '$ca_group_01' ELSE G1.name END AS gpo_name"),
-                    'W.name AS work_area_name',
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 1 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ1"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 2 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ2"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 3 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ3") )
-                ->join('groups AS G1', 'D.gpo_owner_id', '=', 'G1.id')
-                ->join('work_areas AS W', 'D.work_area_id', '=', 'W.id')
-                ->where( 'D.inventory_id', $inventory_id );
-
-            //if is a 'Delegational' user, add delegacion_id to the query
-            if ( Gate::allows('ver_inventario_del') )
-                $list_inventario = $list_inventario->where('D.delegacion_id', $user_del_id);
-
-            $list_inventario = $list_inventario
-                        ->distinct()
-                        ->orderby('D.work_area_id', 'desc')
-                        ->orderby('D.cuenta')
-                        ->paginate( env('ROWS_ON_PAGINATE'),
-                            ['D.cuenta', 'D.name', 'D.install_data',
-                             'W.name AS work_area_name'] );
 
             $cut_off_date = Inventory::find( $inventory_id )->cut_off_date;
+
+            //Base query new accounts
+            $solicitudes = Solicitud::with( ['gpo_nuevo', 'resultado_solicitud'] )
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->whereDate( 'resultado_lotes.attended_at', '>', $cut_off_date ); } 
+                );
+
+            $new_inventory_list = Inventory_cta::sortable('cuenta')
+                ->with(['gpo_owner', 'work_area'])
+                ->where('inventory_id', $inventory_id);
+
+            //if is a 'Delegational' user, add delegacion_id to the query
+            if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
+                $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
+
+                $new_inventory_list = $new_inventory_list->where('delegacion_id', $user_del_id);
+            }
+
+            $total_inventario = $new_inventory_list->get()->count();
+
+            //And if there's a 'search word', add that word to the query and to the log
+            if ( isset( $search_word ) && Gate::allows('ver_buscar_cta_inventario') ) {
+                
+                $query = '%' . $search_word . '%';
+
+                $new_inventory_list = $new_inventory_list->where(function ($list_where) use ($query) {
+                    $list_where
+                        ->where('cuenta', 'like', $query)
+                        ->orWhere('name', 'like', $query)
+                        ->orWhere('install_data', 'like', $query)
+                        ->orwhereHas( 'gpo_owner', function ( $list_where2 ) use ($query) {
+                            $list_where2
+                                ->where( 'groups.name', 'like', $query ); }
+                        )
+                        ->orwhereHas( 'work_area', function ( $list_where3 ) use ($query) {
+                            $list_where3
+                                ->where( 'work_areas.name', 'like', $query ); }
+                        );
+                });
+
+                $texto_log .= '|Buscando:' . strtoupper($search_word);
+            }
+
+            //Finally add these instructions to any query
+            $solicitudes = $solicitudes->orderby('cuenta')->get();
+
+            $new_inventory_list = $new_inventory_list->paginate( env('ROWS_ON_PAGINATE') );
+
         }
         else {
-
             Log::warning('Sin permisos-Consultar Inventario ' . $texto_log);
             return redirect('ctas')->with('message', 'No tiene permitido consultar el inventario.');
         }
 
-        return view('ctas/inventario/show',
-            compact('list_inventario' ,
+        Log::info('Ver Inventario ' . $texto_log);
+        return view('ctas/inventario/home_inventario',
+            compact('solicitudes' ,
+                    'new_inventory_list',
+                    'total_inventario',
                     'cut_off_date',
                     'user_del_name',
-                    'user_del_id') );
+                    'user_del_id',
+                    'search_word') );
 
     }
+
 }
