@@ -37,9 +37,9 @@
             </div>
         </div>
 
-        <div class="table table-hover table-sm">
-            <table class="table">
-                <thead class="thead-primary">
+        <div>
+            <table class="table table-sm table-striped">
+                <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">@sortablelink('cuenta', 'Usuario')</th>
@@ -66,11 +66,15 @@
 
         {{-- Setting row color in red for 'cuentas' deleted after inventory cutoffdate --}}
         @if( $row_inventario->registros_en_baja->isNotEmpty() )
+            @if ($row_inventario->registros_en_baja[0]->solicitud->movimiento_id == 3)
+                <tr class="table-warning text-monospace">
+            @else
                 <tr class="table-danger text-monospace">
+            @endif
         @else
-                <tr class="table-success text-monospace">
+                <tr class="text-monospace">
         @endif
-                    <td class="small"><strong>{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</strong></td>
+                    <th scope="row">{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</th>
                     <td class="small">{{ $row_inventario->cuenta }}</td>
                     <td class="small">{{ $row_inventario->ciz_1 ? 1 : '-' }}|{{ $row_inventario->ciz_2 ? 2 : '-' }}|{{ $row_inventario->ciz_3 ?  3 : '-' }}</td>
                     <td class="small">{{ $row_inventario->name }}</td>
@@ -80,10 +84,14 @@
                     <td class="small text-wrap" style="width: 16rem;">
                     @if( $row_inventario->registros_en_baja->isNotEmpty() )
                         @forelse( $row_inventario->registros_en_baja as $registro_en_baja )
-                                <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $registro_en_baja->solicitud_id }}">
-                                    {{ $registro_en_baja->name ? 
+                            <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $registro_en_baja->solicitud_id }}">
+                            @if ($registro_en_baja->solicitud->movimiento_id == 3)
+                                {{ 'CAMBIO|Grupo nuevo: ' . $registro_en_baja->solicitud->gpo_nuevo->name }}
+                            @else
+                                {{ $registro_en_baja->name ? 
                                     'BAJA|Nombre que reportó Mainframe: ' . $registro_en_baja->name : 'BAJA' }}
-                                </a>
+                            @endif
+                            </a>
                         @empty
 
                         @endforelse

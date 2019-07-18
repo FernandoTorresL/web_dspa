@@ -21,6 +21,11 @@ class Inventory_cta extends Model
                             'delegacion_id', 
                             'work_area_id'];
 
+    public function solicitud()
+    {
+        return $this->belongsTo(Solicitud::class);
+    }
+
     public function registros_en_baja()
     {
         $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
@@ -28,13 +33,14 @@ class Inventory_cta extends Model
         $registros_en_baja = 
                         $this
                         ->hasMany(Resultado_Solicitud::class, 'cuenta', 'cuenta')
+                        ->with('solicitud', 'solicitud.gpo_nuevo')
                         ->where('rechazo_mainframe_id', NULL)
                         ->whereHas( 'resultado_lote', function ( $list_where ) use ($cut_off_date) {
                             $list_where
                                 ->where( 'resultado_lotes.attended_at', '>', $cut_off_date ); } )
                         ->whereHas( 'solicitud', function ( $list_where ) {
                             $list_where
-                                ->where( 'solicitudes.movimiento_id', 2 ); } 
+                                ->whereIn( 'solicitudes.movimiento_id', [2, 3] ); } 
                         );
 
         return $registros_en_baja;
