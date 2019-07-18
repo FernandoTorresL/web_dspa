@@ -70,15 +70,26 @@
         @else
                 <tr class="table-success text-monospace">
         @endif
-                        <td class="small"><strong>{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</strong></td>
-                        <td class="small">{{ $row_inventario->cuenta }}</td>
-                        <td class="small">{{ $row_inventario->ciz_1 ? 1 : '-' }}|{{ $row_inventario->ciz_2 ? 2 : '-' }}|{{ $row_inventario->ciz_3 ?  3 : '-' }}</td>
-                        <td class="small">{{ $row_inventario->name }}</td>
-                        <td class="small">{{ $row_inventario->gpo_owner->name }}</td>
-                        <td class="small">{{ $row_inventario->install_data }}</td>
-                        <td class="small">{{ $row_inventario->work_area->name }}</td>
-                        <td class="small">{{ $row_inventario->registros_en_baja->isNotEmpty() ? 'BAJA después del corte' : '' }}</td>
-                    </tr>
+                    <td class="small"><strong>{{ ($new_inventory_list->currentPage() * $new_inventory_list->perPage()) + $var - $new_inventory_list->perPage() }}</strong></td>
+                    <td class="small">{{ $row_inventario->cuenta }}</td>
+                    <td class="small">{{ $row_inventario->ciz_1 ? 1 : '-' }}|{{ $row_inventario->ciz_2 ? 2 : '-' }}|{{ $row_inventario->ciz_3 ?  3 : '-' }}</td>
+                    <td class="small">{{ $row_inventario->name }}</td>
+                    <td class="small">{{ $row_inventario->gpo_owner->name }}</td>
+                    <td class="small text-wrap" style="width: 8rem;">{{ $row_inventario->install_data }}</td>
+                    <td class="small text-wrap" style="width: 16rem;">{{ $row_inventario->work_area->name }}</td>
+                    <td class="small text-wrap" style="width: 16rem;">
+                    @if( $row_inventario->registros_en_baja->isNotEmpty() )
+                        @forelse( $row_inventario->registros_en_baja as $registro_en_baja )
+                                <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $registro_en_baja->solicitud_id }}">
+                                    {{ $registro_en_baja->name ? 
+                                    'BAJA|Nombre que reportó Mainframe: ' . $registro_en_baja->name : 'BAJA' }}
+                                </a>
+                        @empty
+
+                        @endforelse
+                    @endif
+                    </td>
+                </tr>
     @empty
             @if( isset($search_word) )
                 <h5 class="text-primary">No se localizan cuentas en el inventario con '{{ strtoupper($search_word) }}'</h5>
