@@ -28,6 +28,7 @@ class Inventory_cta extends Model
         $registros_en_baja = 
                         $this
                         ->hasMany(Resultado_Solicitud::class, 'cuenta', 'cuenta')
+                        ->where('rechazo_mainframe_id', NULL)
                         ->whereHas( 'resultado_lote', function ( $list_where ) use ($cut_off_date) {
                             $list_where
                                 ->where( 'resultado_lotes.attended_at', '>', $cut_off_date ); } )
