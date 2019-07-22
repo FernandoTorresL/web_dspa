@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Solicitud;
 use App\Subdelegacion;
+use App\Inventory_cta;
+use App\Inventory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
-class CuentasController extends Controller
+class CuentasHomeController extends Controller
 {
     public function __construct()
     {
@@ -20,36 +22,31 @@ class CuentasController extends Controller
     {
 
         $user = Auth::user();
-        $user_id = Auth::user()->id;
+/*         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;
+        $user_job_name = Auth::user()->job->name;
         $user_del_id = Auth::user()->delegacion_id;
-        $user_del_name = Auth::user()->delegacion->name;
+        $user_del_name = Auth::user()->delegacion->name; */
 
-        $texto_log = ' User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
+        $texto_log = 'User_id:' . $user->id . '|User:' . $user->name . '|Del:' . $user->delegacion_id . '|Job:' . $user->job->id;
 
         Log::info('Visitando Ctas-Home ' . $texto_log);
 
-        if ($user->hasRole('capturista_dspa')) {
-            $primer_renglon = 'Nivel Central - DSPA';
+        if ( $user->hasRole('capturista_dspa') || $user->hasRole('capturista_cceyvd') ) {
+            $primer_renglon = $user->delegacion->name . ' - ' . $user->job->name;
             return view('ctas.home_ctas', [
                 'primer_renglon'    => $primer_renglon,
             ]);
         }
-        elseif ($user->hasRole('capturista_cceyvd'))
+        elseif ( $user->hasRole('capturista_delegacional') )
+        // elseif ( $user->hasRole('capturista_dspa') )
         {
-            $primer_renglon = 'Nivel Central - CCEyVD';
-            return view('ctas.home_ctas', [
-                'primer_renglon'    => $primer_renglon,
-            ]);
-        }
-        elseif ($user->hasRole('capturista_delegacional'))
-        {
-            //$del_id = Auth::user()->delegacion_id;
 
-            $primer_renglon = 'Delegación ' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ' ' . $user_del_name;
-            $subdelegaciones = Subdelegacion::where('delegacion_id', $user_del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
-
+            $primer_renglon = 'Delegación ' . str_pad($user->delegacion->id, 2, '0', STR_PAD_LEFT) . ' ' . $user->delegacion->name;
+            $subdelegaciones = Subdelegacion::where('delegacion_id', $user->delegacion->id)
+                                            ->where('status', '<>', 0)
+                                            ->orderBy('num_sub', 'asc')->get();
 
             $inventory_id = env('INVENTORY_ID');
             $ca_group_01 = env('CA_GROUP_01');
@@ -65,96 +62,228 @@ class CuentasController extends Controller
                 ->join('groups AS G1', 'D.gpo_owner_id', '=', 'G1.id')
                 ->join('work_areas AS W', 'D.work_area_id', '=', 'W.id')
                 ->where( 'D.inventory_id', $inventory_id )
-                ->where('D.delegacion_id', $user_del_id)
+                ->where('D.delegacion_id', $user->delegacion->id)
                 ->distinct()->get()->count();
 
-            $total_ctas_genericas = DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('work_area_id', 2)->distinct()->get()->count();
-            $total_ctas_clas =      DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('work_area_id', 4)->distinct()->get()->count();
-            $total_ctas_fisca =     DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('work_area_id', 46)->distinct()->get()->count();
-            $total_ctas_svc =       DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('work_area_id', 6)->distinct()->get()->count();
-            $total_ctas_cobranza =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('work_area_id', 50)->distinct()->get()->count();
+            $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
+
+            $total_ctas_genericas = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 2)
+                ->get()->count();
+            
+            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 2)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_genericas = $total_ctas_genericas - $registros_en_baja;
+            
+
+            $total_ctas_clas =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 4)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 4)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_clas = $total_ctas_clas - $registros_en_baja;
 
 
-            $total_ctas_SSJSAV =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('gpo_owner_id', 1)->distinct()->get()->count();
-            $total_ctas_SSJDAV =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('gpo_owner_id', 2)->distinct()->get()->count();
-            $total_ctas_SSJOFA =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('gpo_owner_id', 3)->distinct()->get()->count();
+            $total_ctas_fisca =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 46)
+                ->get()->count();
 
-            /*$solicitudes = $solicitudes->where(function ($list_where) use ($query) {
-                $list_where
-                    ->where('solicitudes.cuenta', 'like', $query)
-                    ->orWhere('solicitudes.primer_apellido', 'like', $query)
-                    ->orWhere('solicitudes.segundo_apellido', 'like', $query)
-                    ->orWhere('solicitudes.nombre', 'like', $query)
-                    ->orWhere('solicitudes.matricula', 'like', $query)
-                    ->orWhere('solicitudes.curp', 'like', $query);
-            });*/
+            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 46)
+                ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSCONS = DB::table('detalle_ctas')->
-                        select('cuenta')
-                        ->where('delegacion_id', $user_del_id)
-                        ->where( 'inventory_id', $inventory_id)
-                        ->where( function ($list_where) use ($user_del_id, $inventory_id)
+            $total_ctas_fisca = $total_ctas_fisca - $registros_en_baja;
+            
+
+            $total_ctas_svc =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 6)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 6)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_svc = $total_ctas_svc - $registros_en_baja;
+            
+            
+            $total_ctas_cobranza =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 50)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::with('solicitud_with_baja')
+                ->where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('work_area_id', 50)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_cobranza = $total_ctas_cobranza - $registros_en_baja;
+            
+
+            $total_ctas_SSJSAV =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 1)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 1)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_SSJSAV = $total_ctas_SSJSAV - $registros_en_baja;
+
+
+            $total_ctas_SSJDAV =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 2)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 2)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_SSJDAV = $total_ctas_SSJDAV - $registros_en_baja;
+
+
+            $total_ctas_SSJOFA =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 3)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 3)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_SSJOFA = $total_ctas_SSJOFA - $registros_en_baja;
+
+
+            $total_ctas_SSCONS =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where( 'inventory_id', $inventory_id)
+                        ->where( function ($list_where) 
+                                {
+                                    $list_where
+                                    ->where('gpo_owner_id', 7)
+                                    ->orWhere('gpo_owner_id', 85);
+                                })->get()->count();
+
+            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where( function ($list_where) 
                                 {
                                     $list_where
                                     ->where('gpo_owner_id', 7)
                                     ->orWhere('gpo_owner_id', 85);
                                 })
-                        ->distinct()->get()->count();
+                ->whereHas('solicitud_with_baja')->get()->count();
 
-            /*$total_ctas_SSCONS =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)
-                            ->where('gpo_owner_id', 7)->orWhere('gpo_owner_id', 85)->distinct()->get()->count();*/
-            $total_ctas_SSADIF =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('gpo_owner_id', 12)->distinct()->get()->count();
-            $total_ctas_SSOPER =    DB::table('detalle_ctas')->
-                            select('cuenta')
-                            ->where('delegacion_id', $user_del_id)
-                            ->where( 'inventory_id', $inventory_id)->where('gpo_owner_id', 6)->distinct()->get()->count();
+            $total_ctas_SSCONS = $total_ctas_SSCONS - $registros_en_baja;
 
-            return view('ctas.home_ctas', [
-                'primer_renglon'       => $primer_renglon,
-                'subdelegaciones'      => $subdelegaciones,
-                'total_ctas'           => $total_ctas,
-                'total_ctas_genericas' => $total_ctas_genericas,
-                'total_ctas_clas'      => $total_ctas_clas,
-                'total_ctas_fisca'     => $total_ctas_fisca,
-                'total_ctas_svc'       => $total_ctas_svc,
-                'total_ctas_cobranza'  => $total_ctas_cobranza,
-                'total_ctas_SSJSAV'    => $total_ctas_SSJSAV,
-                'total_ctas_SSJDAV'    => $total_ctas_SSJDAV,
-                'total_ctas_SSJOFA'    => $total_ctas_SSJOFA,
-                'total_ctas_SSCONS'    => $total_ctas_SSCONS,
-                'total_ctas_SSADIF'    => $total_ctas_SSADIF,
-                'total_ctas_SSOPER'    => $total_ctas_SSOPER,
-            ]);
+
+
+
+
+            $total_inventario_SSADIF =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 12)
+                ->get()->count();
+
+            $registros_nuevos_SSADIF = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 12)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSADIF = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 12)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSADIF = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 12)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $registros_cambio_anteriores_SSADIF = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 12)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SSADIF = $total_inventario_SSADIF + $registros_nuevos_SSADIF + $registros_cambio_nuevos_SSADIF 
+                - $registros_en_baja_SSADIF - $registros_cambio_anteriores_SSADIF;
+
+
+            $total_ctas_SSOPER =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 6)
+                ->get()->count();
+
+            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->where('gpo_owner_id', 6)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_SSOPER = $total_ctas_SSOPER - $registros_en_baja;
+
+            return view('ctas.home_ctas', 
+                compact( 'primer_renglon', 
+                    'subdelegaciones',
+                    'total_ctas',
+                    'total_ctas_genericas',
+                    'total_ctas_clas',
+                    'total_ctas_fisca',
+                'total_ctas_svc',
+                'total_ctas_cobranza',
+                'total_ctas_SSJSAV',
+                'total_ctas_SSJDAV',
+                'total_ctas_SSJOFA',
+                'total_ctas_SSCONS',
+
+                'total_ctas_SSADIF',
+                'total_inventario_SSADIF', 
+                'registros_nuevos_SSADIF', 
+                'registros_cambio_nuevos_SSADIF', 
+                'registros_en_baja_SSADIF', 
+                'registros_cambio_anteriores_SSADIF',
+
+                'total_ctas_SSOPER') );
         }
         else return "No estas autorizado a ver esta página";
     }
@@ -163,8 +292,8 @@ class CuentasController extends Controller
 
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
-        $user_del_id = Auth::user()->delegacion_id;
-        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        $user->delegacion->id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user->delegacion->id;
 
         if (Gate::allows('ver_resumen_admin_ctas')) {
             Log::info('Ver Resumen' . $texto_log);
@@ -215,8 +344,8 @@ class CuentasController extends Controller
     public function show_admin_tabla() {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
-        $user_del_id = Auth::user()->delegacion_id;
-        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        $user->delegacion->id = Auth::user()->delegacion_id;
+        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user->delegacion->id;
 
         if (Gate::allows('genera_tabla_oficio')) {
 

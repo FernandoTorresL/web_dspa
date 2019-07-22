@@ -102,8 +102,17 @@
                 <li class="list-group-item">
                     SSCONS <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSCONS }}</span>
                 </li>
+
                 <li class="list-group-item">
-                    SSADIF <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSADIF }}</span>
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSADIF }}
+                        +Nuevas:{{ $registros_nuevos_SSADIF }}
+                        +Cambios(a SSADIF):{{ $registros_cambio_nuevos_SSADIF }}
+                        -Bajas:{{ $registros_en_baja_SSADIF }}
+                        -Cambios(dejan SSADIF):{{ $registros_cambio_anteriores_SSADIF }}">
+                        SSADIF <span class="badge badge-light">{{ $total_ctas_SSADIF }}</span>
+                    </button>
                 </li>
                 <li class="list-group-item">
                     SSOPER <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSOPER }}</span>

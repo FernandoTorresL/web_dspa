@@ -3,9 +3,10 @@
 @section('title', 'Módulo Gestión de Cuentas')
 
 @section('content')
+
     <div class="container">
         <div class="row">
-            <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
+            <a class="nav-link" href="{{ url('/') }}">Inicio</a>
             <a class="nav-link" href="{{ url()->previous() }}">Regresar</a>
         </div>
 
@@ -15,9 +16,18 @@
             </div>
         @endif
 
+        <div class="card-header card text-white bg-primary">
+            <p class="h4">
+                {{ $primer_renglon }}
+            </p>
+        </div>
+        <br>
+
+
+
         <div class="row">
             <div class="card-body">
-                <h4 class="card-title">{{ $primer_renglon }}</h4>
+                <h4 class="card-title"></h4>
             </div>
         </div>
 
