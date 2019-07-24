@@ -50,8 +50,16 @@
                     @endphp
                 @endif
                 <li class="list-group-item">
-                    SSJSAV <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJSAV }}</span>
-                    <small class="text-muted">{{ $mensaje }}</small>
+                    <button type="button" class="btn btn-{{ $color }}" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSJSAV }}
+                        +Nuevas:{{ $registros_nuevos_SSJSAV }}
+                        +Cambios(a SSJSAV):{{ $registros_cambio_nuevos_SSJSAV }}
+                        -Bajas:{{ $registros_en_baja_SSJSAV }}
+                        -Cambios(dejan SSJSAV):{{ $registros_cambio_anteriores_SSJSAV }}">
+                        SSJSAV <span class="badge badge-light">{{ $total_ctas_SSJSAV }}</span>
+                        <small class="text-muted text-color-dark">{{ $mensaje }}</small>
+                    </button>
                 </li>
 
                 @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
@@ -72,8 +80,16 @@
                     @endphp
                 @endif
                 <li class="list-group-item">
-                    SSJDAV <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJDAV }}</span>
-                    <small class="text-muted">{{ $mensaje }}</small>
+                    <button type="button" class="btn btn-{{ $color }}" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSJDAV }}
+                        +Nuevas:{{ $registros_nuevos_SSJDAV }}
+                        +Cambios(a SSJDAV):{{ $registros_cambio_nuevos_SSJDAV }}
+                        -Bajas:{{ $registros_en_baja_SSJDAV }}
+                        -Cambios(dejan SSJDAV):{{ $registros_cambio_anteriores_SSJDAV }}">
+                        SSJDAV <span class="badge badge-light">{{ $total_ctas_SSJDAV }}</span>
+                        <small class="text-muted text-color-dark">{{ $mensaje }}</small>
+                    </button>
                 </li>
 
                 @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
@@ -96,11 +112,28 @@
                     @endphp
                 @endif
                 <li class="list-group-item">
-                    SSJOFA <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_SSJOFA }}</span>
-                    <p><small class="text-muted">{{ $mensaje }}</small></p>
+                    <button type="button" class="btn btn-{{ $color }}" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSJOFA }}
+                        +Nuevas:{{ $registros_nuevos_SSJOFA }}
+                        +Cambios(a SSJOFA):{{ $registros_cambio_nuevos_SSJOFA }}
+                        -Bajas:{{ $registros_en_baja_SSJOFA }}
+                        -Cambios(dejan SSJOFA):{{ $registros_cambio_anteriores_SSJOFA }}">
+                        SSJOFA <span class="badge badge-light">{{ $total_ctas_SSJOFA }}</span>
+                        <small class="text-muted text-color-dark">{{ $mensaje }}</small>
+                    </button>
                 </li>
+
                 <li class="list-group-item">
-                    SSCONS <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSCONS }}</span>
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSCONS }}
+                        +Nuevas:{{ $registros_nuevos_SSCONS }}
+                        +Cambios(a SSCONS):{{ $registros_cambio_nuevos_SSCONS }}
+                        -Bajas:{{ $registros_en_baja_SSCONS }}
+                        -Cambios(dejan SSCONS):{{ $registros_cambio_anteriores_SSCONS }}">
+                        SSCONS <span class="badge badge-light">{{ $total_ctas_SSCONS }}</span>
+                    </button>
                 </li>
 
                 <li class="list-group-item">
@@ -114,8 +147,17 @@
                         SSADIF <span class="badge badge-light">{{ $total_ctas_SSADIF }}</span>
                     </button>
                 </li>
+                
                 <li class="list-group-item">
-                    SSOPER <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_SSOPER }}</span>
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SSOPER }}
+                        +Nuevas:{{ $registros_nuevos_SSOPER }}
+                        +Cambios(a SSOPER):{{ $registros_cambio_nuevos_SSOPER }}
+                        -Bajas:{{ $registros_en_baja_SSOPER }}
+                        -Cambios(dejan SSOPER):{{ $registros_cambio_anteriores_SSOPER }}">
+                        SSOPER <span class="badge badge-light"> {{ $total_ctas_SSOPER }}</span>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -134,7 +176,7 @@
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
-                @if($total_ctas_genericas == 0 )
+                @if($total_ctas_Genericas == 0 )
                     @php
                         $color = 'success';
                         $mensaje = '';
@@ -146,10 +188,15 @@
                     @endphp
                 @endif
                 <li class="list-group-item">
-                    Genéricas <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_genericas }}</span>
-                    <small class="text-muted">{{ $mensaje }}</small>
+                    <button type="button" class="btn btn-{{ $color }}" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_Genericas }}
+                        -Bajas:{{ $registros_en_baja_Genericas }}">
+                        Genéricas <span class="badge badge-light"> {{ $total_ctas_Genericas }}</span>
+                    </button>
                 </li>
-                @if($total_ctas_svc <= 1 )
+
+                @if($total_ctas_SVC <= 1 )
                     @php
                         $color = 'success';
                         $mensaje = '';
@@ -161,18 +208,48 @@
                     @endphp
                 @endif
                 <li class="list-group-item">
-                    SVC <span class="float-right badge badge-pill badge-{{ $color }}">{{ $total_ctas_svc }}</span>
-                    <small class="text-muted">{{ $mensaje }}</small>
+                    <button type="button" class="btn btn-{{ $color }}" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_SVC }}
+                        +Nuevas:{{ $registros_nuevos_SVC }}
+                        +Cambios(a SVC):{{ $registros_cambio_nuevos_SVC }}
+                        -Bajas:{{ $registros_en_baja_SVC }}
+                        -Cambios(dejan SVC):{{ $registros_cambio_anteriores_SVC }}">
+                        SVC <span class="badge badge-light"> {{ $total_ctas_SVC }}</span>
+                    </button>
                 </li>
+
                 <li class="list-group-item">
-                    Clasificación <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_clas }}</span>
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_Clas }}
+                        +Nuevas:{{ $registros_nuevos_Clas }}
+                        +Cambios(a Clasificación):{{ $registros_cambio_nuevos_Clas }}
+                        -Bajas:{{ $registros_en_baja_Clas }}
+                        -Cambios(dejan Clasificación):{{ $registros_cambio_anteriores_Clas }}">
+                        Clasificación y Vigencia <span class="badge badge-light"> {{ $total_ctas_Clas }}</span>
+                    </button>
                 </li>
+                
                 <li class="list-group-item">
-                    Fiscalización <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_fisca }}</span>
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_inventario_Fisca }}
+                        +Nuevas:{{ $registros_nuevos_Fisca }}
+                        +Cambios(a Fiscalización):{{ $registros_cambio_nuevos_Fisca }}
+                        -Bajas:{{ $registros_en_baja_Fisca }}
+                        -Cambios(dejan Fiscalización):{{ $registros_cambio_anteriores_Fisca }}">
+                        Fiscalización <span class="badge badge-light"> {{ $total_ctas_Fisca }}</span>
+                    </button>
                 </li>
-                    <li class="list-group-item">
-                        Cobranza <span class="float-right badge badge-pill badge-primary">{{ $total_ctas_cobranza }}</span>
-                    </li>
+
+                <li class="list-group-item">
+                    <button type="button" class="btn btn-primary" 
+                    data-toggle="tooltip" data-placement="top" 
+                        title="Inventario:{{ $total_ctas_Cobranza }}">
+                        Cobranza <span class="badge badge-light"> {{ $total_ctas_Cobranza }}</span>
+                    </button>
+                </li>
             </ul>
         </div>
 

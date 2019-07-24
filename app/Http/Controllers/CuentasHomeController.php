@@ -67,143 +67,341 @@ class CuentasHomeController extends Controller
 
             $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
 
-            $total_ctas_genericas = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $total_inventario_Genericas =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 2)
                 ->get()->count();
-            
-            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+
+            $registros_nuevos_Genericas = 0;
+
+            $registros_cambio_nuevos_Genericas = 0;
+
+            $registros_en_baja_Genericas = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 2)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_genericas = $total_ctas_genericas - $registros_en_baja;
+            $registros_cambio_anteriores_Genericas = 0;
+
+            $total_ctas_Genericas = $total_inventario_Genericas + $registros_nuevos_Genericas + $registros_cambio_nuevos_Genericas 
+                - $registros_en_baja_Genericas - $registros_cambio_anteriores_Genericas;
+
+
             
 
-            $total_ctas_clas =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $total_inventario_Clas =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 4)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $registros_nuevos_Clas = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereIn('solicitudes.gpo_nuevo_id', [4, 5, 8, 9, 10, 11, 24])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_Clas = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->whereIn('solicitudes.gpo_nuevo_id', [4, 5, 8, 9, 10, 11, 24])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_Clas = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 4)
+                ->whereIn('gpo_owner_id', [4, 5, 8, 9, 10, 11, 24])
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_clas = $total_ctas_clas - $registros_en_baja;
+            $registros_cambio_anteriores_Clas = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->whereIn('solicitudes.gpo_actual_id', [4, 5, 8, 9, 10, 11, 24])
+                ->whereNotIn('solicitudes.gpo_nuevo_id', [4, 5, 8, 9, 10, 11, 24])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_Clas = $total_inventario_Clas + $registros_nuevos_Clas + $registros_cambio_nuevos_Clas 
+                - $registros_en_baja_Clas - $registros_cambio_anteriores_Clas;
 
 
-            $total_ctas_fisca =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $total_inventario_Fisca =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 46)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $registros_nuevos_Fisca = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 25)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_Fisca = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 25)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_Fisca = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 46)
+                ->where('gpo_owner_id', 25)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_fisca = $total_ctas_fisca - $registros_en_baja;
+            $registros_cambio_anteriores_Fisca = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 25)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_Fisca = $total_inventario_Fisca + $registros_nuevos_Fisca + $registros_cambio_nuevos_Fisca 
+                - $registros_en_baja_Fisca - $registros_cambio_anteriores_Fisca;
             
 
-            $total_ctas_svc =  Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $total_inventario_SVC =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 6)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::with(['gpo_owner', 'work_area', 'solicitud_with_baja'])
-                ->where('inventory_id', $inventory_id)
+            $registros_nuevos_SVC = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 18)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SVC = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 18)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SVC = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 6)
+                ->where('gpo_owner_id', 18)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_svc = $total_ctas_svc - $registros_en_baja;
+            $registros_cambio_anteriores_SVC = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 18)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SVC = $total_inventario_SVC + $registros_nuevos_SVC + $registros_cambio_nuevos_SVC 
+                - $registros_en_baja_SVC - $registros_cambio_anteriores_SVC;
             
             
-            $total_ctas_cobranza =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_ctas_Cobranza =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('work_area_id', 50)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::with('solicitud_with_baja')
-                ->where('inventory_id', $inventory_id)
-                ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 50)
-                ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_cobranza = $total_ctas_cobranza - $registros_en_baja;
-            
-
-            $total_ctas_SSJSAV =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_inventario_SSJSAV =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 1)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+            $registros_nuevos_SSJSAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 1)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSJSAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 1)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSJSAV = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 1)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSJSAV = $total_ctas_SSJSAV - $registros_en_baja;
+            $registros_cambio_anteriores_SSJSAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 1)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SSJSAV = $total_inventario_SSJSAV + $registros_nuevos_SSJSAV + $registros_cambio_nuevos_SSJSAV 
+                - $registros_en_baja_SSJSAV - $registros_cambio_anteriores_SSJSAV;
 
 
-            $total_ctas_SSJDAV =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_inventario_SSJDAV =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 2)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+            $registros_nuevos_SSJDAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 2)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSJDAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 2)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSJDAV = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 2)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSJDAV = $total_ctas_SSJDAV - $registros_en_baja;
+            $registros_cambio_anteriores_SSJDAV = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 2)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SSJDAV = $total_inventario_SSJDAV + $registros_nuevos_SSJDAV + $registros_cambio_nuevos_SSJDAV 
+                - $registros_en_baja_SSJDAV - $registros_cambio_anteriores_SSJDAV;
 
 
-            $total_ctas_SSJOFA =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_inventario_SSJOFA =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 3)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+            $registros_nuevos_SSJOFA = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 3)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSJOFA = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 3)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSJOFA = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 3)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSJOFA = $total_ctas_SSJOFA - $registros_en_baja;
+            $registros_cambio_anteriores_SSJOFA = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 3)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SSJOFA = $total_inventario_SSJOFA + $registros_nuevos_SSJOFA + $registros_cambio_nuevos_SSJOFA 
+                - $registros_en_baja_SSJOFA - $registros_cambio_anteriores_SSJOFA;
 
 
-            $total_ctas_SSCONS =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_inventario_SSCONS =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where( 'inventory_id', $inventory_id)
-                        ->where( function ($list_where) 
-                                {
-                                    $list_where
-                                    ->where('gpo_owner_id', 7)
-                                    ->orWhere('gpo_owner_id', 85);
-                                })->get()->count();
+                ->whereIn('gpo_owner_id', [7, 85])
+                ->get()->count();
 
-            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+            $registros_nuevos_SSCONS = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereIn('solicitudes.gpo_nuevo_id', [7, 85])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSCONS = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->whereIn('solicitudes.gpo_nuevo_id', [7, 85])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSCONS = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where( function ($list_where) 
-                                {
-                                    $list_where
-                                    ->where('gpo_owner_id', 7)
-                                    ->orWhere('gpo_owner_id', 85);
-                                })
+                ->whereIn('gpo_owner_id', [7, 85])
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSCONS = $total_ctas_SSCONS - $registros_en_baja;
+            $registros_cambio_anteriores_SSCONS = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->whereIn('solicitudes.gpo_actual_id', [7, 85])
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
 
-
-
+            $total_ctas_SSCONS = $total_inventario_SSCONS + $registros_nuevos_SSCONS + $registros_cambio_nuevos_SSCONS 
+                - $registros_en_baja_SSCONS - $registros_cambio_anteriores_SSCONS;
 
 
             $total_inventario_SSADIF =  Inventory_cta::where('inventory_id', $inventory_id)
@@ -250,31 +448,111 @@ class CuentasHomeController extends Controller
                 - $registros_en_baja_SSADIF - $registros_cambio_anteriores_SSADIF;
 
 
-            $total_ctas_SSOPER =  Inventory_cta::where('inventory_id', $inventory_id)
+            $total_inventario_SSOPER =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 6)
                 ->get()->count();
 
-            $registros_en_baja = Inventory_cta::where('inventory_id', $inventory_id)
+            $registros_nuevos_SSOPER = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->where('solicitudes.gpo_nuevo_id', 6)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_cambio_nuevos_SSOPER = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_nuevo_id', 6)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_SSOPER = Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->where('gpo_owner_id', 6)
                 ->whereHas('solicitud_with_baja')->get()->count();
 
-            $total_ctas_SSOPER = $total_ctas_SSOPER - $registros_en_baja;
+            $registros_cambio_anteriores_SSOPER = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 3 )
+                ->where('solicitudes.gpo_actual_id', 6)
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $total_ctas_SSOPER = $total_inventario_SSOPER + $registros_nuevos_SSOPER + $registros_cambio_nuevos_SSOPER 
+                - $registros_en_baja_SSOPER - $registros_cambio_anteriores_SSOPER;
 
             return view('ctas.home_ctas', 
                 compact( 'primer_renglon', 
                     'subdelegaciones',
                     'total_ctas',
-                    'total_ctas_genericas',
-                    'total_ctas_clas',
-                    'total_ctas_fisca',
-                'total_ctas_svc',
-                'total_ctas_cobranza',
+
+                'total_ctas_Genericas',
+                'total_inventario_Genericas', 
+                'registros_nuevos_Genericas', 
+                'registros_cambio_nuevos_Genericas', 
+                'registros_en_baja_Genericas', 
+                'registros_cambio_anteriores_Genericas',
+                
+                'total_ctas_Clas',
+                'total_inventario_Clas', 
+                'registros_nuevos_Clas', 
+                'registros_cambio_nuevos_Clas', 
+                'registros_en_baja_Clas', 
+                'registros_cambio_anteriores_Clas',
+                
+                'total_ctas_Fisca',
+                'total_inventario_Fisca', 
+                'registros_nuevos_Fisca', 
+                'registros_cambio_nuevos_Fisca', 
+                'registros_en_baja_Fisca', 
+                'registros_cambio_anteriores_Fisca',
+                
+                'total_ctas_SVC',
+                'total_inventario_SVC', 
+                'registros_nuevos_SVC', 
+                'registros_cambio_nuevos_SVC', 
+                'registros_en_baja_SVC', 
+                'registros_cambio_anteriores_SVC',
+
+                'total_ctas_Cobranza',
+                
                 'total_ctas_SSJSAV',
+                'total_inventario_SSJSAV', 
+                'registros_nuevos_SSJSAV', 
+                'registros_cambio_nuevos_SSJSAV', 
+                'registros_en_baja_SSJSAV', 
+                'registros_cambio_anteriores_SSJSAV',
+                
                 'total_ctas_SSJDAV',
+                'total_inventario_SSJDAV', 
+                'registros_nuevos_SSJDAV', 
+                'registros_cambio_nuevos_SSJDAV', 
+                'registros_en_baja_SSJDAV', 
+                'registros_cambio_anteriores_SSJDAV',
+                
                 'total_ctas_SSJOFA',
+                'total_inventario_SSJOFA', 
+                'registros_nuevos_SSJOFA', 
+                'registros_cambio_nuevos_SSJOFA', 
+                'registros_en_baja_SSJOFA', 
+                'registros_cambio_anteriores_SSJOFA',
+                
                 'total_ctas_SSCONS',
+                'total_inventario_SSCONS', 
+                'registros_nuevos_SSCONS', 
+                'registros_cambio_nuevos_SSCONS', 
+                'registros_en_baja_SSCONS', 
+                'registros_cambio_anteriores_SSCONS',
 
                 'total_ctas_SSADIF',
                 'total_inventario_SSADIF', 
@@ -283,7 +561,14 @@ class CuentasHomeController extends Controller
                 'registros_en_baja_SSADIF', 
                 'registros_cambio_anteriores_SSADIF',
 
-                'total_ctas_SSOPER') );
+                'total_ctas_SSOPER',
+                'total_inventario_SSOPER', 
+                'registros_nuevos_SSOPER', 
+                'registros_cambio_nuevos_SSOPER', 
+                'registros_en_baja_SSOPER', 
+                'registros_cambio_anteriores_SSOPER',
+
+                ) );
         }
         else return "No estas autorizado a ver esta página";
     }
