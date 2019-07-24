@@ -43,7 +43,8 @@ class CuentasHomeController extends Controller
         // elseif ( $user->hasRole('capturista_dspa') )
         {
 
-            $primer_renglon = 'Delegación ' . str_pad($user->delegacion->id, 2, '0', STR_PAD_LEFT) . ' ' . $user->delegacion->name;
+            $primer_renglon = 'Delegación ' . str_pad($user->delegacion->id, 2, '0', STR_PAD_LEFT) . ' - ' . $user->delegacion->name;
+ 
             $subdelegaciones = Subdelegacion::where('delegacion_id', $user->delegacion->id)
                                             ->where('status', '<>', 0)
                                             ->orderBy('num_sub', 'asc')->get();
@@ -51,21 +52,29 @@ class CuentasHomeController extends Controller
             $inventory_id = env('INVENTORY_ID');
             $ca_group_01 = env('CA_GROUP_01');
             $ca_group_01_eq = env('CA_GROUP_01_EQ');
-
-            $total_ctas = DB::table('detalle_ctas AS D')
-                ->select('D.cuenta', 'D.name', 'D.install_data',
-                    DB::raw("CASE WHEN G1.name = '$ca_group_01_eq' THEN '$ca_group_01' ELSE G1.name END AS gpo_name"),
-                    'W.name AS work_area_name',
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 1 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ1"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 2 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ2"),
-                    DB::raw("EXISTS(SELECT 1 FROM detalle_ctas WHERE ciz_id = 3 AND inventory_id = $inventory_id AND cuenta = D.cuenta) AS CIZ3") )
-                ->join('groups AS G1', 'D.gpo_owner_id', '=', 'G1.id')
-                ->join('work_areas AS W', 'D.work_area_id', '=', 'W.id')
-                ->where( 'D.inventory_id', $inventory_id )
-                ->where('D.delegacion_id', $user->delegacion->id)
-                ->distinct()->get()->count();
-
+ 
             $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
+
+
+            $total_inventario_Ctas =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->get()->count();
+
+            $registros_nuevos_Ctas = Solicitud::where('delegacion_id', $user->delegacion->id)
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_Ctas = Inventory_cta::where('inventory_id', $inventory_id)
+                ->where('delegacion_id', $user->delegacion->id)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_Ctas = $total_inventario_Ctas + $registros_nuevos_Ctas - $registros_en_baja_Ctas;
+
 
             $total_inventario_Genericas =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
@@ -86,8 +95,6 @@ class CuentasHomeController extends Controller
             $total_ctas_Genericas = $total_inventario_Genericas + $registros_nuevos_Genericas + $registros_cambio_nuevos_Genericas 
                 - $registros_en_baja_Genericas - $registros_cambio_anteriores_Genericas;
 
-
-            
 
             $total_inventario_Clas =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
@@ -491,10 +498,14 @@ class CuentasHomeController extends Controller
             $total_ctas_SSOPER = $total_inventario_SSOPER + $registros_nuevos_SSOPER + $registros_cambio_nuevos_SSOPER 
                 - $registros_en_baja_SSOPER - $registros_cambio_anteriores_SSOPER;
 
-            return view('ctas.home_ctas', 
-                compact( 'primer_renglon', 
-                    'subdelegaciones',
-                    'total_ctas',
+            return view('ctas.home_ctas', compact( 
+                'primer_renglon', 
+                'subdelegaciones',
+
+                'total_ctas_Ctas',
+                'total_inventario_Ctas', 
+                'registros_nuevos_Ctas', 
+                'registros_en_baja_Ctas', 
 
                 'total_ctas_Genericas',
                 'total_inventario_Genericas', 
