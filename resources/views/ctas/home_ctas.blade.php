@@ -1,24 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Módulo Gestión de Cuentas')
+@section('title', 'Gestión de Cuentas')
 
 @section('content')
+
     <div class="container">
         <div class="row">
-            <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
+            <a class="nav-link" href="{{ url('/') }}">Inicio</a>
             <a class="nav-link" href="{{ url()->previous() }}">Regresar</a>
         </div>
 
-        @if(session()->has('message'))
-            <div class="alert alert-danger">
-                {{ session()->get('message') }}
-            </div>
-        @endif
+    @if(session()->has('message'))
+        <div class="alert alert-danger">
+            {{ session()->get('message') }}
+        </div>
+    @endif
 
-        <div class="row">
-            <div class="card-body">
-                <h4 class="card-title">{{ $primer_renglon }}</h4>
-            </div>
+        <div class="card-header card text-white bg-success">
+            <p class="h4">Gestión de Cuentas - {{ $primer_renglon }}</p>
+            <p>Total Cuentas: {{ number_format( $total_ctas_Ctas ) }} = 
+            {{ number_format( $total_inventario_Ctas ) }} en inventario
+            + {{ number_format( $registros_nuevos_Ctas ) }} nuevas 
+            - {{ number_format( $registros_en_baja_Ctas ) }} bajas</p>
         </div>
 
         <div class="row">
@@ -33,9 +36,7 @@
             @endcan
         </div>
 
-        <div class="col-10 col-md-12">
-            <br>
-        </div>
+        <hr>
 
         <div class="row">
             @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
@@ -47,10 +48,6 @@
             @can('ver_status_solicitudes')
                 @include('ctas.card_status_solicitudes')
             @endcan
-        </div>
-
-        <div class="col-10 col-md-12">
-            <br>
         </div>
 
     </div>
