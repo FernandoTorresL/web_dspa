@@ -34,6 +34,9 @@ class CreateDetalleCtasTable extends Migration
             $table->string('comment')->nullable();
 
             $table->timestamps();
+
+            $table->index(['inventory_id', 'cuenta', 'ciz_id', 'delegacion_id'], 'idx_detalle_ctas');
+            $table->index(['cuenta'], 'idx_detalle_ctas_cuenta');
         });
     }
 

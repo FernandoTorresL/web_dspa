@@ -80,7 +80,7 @@
     <div class="col-md-12 text-center">
         <footer>
             <div class="row ">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <p><strong>Conmutador (ext. {{ $contacto_ext }})</strong></p>
                     <a href="tel:+{{ $contacto_conm1 }}">{{ $contacto_conm2 }}</a>
                 </div>
@@ -88,7 +88,7 @@
                     <p><strong>{{ $contacto_dir }}</strong></p>
                     <p><strong>{{ $contacto_div }}</strong></p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <p><strong>¿Necesitas ayuda?</strong></p>
                     <a href="mailto: {{ $contacto_mail }}">Contáctanos aquí</a>
                 </div>

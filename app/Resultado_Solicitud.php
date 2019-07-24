@@ -21,7 +21,7 @@ class Resultado_Solicitud extends Model
 
     public function solicitud()
     {
-        return $this->hasMany(Solicitud::class);
+        return $this->belongsTo(Solicitud::class);
     }
 
     public function grupo()
@@ -31,7 +31,7 @@ class Resultado_Solicitud extends Model
 
     public function rechazo_mainframe()
     {
-        return $this->belongsTo(Rechazo_mainframe::class);
+        return $this->belongsTo(Rechazo_mainframe::class, 'rechazo_mainframe_id');
     }
 
     public function user()
