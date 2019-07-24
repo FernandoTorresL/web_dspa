@@ -22,26 +22,45 @@ class CuentasHomeController extends Controller
     {
 
         $user = Auth::user();
-/*         $user_id = Auth::user()->id;
-        $user_name = Auth::user()->name;
-        $user_job_id = Auth::user()->job_id;
-        $user_job_name = Auth::user()->job->name;
-        $user_del_id = Auth::user()->delegacion_id;
-        $user_del_name = Auth::user()->delegacion->name; */
 
         $texto_log = 'User_id:' . $user->id . '|User:' . $user->name . '|Del:' . $user->delegacion_id . '|Job:' . $user->job->id;
 
         Log::info('Visitando Ctas-Home ' . $texto_log);
 
+        $inventory_id = env('INVENTORY_ID');
+        $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
+
         if ( $user->hasRole('capturista_dspa') || $user->hasRole('capturista_cceyvd') ) {
+
             $primer_renglon = $user->delegacion->name . ' - ' . $user->job->name;
-            return view('ctas.home_ctas', [
-                'primer_renglon'    => $primer_renglon,
-            ]);
+
+            $total_inventario_Ctas =  Inventory_cta::where('inventory_id', $inventory_id)
+                ->get()->count();
+
+            $registros_nuevos_Ctas = Solicitud::where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
+                ->where( 'solicitudes.movimiento_id', 1 )
+                ->whereHas( 'resultado_solicitud.resultado_lote', function ( $list_where ) use ( $cut_off_date ) {
+                    $list_where
+                        ->where( 'resultado_lotes.attended_at', '>', $cut_off_date )
+                    ->whereNull( 'rechazo_mainframe_id'); } 
+                )->get()->count();
+
+            $registros_en_baja_Ctas = Inventory_cta::where('inventory_id', $inventory_id)
+                ->whereHas('solicitud_with_baja')->get()->count();
+
+            $total_ctas_Ctas = $total_inventario_Ctas + $registros_nuevos_Ctas - $registros_en_baja_Ctas;
+
+            return view('ctas.home_ctas', compact( 
+                'primer_renglon', 
+
+                'total_ctas_Ctas',
+                'total_inventario_Ctas', 
+                'registros_nuevos_Ctas', 
+                'registros_en_baja_Ctas', 
+                ) );
         }
         elseif ( $user->hasRole('capturista_delegacional') )
-        // elseif ( $user->hasRole('capturista_dspa') )
-        {
+            {
 
             $primer_renglon = 'Delegación ' . str_pad($user->delegacion->id, 2, '0', STR_PAD_LEFT) . ' - ' . $user->delegacion->name;
  
@@ -49,13 +68,9 @@ class CuentasHomeController extends Controller
                                             ->where('status', '<>', 0)
                                             ->orderBy('num_sub', 'asc')->get();
 
-            $inventory_id = env('INVENTORY_ID');
             $ca_group_01 = env('CA_GROUP_01');
             $ca_group_01_eq = env('CA_GROUP_01_EQ');
  
-            $cut_off_date = Inventory::find( env('INVENTORY_ID') )->cut_off_date;
-
-
             $total_inventario_Ctas =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
                 ->get()->count();
@@ -586,9 +601,12 @@ class CuentasHomeController extends Controller
 
     public function show_resume() {
 
+        $user = Auth::user();
+
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
-        $user->delegacion->id = Auth::user()->delegacion_id;
+        $user_delegacion_id = Auth::user()->delegacion_id;
+
         $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user->delegacion->id;
 
         if (Gate::allows('ver_resumen_admin_ctas')) {
@@ -638,9 +656,13 @@ class CuentasHomeController extends Controller
     }
 
     public function show_admin_tabla() {
+
+        $user = Auth::user();
+
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
-        $user->delegacion->id = Auth::user()->delegacion_id;
+        $user_delegacion_id = Auth::user()->delegacion_id;
+        
         $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user->delegacion->id;
 
         if (Gate::allows('genera_tabla_oficio')) {

@@ -24,6 +24,8 @@
             - {{ number_format( $registros_en_baja_Ctas ) }} bajas</p>
         </div>
 
+        <br>
+
         <div class="row">
             @can('ver_modulo_admin')
                 @include('ctas.card_admin')
