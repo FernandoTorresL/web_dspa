@@ -91,10 +91,18 @@ class CuentasHomeController extends Controller
             $total_ctas_Ctas = $total_inventario_Ctas + $registros_nuevos_Ctas - $registros_en_baja_Ctas;
 
 
-            $total_inventario_Genericas =  Inventory_cta::where('inventory_id', $inventory_id)
+            $array_total_inventario_work_area =  Inventory_cta::
+                select( DB::raw('count(*) as work_count, work_area_id') )
+                ->where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 2)
-                ->get()->count();
+                ->groupby('work_area_id')
+                ->pluck('work_count', 'work_area_id');
+
+            $var_work_area_id = 2;
+            if( isset( $array_total_inventario_work_area[$var_work_area_id] ) ) 
+                $total_inventario_Genericas = $array_total_inventario_work_area[$var_work_area_id];
+            else
+                $total_inventario_Genericas = 0;
 
             $registros_nuevos_Genericas = 0;
 
@@ -111,11 +119,12 @@ class CuentasHomeController extends Controller
                 - $registros_en_baja_Genericas - $registros_cambio_anteriores_Genericas;
 
 
-            $total_inventario_Clas =  Inventory_cta::where('inventory_id', $inventory_id)
-                ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 4)
-                ->get()->count();
-
+            $var_work_area_id = 4;
+                if( isset( $array_total_inventario_work_area[$var_work_area_id] ) ) 
+                    $total_inventario_Clas = $array_total_inventario_work_area[$var_work_area_id];
+                else
+                    $total_inventario_Clas = 0;
+    
             $registros_nuevos_Clas = Solicitud::where('delegacion_id', $user->delegacion->id)
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
                 ->where( 'solicitudes.movimiento_id', 1 )
@@ -156,10 +165,11 @@ class CuentasHomeController extends Controller
                 - $registros_en_baja_Clas - $registros_cambio_anteriores_Clas;
 
 
-            $total_inventario_Fisca =  Inventory_cta::where('inventory_id', $inventory_id)
-                ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 46)
-                ->get()->count();
+            $var_work_area_id = 46;
+            if( isset( $array_total_inventario_work_area[$var_work_area_id] ) ) 
+                $total_inventario_Fisca = $array_total_inventario_work_area[$var_work_area_id];
+            else
+                $total_inventario_Fisca = 0;
 
             $registros_nuevos_Fisca = Solicitud::where('delegacion_id', $user->delegacion->id)
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
@@ -199,11 +209,11 @@ class CuentasHomeController extends Controller
             $total_ctas_Fisca = $total_inventario_Fisca + $registros_nuevos_Fisca + $registros_cambio_nuevos_Fisca 
                 - $registros_en_baja_Fisca - $registros_cambio_anteriores_Fisca;
             
-
-            $total_inventario_SVC =  Inventory_cta::where('inventory_id', $inventory_id)
-                ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 6)
-                ->get()->count();
+            $var_work_area_id = 6;
+            if( isset( $array_total_inventario_work_area[$var_work_area_id] ) ) 
+                $total_inventario_SVC = $array_total_inventario_work_area[$var_work_area_id];
+            else
+                $total_inventario_SVC = 0;
 
             $registros_nuevos_SVC = Solicitud::where('delegacion_id', $user->delegacion->id)
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') )
@@ -243,12 +253,11 @@ class CuentasHomeController extends Controller
             $total_ctas_SVC = $total_inventario_SVC + $registros_nuevos_SVC + $registros_cambio_nuevos_SVC 
                 - $registros_en_baja_SVC - $registros_cambio_anteriores_SVC;
             
-            
-            $total_ctas_Cobranza =  Inventory_cta::where('inventory_id', $inventory_id)
-                ->where('delegacion_id', $user->delegacion->id)
-                ->where('work_area_id', 50)
-                ->get()->count();
-
+            $var_work_area_id = 50;
+            if( isset( $array_total_inventario_work_area[$var_work_area_id] ) ) 
+                $total_ctas_Cobranza = $array_total_inventario_work_area[$var_work_area_id];
+            else
+                $total_ctas_Cobranza = 0;
 
             $total_inventario_SSJSAV =  Inventory_cta::where('inventory_id', $inventory_id)
                 ->where('delegacion_id', $user->delegacion->id)
