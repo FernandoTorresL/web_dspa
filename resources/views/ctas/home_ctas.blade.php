@@ -19,9 +19,9 @@
         <div class="card-header card text-white bg-success">
             <p class="h4">Gestión de Cuentas - {{ $primer_renglon }}</p>
             <p>Total Cuentas: {{ number_format( $total_ctas_Ctas ) }} = 
-            {{ number_format( $total_inventario_Ctas ) }} en inventario
-            + {{ number_format( $registros_nuevos_Ctas ) }} nuevas 
-            - {{ number_format( $registros_en_baja_Ctas ) }} bajas</p>
+            {{ number_format( $total_inv_Ctas ) }} en inventario
+            + {{ number_format( $nuevos_Ctas ) }} nuevas 
+            - {{ number_format( $bajas_Ctas ) }} bajas</p>
         </div>
 
         <br>
