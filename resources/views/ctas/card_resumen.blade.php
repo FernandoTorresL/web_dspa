@@ -47,11 +47,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-{{ $color }} btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSJSAV }}
-                            +Nuevas:{{ $registros_nuevos_SSJSAV }}
-                            +Cambios(a SSJSAV):{{ $registros_cambio_nuevos_SSJSAV }}
-                            -Bajas:{{ $registros_en_baja_SSJSAV }}
-                            -Cambios(dejan SSJSAV):{{ $registros_cambio_anteriores_SSJSAV }}">
+                            title="Inventario:{{ $total_inv_SSJSAV }}
+                            +Nuevas:{{ $nuevos_SSJSAV }}
+                            +Cambios(a SSJSAV):{{ $cambio_nuevos_SSJSAV }}
+                            -Bajas:{{ $bajas_SSJSAV }}
+                            -Cambios(dejan SSJSAV):{{ $cambio_anteriores_SSJSAV }}">
                             SSJSAV <span class="badge badge-light">{{ $total_ctas_SSJSAV }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
@@ -77,11 +77,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-{{ $color }} btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSJDAV }}
-                            +Nuevas:{{ $registros_nuevos_SSJDAV }}
-                            +Cambios(a SSJDAV):{{ $registros_cambio_nuevos_SSJDAV }}
-                            -Bajas:{{ $registros_en_baja_SSJDAV }}
-                            -Cambios(dejan SSJDAV):{{ $registros_cambio_anteriores_SSJDAV }}">
+                            title="Inventario:{{ $total_inv_SSJDAV }}
+                            +Nuevas:{{ $nuevos_SSJDAV }}
+                            +Cambios(a SSJDAV):{{ $cambio_nuevos_SSJDAV }}
+                            -Bajas:{{ $bajas_SSJDAV }}
+                            -Cambios(dejan SSJDAV):{{ $cambio_anteriores_SSJDAV }}">
                             SSJDAV <span class="badge badge-light">{{ $total_ctas_SSJDAV }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
@@ -109,11 +109,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-{{ $color }} btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSJOFA }}
-                            +Nuevas:{{ $registros_nuevos_SSJOFA }}
-                            +Cambios(a SSJOFA):{{ $registros_cambio_nuevos_SSJOFA }}
-                            -Bajas:{{ $registros_en_baja_SSJOFA }}
-                            -Cambios(dejan SSJOFA):{{ $registros_cambio_anteriores_SSJOFA }}">
+                            title="Inventario:{{ $total_inv_SSJOFA }}
+                            +Nuevas:{{ $nuevos_SSJOFA }}
+                            +Cambios(a SSJOFA):{{ $cambio_nuevos_SSJOFA }}
+                            -Bajas:{{ $bajas_SSJOFA }}
+                            -Cambios(dejan SSJOFA):{{ $cambio_anteriores_SSJOFA }}">
                             SSJOFA <span class="badge badge-light">{{ $total_ctas_SSJOFA }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
@@ -122,11 +122,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSCONS }}
-                            +Nuevas:{{ $registros_nuevos_SSCONS }}
-                            +Cambios(a SSCONS):{{ $registros_cambio_nuevos_SSCONS }}
-                            -Bajas:{{ $registros_en_baja_SSCONS }}
-                            -Cambios(dejan SSCONS):{{ $registros_cambio_anteriores_SSCONS }}">
+                            title="Inventario:{{ $total_inv_SSCONS }}
+                            +Nuevas:{{ $nuevos_SSCONS }}
+                            +Cambios(a SSCONS):{{ $cambio_nuevos_SSCONS }}
+                            -Bajas:{{ $bajas_SSCONS }}
+                            -Cambios(dejan SSCONS):{{ $cambio_anteriores_SSCONS }}">
                             SSCONS <span class="badge badge-light">{{ $total_ctas_SSCONS }}</span>
                         </button>
                     </li>
@@ -134,11 +134,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSADIF }}
-                            +Nuevas:{{ $registros_nuevos_SSADIF }}
-                            +Cambios(a SSADIF):{{ $registros_cambio_nuevos_SSADIF }}
-                            -Bajas:{{ $registros_en_baja_SSADIF }}
-                            -Cambios(dejan SSADIF):{{ $registros_cambio_anteriores_SSADIF }}">
+                            title="Inventario:{{ $total_inv_SSADIF }}
+                            +Nuevas:{{ $nuevos_SSADIF }}
+                            +Cambios(a SSADIF):{{ $cambio_nuevos_SSADIF }}
+                            -Bajas:{{ $bajas_SSADIF }}
+                            -Cambios(dejan SSADIF):{{ $cambio_anteriores_SSADIF }}">
                             SSADIF <span class="badge badge-light">{{ $total_ctas_SSADIF }}</span>
                         </button>
                     </li>
@@ -146,11 +146,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SSOPER }}
-                            +Nuevas:{{ $registros_nuevos_SSOPER }}
-                            +Cambios(a SSOPER):{{ $registros_cambio_nuevos_SSOPER }}
-                            -Bajas:{{ $registros_en_baja_SSOPER }}
-                            -Cambios(dejan SSOPER):{{ $registros_cambio_anteriores_SSOPER }}">
+                            title="Inventario:{{ $total_inv_SSOPER }}
+                            +Nuevas:{{ $nuevos_SSOPER }}
+                            +Cambios(a SSOPER):{{ $cambio_nuevos_SSOPER }}
+                            -Bajas:{{ $bajas_SSOPER }}
+                            -Cambios(dejan SSOPER):{{ $cambio_anteriores_SSOPER }}">
                             SSOPER <span class="badge badge-light"> {{ $total_ctas_SSOPER }}</span>
                         </button>
                     </li>
@@ -178,8 +178,8 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-{{ $color }} btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_Genericas }}
-                            -Bajas:{{ $registros_en_baja_Genericas }}">
+                            title="Inventario:{{ $total_inv_Genericas }}
+                            -Bajas:{{ $bajas_Genericas }}">
                             Genéricas <span class="badge badge-light"> {{ $total_ctas_Genericas }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
@@ -205,11 +205,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-{{ $color }} btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_SVC }}
-                            +Nuevas:{{ $registros_nuevos_SVC }}
-                            +Cambios(a SVC):{{ $registros_cambio_nuevos_SVC }}
-                            -Bajas:{{ $registros_en_baja_SVC }}
-                            -Cambios(dejan SVC):{{ $registros_cambio_anteriores_SVC }}">
+                            title="Inventario:{{ $total_inv_SVC }}
+                            +Nuevas:{{ $nuevos_SVC }}
+                            +Cambios(a SVC):{{ $cambio_nuevos_SVC }}
+                            -Bajas:{{ $bajas_SVC }}
+                            -Cambios(dejan SVC):{{ $cambio_anteriores_SVC }}">
                             SVC <span class="badge badge-light"> {{ $total_ctas_SVC }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
@@ -218,11 +218,11 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm"
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_Clas }}
-                            +Nuevas:{{ $registros_nuevos_Clas }}
-                            +Cambios(a Clasificación):{{ $registros_cambio_nuevos_Clas }}
-                            -Bajas:{{ $registros_en_baja_Clas }}
-                            -Cambios(dejan Clasificación):{{ $registros_cambio_anteriores_Clas }}">
+                            title="Inventario:{{ $total_inv_Clas }}
+                            +Nuevas:{{ $nuevos_Clas }}
+                            +Cambios(a Clasificación):{{ $cambio_nuevos_Clas }}
+                            -Bajas:{{ $bajas_Clas }}
+                            -Cambios(dejan Clasificación):{{ $cambio_anteriores_Clas }}">
                             Clasificación y Vigencia <span class="badge badge-light"> {{ $total_ctas_Clas }}</span>
                         </button>
                     </li>
@@ -230,7 +230,7 @@
                     <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" 
                         data-toggle="tooltip" data-placement="top" 
-                            title="Inventario:{{ $total_inventario_Fisca }}">
+                            title="Inventario:{{ $total_ctas_Fisca }}">
                             Fiscalización <span class="badge badge-light"> {{ $total_ctas_Fisca }}</span>
                         </button>
                     </li>
