@@ -6,6 +6,7 @@ use App\Solicitud;
 use App\Subdelegacion;
 use App\Inventory_cta;
 use App\Inventory;
+use App\Lote;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -510,15 +511,16 @@ class CuentasHomeController extends Controller
 
         $user = Auth::user();
 
-        $user_id = Auth::user()->id;
-        $user_name = Auth::user()->name;
-        $user_delegacion_id = Auth::user()->delegacion_id;
-        
-        $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user->delegacion->id;
+        $texto_log = 'User_id:' . $user->id . '|User:' . $user->name . '|Del:' . $user->delegacion_id . '|Job:' . $user->job->id;
 
         if (Gate::allows('genera_tabla_oficio')) {
 
             Log::info('Genera Tabla' . $texto_log);
+
+            $id_lote = NULL;
+            $solicitud_id = NULL;
+
+            $info_lote = Lote::find($id_lote);
 
             $tabla_movimientos = DB::table('solicitudes')
                 ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
@@ -529,12 +531,11 @@ class CuentasHomeController extends Controller
                     'solicitudes.id as sol_id', 'solicitudes.primer_apellido', 'solicitudes.segundo_apellido', 'solicitudes.nombre',
                     'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
                     'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
+                ->where('solicitudes.lote_id', $id_lote)
                 ->where('solicitudes.rechazo_id', NULL)
-                ->where('solicitudes.lote_id', NULL)
                 ->orderBy('solicitudes.movimiento_id')
                 ->orderBy('solicitudes.cuenta')
-                ->orderBy('valijas.num_oficio_ca')
-                ->get();
+                ->orderBy('valijas.num_oficio_ca');
 
             $first_query =
                 DB::table('solicitudes')
@@ -545,7 +546,7 @@ class CuentasHomeController extends Controller
                         'valijas.delegacion_id',
                         'solicitudes.delegacion_id as sol_del_id',
                         DB::raw('count(solicitudes.id) as soli_count') )
-                    ->where('solicitudes.lote_id', NULL)
+                    ->where('solicitudes.lote_id', $id_lote)
                     ->where('valijas.id', '<>', NULL)
                     ->groupBy('valijas.id',
                         'valijas.num_oficio_del',
@@ -563,39 +564,54 @@ class CuentasHomeController extends Controller
                         'valijas.delegacion_id',
                         'solicitudes.delegacion_id as sol_del_id',
                         DB::raw('count(solicitudes.id) as soli_count') )
-                    ->where('solicitudes.lote_id', NULL)
+                    ->where('solicitudes.lote_id', $id_lote)
                     ->where('valijas.id',NULL)
                     ->groupBy('valijas.id',
                         'valijas.num_oficio_del',
                         'valijas.num_oficio_ca',
                         'valijas.delegacion_id',
                         'solicitudes.delegacion_id')
-                    ->orderBy('valijas.delegacion_id')
-                    ->union($first_query)
-                    ->get();
+                    ->orderBy('valijas.delegacion_id');
 
             $listado_mov_rechazados =
-                Solicitud::with([
-                    'valija',
-                    'delegacion',
-                    'subdelegacion',
-                    'movimiento',
-                    'rechazo',
-                    'gpo_actual',
-                    'gpo_nuevo',
-                    'lote'])
-                ->where('lote_id', NULL)
-                ->where('rechazo_id', '<>', NULL)
-                ->orderBy('solicitudes.movimiento_id')
-                ->orderBy('solicitudes.cuenta')
-                ->get();
+                    Solicitud::with([
+                        'valija',
+                        'delegacion',
+                        'subdelegacion',
+                        'movimiento',
+                        'rechazo',
+                        'gpo_actual',
+                        'gpo_nuevo',
+                        'lote'])
+                    ->where('lote_id', $id_lote)
+                    ->where('rechazo_id', '<>', NULL)
+                    ->orderBy('solicitudes.movimiento_id')
+                    ->orderBy('solicitudes.cuenta');
 
+            if ( isset( $solicitud_id ) ) {
+                $tabla_movimientos = $tabla_movimientos->where('solicitudes.id', '<=', $solicitud_id)->get();
+                $first_query = $first_query->where('solicitudes.id', '<=', $solicitud_id);
+                $listado_valijas = $listado_valijas->where('solicitudes.id', '<=', $solicitud_id)->union($first_query)->get();
+                $listado_mov_rechazados = $listado_mov_rechazados->where('solicitudes.id', '<=', $solicitud_id)->get();
+
+            }
+            else {
+                $tabla_movimientos = $tabla_movimientos->get();
+                $first_query = $first_query;
+                $listado_valijas = $listado_valijas->union($first_query)->get();
+                $listado_mov_rechazados = $listado_mov_rechazados->get();
+            }
+
+            //dd($tabla_movimientos);
             return view(
-                'ctas.admin.show_tabla', [
-                'tabla_movimientos'      => $tabla_movimientos,
-                'listado_valijas'        => $listado_valijas,
-                'listado_mov_rechazados' => $listado_mov_rechazados,
-            ]);
+                'ctas.admin.show_tabla', compact (
+                    'tabla_movimientos',
+                    'listado_valijas',
+                    'listado_mov_rechazados',
+                    'info_lote',
+                    'solicitud_id'
+                )
+            );
         }
         else {
             Log::info('Sin permiso-Generar Tabla' . $texto_log);
