@@ -12,13 +12,21 @@
 
         <br>
         <div class="card text-white bg-danger mb-6" style="max-width: 25rem;">
-            <div class="card-header">Error 404</div>
-                <div class="card-body">
-                    <h5 class="card-title">Recurso no localizado</h5>
-                    <p class="card-text">No se ha podido localizar lo que buscas. 
-                    Si crees que esto es un error, por favor comunícate con los administradores del portal</p>
-                </div>
-                <div class="card-footer bg-transparent">Atte. Equipo DSPA</div>
+
+            <div class="card-header">
+                <h5 class="card-title">Error 404</h5>
+                <h6 class="card-subtitle mb-2">Recurso no localizado</h6>
+            </div>
+
+            <div class="card-body">
+                
+                <p class="card-text">No se ha podido localizar lo que buscas. 
+                    Si crees que esto es un error, por favor comunícate con los administradores del portal y proporciona la ruta (URL) que muestra este navegador.</p>
+            </div>
+
+            <div class="card-footer bg-transparent">
+                Atte. Equipo DSPA
+            </div>
         </div>
 
         <br>
