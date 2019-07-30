@@ -41,7 +41,10 @@
                         $texto_no_coincide = '';
                     @endphp
                 @endif
-                <td class="small {{ $color_no_match }}">{{ 'Delegación: ' . $del_valija . $texto_renglon . $texto_no_coincide }}</td>
+                <td class="small {{ $color_no_match }}">{{ 'Delegación: ' . $del_valija . ' [' . $del_sol . '-' . $row_valija->num_oficio_del . '|' }}
+                    <a target="_blank" href="/ctas/valijas/{{ $row_valija->id }}">{{ $row_valija->num_oficio_ca }}</a>
+                    {{ '] ' . $texto_no_coincide }}
+                </td>
             @else
                 @php
                     $texto_renglon = '[' . $del_sol . '|' . env('APP_NAME') . ']';
