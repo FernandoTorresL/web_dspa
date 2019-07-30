@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Error 404')
+@section('title', 'Error 503')
 
 @section('content')
 
