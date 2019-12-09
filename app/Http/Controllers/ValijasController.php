@@ -153,13 +153,40 @@ class ValijasController extends Controller
 
     public function show(Valija $valija)
     {
+        $user = Auth::user();
+
+        $texto_log = 'User_id:' . $user->id . '|User:' . $user->name . '|Del:' . $user->delegacion_id . '|Job:' . $user->job->id;
+        $texto_log_valija = 'id:' . $valija->id . '|';
+
         if (Gate::allows('consultar_valijas')) {
-            if (
-                Auth::user()->hasRole('capturista_dspa') ||
-                (Auth::user()->hasRole('capturista_cceyvd') && $valija->origen_id == 12))
+
+            if ( Auth::user()->hasRole('capturista_delegacional') ) {
+                
+                if ( $valija->delegacion_id <> Auth::user()->delegacion_id ) {
+                    
+                    Log::warning('Consultar Valija otra Del ' . $texto_log_valija . 'val_Del:' . $valija->delegacion_id . '|' . $texto_log);
+                    
+                    return redirect('ctas')->with('message', 'No tiene autorización para consultar valijas de otras delegaciones');
+                }
+                else {
+                    
+                    $valija_hasBeenModified = $valija->hasBeenModified($valija);
+                    
+                    Log::info('Consultando Valija ' . $texto_log_valija . $texto_log);
+
+                    return view('ctas.valijas.show', [
+                        'valija' => $valija,
+                        'valija_hasBeenModified' => $valija_hasBeenModified,
+                    ]);
+                }
+            }
+            
+            if ( Auth::user()->hasRole('capturista_dspa') || 
+                (Auth::user()->hasRole('capturista_cceyvd') && $valija->origen_id == 12) )
             {
                 $valija_hasBeenModified = $valija->hasBeenModified($valija);
-                Log::info('Consultando Valija:'.$valija->id.'|Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
+
+                Log::info('Consultando Valija ' . $texto_log_valija . $texto_log);
 
                 return view('ctas.valijas.show', [
                     'valija' => $valija,
@@ -168,13 +195,14 @@ class ValijasController extends Controller
             }
             else
             {
-                Log::info('Valija ajena-Consultar Valija:'.$valija->id.'|Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-                return redirect('ctas')->with('message', 'No tiene autorización para consultar esta Valija de otra Coordinación');
+                Log::warning('Consultar Valija otra Coordinación ' . $texto_log_valija . $texto_log );
+                return redirect('ctas')->with('message', 'No tiene autorización para consultar valijas de otra Coordinación');
             }
+            
         }
         else {
-            Log::info('Sin permiso-Consultar Valija:'.$valija->id.'|Usuario:' . Auth::user()->name . '|Del:' . Auth::user()->delegacion_id);
-            return redirect('ctas')->with('message', 'No tiene permitido consultar Valijas');
+            Log::info('Sin permiso-Consultar Valijas ' . $texto_log_valija . $texto_log );
+            return redirect('ctas')->with('message', 'No tiene permitido consultar valijas');
         }
     }
 }

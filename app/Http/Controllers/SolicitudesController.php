@@ -162,6 +162,8 @@ class SolicitudesController extends Controller
 
         Log::info('Creando Solicitud. ' . $texto_log);
 
+        //throw new \Exception("Simulando un error.");
+
         $solicitud = Solicitud::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
             'delegacion_id' => $user->delegacion_id,
