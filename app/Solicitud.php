@@ -25,8 +25,7 @@ class Solicitud extends Model
         'matricula',
         'cuenta',
         'movimiento_id',
-        'status_sol_id',
-        'rechazo_id',
+        'status_sol_id'
     ];
 
     public function valija()

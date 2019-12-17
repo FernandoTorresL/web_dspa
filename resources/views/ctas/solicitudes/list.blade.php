@@ -19,10 +19,10 @@
             <tr>
                 <th class="small align-text-top" scope="col">#</th>
                 <th class="small align-text-top" scope="col">@sortablelink('created_at', 'Fecha captura')</th>
-                <th class="small align-text-top" scope="col">@sortablelink('lote_id', 'Lote')</th>
-                <th class="small align-text-top" scope="col">@sortablelink('valija_oficio.num_oficio_del', 'Oficio Del (#Gestión CA)')</th>
-                <th class="small align-text-top" scope="col">@sortablelink('delegacion_id', '#Del')</th>
-                <th class="small align-text-top" scope="col">@sortablelink('subdelegacion_id', '#Subdel')</th>
+                <th class="small align-text-top text-sm-center" scope="col">@sortablelink('lote_id', 'Lote')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('valija_oficio.num_oficio_del', 'Oficio Del - Núm Gestión CA')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('delegacion_id', '#Del - ')</th>
+                <th class="small align-text-top" scope="col">@sortablelink('subdelegacion_id', 'Subdel')</th>
                 <th class="small align-text-top" scope="col">@sortablelink('primer_apellido', 'Primer apellido')</th>
                 <th class="small align-text-top" scope="col">@sortablelink('segundo_apellido', 'Segundo apellido')</th>
                 <th class="small align-text-top text-sm-left" scope="col">@sortablelink('nombre', 'Nombre(s)')</th>
@@ -42,51 +42,22 @@
         @endphp
 
         @forelse($solicitudes as $clave_solicitud =>$solicitud)
-            {{-- Setting the color row by the result of the solicitud --}}
             @php
                 $var += 1;
                 $estatus_solicitud = $solicitud->status_sol_id;
 
-                switch($estatus_solicitud)
-                {
-                    case 1:
-                        $color = 'info';
-                    break;
-
-                    case 2:
-                        $color = 'warning';
-                    break;
-
-                    case 3:
-                        $color = 'danger';
-                    break;
-
-                    case 4:
-                        $color = 'secondary';
-                    break;
-
-                    case 5:
-                        $color = 'primary';
-                    break;
-
-                    case 6:
-                        $color = 'secondary';
-                    break;
-
-                    case 7:
-                        $color = 'danger';
-                    break;
-
-                    case 8:
-                        $color = 'success';
-                    break;
-
-                    case 9:
-                        $color = 'dark';
-                    break;
-
-                    default:
-                        $color = 'secondary';
+                // Setting the color row by the result of the solicitud
+                switch($estatus_solicitud) {
+                    case 1:     $color = 'light';       $color_text = 'dark';       break;
+                    case 2:     $color = 'warning';     $color_text = 'warning';    break;
+                    case 3:     $color = 'danger';      $color_text = 'danger';     break;
+                    case 4:     $color = 'secondary';   $color_text = 'secondary';  break;
+                    case 5:     $color = 'primary';     $color_text = 'primary';    break;
+                    case 6:     $color = 'info';        $color_text= 'dark';        break;
+                    case 7:     $color = 'danger';      $color_text = 'danger';     break;
+                    case 8:     $color = 'success';     $color_text = 'success';    break;
+                    case 9:     $color = 'secondary';   $color_text = 'secondary';  break;
+                    default:    $color = 'secondary';
                 }
             @endphp
 
@@ -95,43 +66,32 @@
                     <strong>{{ ($solicitudes->currentPage() * $solicitudes->perPage()) + $var - $solicitudes->perPage() }}</strong>
                 </td>
                 <td class="small text-left">
-                        <span>{{ $solicitud->created_at->format('dMy') }}</span>
-                        <span>{{ $solicitud->created_at->format('H:i') }}</span>
+                    <span>{{ $solicitud->created_at->format('dMy') }}</span>
+                    <span>{{ $solicitud->created_at->format('H:i') }}</span>
                 </td>
-                <td class="small text-left">
-                @if( isset($solicitud->lote) && ($solicitud->lote->id <> env('LOTE_CCEVyD') ) )
-                    <a target="_blank" title="Ir a detalle solicitud" href="/ctas/solicitudes/{{ $solicitud->id }}" data-placement="center" class="badge badge-primary">
-                        {{ $solicitud->lote->num_lote }}
-                    </a>
-                @else
-                    {{ '--' }}
-                @endif
-                </td>
-                <td class="small">
+                <td class="small text-center">{{ isset($solicitud->lote) ? $solicitud->lote->num_lote : '--' }}</td>
+                <td class="small text-sm-left">
                 @if( isset($solicitud->valija_oficio) )
-                    <a target="_blank" title="{{ $solicitud->valija_oficio->num_oficio_ca }}" href="/ctas/valijas/{{ $solicitud->valija_id }}" data-placement="center" class="badge badge-primary">
-                        {{ $solicitud->valija_oficio->num_oficio_del }} ({{ $solicitud->valija_oficio->num_oficio_ca }})
+                    <a target="_blank" title="{{ $solicitud->valija_oficio->num_oficio_ca }}" href="/ctas/valijas/{{ $solicitud->valija_id }}" data-placement="center">
+                        <span>Oficio: {{ $solicitud->valija_oficio->num_oficio_del }}</span>
+                        <p>{{ $solicitud->valija_oficio->num_oficio_ca }}</p>
                     </a>
                 @else
                     {{ '--' }}
                 @endif
                 </td>
-                <td class="small text-center" colspan="2">
+                <td class="small text-left" colspan="2">
                 @php
-                    $nombres_delegaciones = $cifras_delegaciones = null;
-                    if ( ( isset($solicitud->valija_oficio) && ($solicitud->valija->delegacion_id <> $solicitud->delegacion->id) ) ) {
-                        // If there's 'valija' and valija.delegacion is different to solicitud.delegacion, show also (valija.delegacion)
-                        $nombres_delegaciones   = 'Valija(' . $solicitud->valija->delegacion->name .') ';
-                        $cifras_delegaciones    = '(' . str_pad($solicitud->valija->delegacion_id, 2, '0', STR_PAD_LEFT) . ') ';
-                    }
+                    $del_name = $del_num = NULL;
 
-                    $nombres_delegaciones .= $solicitud->delegacion->name . ' - ' . $solicitud->subdelegacion->name;
-                    $cifras_delegaciones .= str_pad($solicitud->delegacion->id, 2, '0', STR_PAD_LEFT) . ' - ' . str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT);
+                    // If there's 'valija' and valija.delegacion is different to solicitud.delegacion, show also (valija.delegacion)
+                    if ( ( isset($solicitud->valija_oficio) && ($solicitud->valija->delegacion_id <> $solicitud->delegacion->id) ) ) {
+                        $del_name = 'Valija(' . $solicitud->valija->delegacion->name .') ';
+                    }
+                    $del_num = str_pad($solicitud->delegacion_id, 2, '0', STR_PAD_LEFT);
                 @endphp
-                    <a target="_blank" data-toggle="tooltip" data-placement="center"
-                        title="{{ $nombres_delegaciones }}" href="/ctas/solicitudes/{{ $solicitud->id }}" class="badge badge-primary">
-                        {{ $cifras_delegaciones }}
-                    </a>
+                    <span>{{ $del_name }}</span>
+                    <p>{{ $del_num . ' - ' . $solicitud->subdelegacion->name }}</p>
                 </td>
                 <td class="small" colspan="3">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
                 <td class="small text-center"  colspan="2">{{ $solicitud->curp }} - ({{ $solicitud->matricula }})</td>
@@ -148,17 +108,17 @@
                 <td class="small">{{ isset($solicitud->grupo2->name) ? $solicitud->grupo2->name : '--' }}</td>
                 <td class="small text-{{$color}} text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
-                        <button type="button" class="btn btn-outline-{{$color}} btn-sm" data-toggle="tooltip" data-placement="top"
+                        <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
                             title="{{ $solicitud->status_sol->description }}">
                             {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
                         </button>
                     </a>
                 </td>
             </tr>
-        </tbody>
         @empty
             <p>No hay solicitudes que coincidan con el criterio de búsqueda</p>
         @endforelse
+        </tbody>
     </table>
 </div>
 
