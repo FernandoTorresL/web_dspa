@@ -4,28 +4,46 @@
             use Carbon\Carbon;
             setlocale(LC_TIME, 'es-ES');
             \Carbon\Carbon::setUtf8(false);
+
+            $estatus_solicitud = $solicitud->status_sol_id;
+
+            switch($estatus_solicitud) {
+                case 1:     $color = 'light';       $color_text = 'dark';       break;
+                case 2:     $color = 'warning';     $color_text = 'warning';    break;
+                case 3:     $color = 'danger';      $color_text = 'danger';     break;
+                case 4:     $color = 'secondary';   $color_text = 'secondary';  break;
+                case 5:     $color = 'primary';     $color_text = 'primary';    break;
+                case 6:     $color = 'info';        $color_text= 'dark';        break;
+                case 7:     $color = 'danger';      $color_text = 'danger';     break;
+                case 8:     $color = 'success';     $color_text = 'success';    break;
+                case 9:     $color = 'secondary';   $color_text = 'secondary';  break;
+                default:    $color = 'secondary';
+            }
+
+            // If solicitud has a response...
+            if ( isset($solicitud->resultado_solicitud) )
+                $cuenta = $solicitud->resultado_solicitud->cuenta;
+            else {
+                //...show the captured value
+                $cuenta = $solicitud->cuenta;
+            }
         @endphp
 
-        @if( isset($solicitud->resultado_solicitud) )
-            {{--If solicitud has a response ... --}}
-            @php
-                $cuenta = $solicitud->resultado_solicitud->cuenta;
-            @endphp
-        @else
-            {{--  ...show the captured value --}}
-            @php
-                $cuenta = $solicitud->cuenta;
-            @endphp
-        @endif
-
-        SOLICITUD {{ $solicitud->movimiento->name }}
-        <span class="text-success">{{ $cuenta }}</span>
+        {{ $solicitud->movimiento->name }}
+        <span class="text-{{$color_text}}">{{ $cuenta }}</span>
         ({{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
-        {{ isset($solicitud->gpo_nuevo)&&isset($solicitud->gpo_actual) ? '->' : '' }}
+        {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
         {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }})
         -
-        <strong>{{ isset($solicitud->valija) ? 'Valija '.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT).'-'.$solicitud->valija->num_oficio_ca : '(Sin valija)' }} </strong>
-        </strong>
+        @if( isset($solicitud->valija_oficio) )
+            <a target="_blank" title="{{ $solicitud->valija_oficio->num_oficio_ca }}" href="/ctas/valijas/{{ $solicitud->valija_id }}" data-placement="center">
+            {{ 'Valija ('.str_pad($solicitud->valija->delegacion->id, 2, '0', STR_PAD_LEFT). ') - ' . $solicitud->valija->num_oficio_del . ' (' . $solicitud->valija->num_oficio_ca . ')' }}
+            </a>
+        @else
+            (Sin valija)
+        @endif
+    </strong>
+
         @can('ver_timeline_solicitudes')
             <a class="" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
         @endcan
@@ -83,29 +101,14 @@
                     </li>
 
                     <li class="list-group-item">
-                        <strong>Status: </strong>
-                        {{-- Setting the solicitud status --}}
-                        @if( isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe) )
-                            {{-- Solicitud was denny... --}}
-                            <span class="card-text float-right text-danger">No procede</span>
-                        @else
-                            @if( !isset($solicitud->resultado_solicitud) )
-                                {{-- There's not response for the solicitud --}}
-                                @if( isset($solicitud->lote) )
-                                    {{-- This solicitud has a lote and we're waiting for response --}}
-                                    <span class="card-text float-right text-warning">Enviada a Mainframe. En espera de respuesta</span>
-                                @else
-                                    {{-- We're analizing your solicitud --}}
-                                    <span class="card-text float-right text-primary">En revisión por personal CA-DSPA</span>
-                                @endif
+                        <strong>Status:</strong>
+                        <span class="card-text float-right text-{{$color_text}}">
+                            <button type="button" class="btn btn-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
+                                title="{{ $solicitud->status_sol->description }}">
+                                {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
+                            </button>
+                        </span>
 
-                                {{--@elseif( $solicitud->resultado_solicitud->status == 1 )
-                                    --}}{{-- There's an response, but we have to send again the solicitud --}}{{--
-                                    <td class="text-warning">PENDIENTE</td>--}}
-                            @else
-                                <span class="card-text float-right text-success">Atendida</span>
-                            @endif
-                        @endif
                         <div>
                             <strong>Causa de rechazo: </strong>
                             <span class="card-text float-right @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">

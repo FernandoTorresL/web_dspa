@@ -116,8 +116,6 @@ class SolicitudesController extends Controller
                 ( $solicitud->user->id == $user_id ) ||
                 ( $solicitud->user->job->id == env('DSPA_USER_JOB_ID_CCEVyD') ) ) {
 
-                //dd($user_id);
-                //dd($solicitud->user->id);
                 $allowToShowSolicitudes = true;
             }
             else {
