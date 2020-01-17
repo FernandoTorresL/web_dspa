@@ -25,7 +25,7 @@ class Solicitud extends Model
         'matricula',
         'cuenta',
         'movimiento_id',
-        'rechazo_id',
+        'status_sol_id'
     ];
 
     public function valija()
@@ -61,6 +61,11 @@ class Solicitud extends Model
     public function gpo_nuevo()
     {
         return $this->belongsTo(Group::class, 'gpo_nuevo_id');
+    }
+
+    public function status_sol()
+    {
+        return $this->belongsTo(Status_sol::class);
     }
 
     public function rechazo()

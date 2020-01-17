@@ -31,12 +31,11 @@ class SolicitudesDelController extends Controller
                     'delegacion',
                     'subdelegacion',
                     'movimiento',
-                    'rechazo',
                     'grupo1',
                     'grupo2',
                     'lote',
-                    'resultado_solicitud',
-                    'resultado_solicitud.rechazo_mainframe'])
+                    'status_sol',
+                    'resultado_solicitud'])
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
@@ -65,7 +64,7 @@ class SolicitudesDelController extends Controller
             Log::info('Buscar solicitudes ' . $texto_log);
             return view('ctas.solicitudes.delegacion_list',
                     ['solicitudes' => $solicitudes,
-                     'search_word'      => $search_word]
+                    'search_word'      => $search_word]
                 );
         }
         else {
@@ -93,7 +92,7 @@ class SolicitudesDelController extends Controller
     {
         setlocale(LC_TIME, 'es-ES');
         Carbon::setUtf8(false);
-      
+
         $del = Auth::user()->delegacion_id;
 
         Log::info('Ver timeline solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);

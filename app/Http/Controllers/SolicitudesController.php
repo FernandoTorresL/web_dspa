@@ -116,8 +116,6 @@ class SolicitudesController extends Controller
                 ( $solicitud->user->id == $user_id ) ||
                 ( $solicitud->user->job->id == env('DSPA_USER_JOB_ID_CCEVyD') ) ) {
 
-                //dd($user_id);
-                //dd($solicitud->user->id);
                 $allowToShowSolicitudes = true;
             }
             else {
@@ -178,6 +176,7 @@ class SolicitudesController extends Controller
             'gpo_nuevo_id' => $request->input('gpo_nuevo'),
             'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
+            'status_sol_id' => 1, //En revisión DSPA
             'rechazo_id' => $request->input('rechazo'),
             'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
             'user_id' => $user->id,
@@ -209,6 +208,7 @@ class SolicitudesController extends Controller
             'movimiento_id' => $request->input('tipo_movimiento'),
             'gpo_nuevo_id' => $request->input('gpo_nuevo'),
             'gpo_actual_id' => $request->input('gpo_actual'),
+            'status_sol_id' => 1, //En revisión DSPA
             'comment' => $request->input('comment'),
             'rechazo_id' => $request->input('rechazo'),
             'final_remark' => $request->input('final_remark'),
