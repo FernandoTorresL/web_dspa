@@ -46,6 +46,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@show_for_edit');
     Route::post('/ctas/solicitudes/editNC/{solicitud}', 'SolicitudesController@editNC');
 
+    //Route to authorize solicitudes at 'CCEyVD'
+    Route::post('/ctas/solicitudes/change_status/{solicitud}', 'SolChangeStatusController@change_estatus');
+
     //Route to view table for solicitudes using pagination
     //Search 'solicitudes' by 'cuenta' (User-ID)
     Route::get('/ctas/solicitudes/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');

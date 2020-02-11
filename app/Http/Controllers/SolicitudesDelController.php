@@ -43,6 +43,32 @@ class SolicitudesDelController extends Controller
                 $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
             }
 
+            if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') ) {
+                //if is a 'CCEVyD' user, add only some groups to the query
+                $groups_ccevyd = array(env('CCEVYD_GROUP_01'), env('CCEVYD_GROUP_02'), env('CCEVYD_GROUP_03'),
+                    env('CCEVYD_GROUP_04'), env('CCEVYD_GROUP_05'), env('CCEVYD_GROUP_06'),
+                    env('CCEVYD_GROUP_07'));
+                $solicitudes = $solicitudes->where(function ($list_where) use ($user_id) {
+                    $list_where
+                        ->where('solicitudes.gpo_actual_id', 4 )
+                        ->orWhere('solicitudes.gpo_actual_id', 5 )
+                        ->orWhere('solicitudes.gpo_actual_id', 8 )
+                        ->orWhere('solicitudes.gpo_actual_id', 9 )
+                        ->orWhere('solicitudes.gpo_actual_id', 10 )
+                        ->orWhere('solicitudes.gpo_actual_id', 11 )
+                        ->orWhere('solicitudes.gpo_actual_id', 24 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 4 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 5 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 8 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 9 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 10 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 11 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 24 )
+                        ->orWhere('solicitudes.user_id', $user_id )
+                        ;
+                });
+            }
+
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
                 //And if there's a 'search word', add that word to the query and to the log
                 $query = '%' . $search_word . '%';

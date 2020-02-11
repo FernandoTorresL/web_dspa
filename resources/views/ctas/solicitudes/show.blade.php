@@ -13,6 +13,12 @@
         </div>
     @endif
 
+    @if(session()->has('error'))
+        <div class="alert alert-danger">
+            {{ session()->get('error') }}
+        </div>
+    @endif
+
     @can('consultar_solicitudes_del')
         @include('ctas.solicitudes.solicitud')
     @else
