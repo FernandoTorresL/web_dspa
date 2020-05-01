@@ -110,7 +110,7 @@ class RegisterController extends Controller
             $user = app(User::class)->where('activation_code', $activationCode)->first();
             if (!$user) {
                 Log::error('Activando usuario. Código no existe o ya ha sido utilizado.');
-                return "El código de activación no existe en el sistema o ya ha sido utilizado.";
+                return "El código de activación ya no existe en el sistema o ya ha sido utilizado. Intente ingresar al sistema con su usuario y contraseña. Recuerde utilizar Google Chrome.";
             }
             $user->status          = 2;
             $user->activation_code = null;

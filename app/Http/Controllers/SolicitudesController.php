@@ -116,14 +116,12 @@ class SolicitudesController extends Controller
                 ( $solicitud->user->id == $user_id ) ||
                 ( $solicitud->user->job->id == env('DSPA_USER_JOB_ID_CCEVyD') ) ) {
 
-                //dd($user_id);
-                //dd($solicitud->user->id);
                 $allowToShowSolicitudes = true;
             }
             else {
                 $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
-                Log::warning('Sin permiso-Consultar solicitudes de otros grupos' . $texto_log);
-                return redirect('ctas')->with('message', 'No tiene permitido consultar solicitudes de otros grupos.');
+                Log::warning('Sin permiso-Ver detalle de solicitudes de otros grupos' . $texto_log);
+                return redirect('ctas')->with('message', 'No tiene permitido ver detalle de solicitudes de otros grupos.');
             }
         }
         else {
@@ -139,12 +137,14 @@ class SolicitudesController extends Controller
         }
 
         //All OK. Return values to the view
+        $rechazos = Rechazo::all();
         $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
         if ($allowToShowSolicitudes) {
             Log::info('Consultando solicitud' . $texto_log);
 
             return view('ctas.solicitudes.show', [
                 'solicitud' => $solicitud,
+                'rechazos' => $rechazos,
                 'solicitud_hasBeenModified' => $solicitud_hasBeenModified,
             ]);
         }
@@ -162,6 +162,8 @@ class SolicitudesController extends Controller
 
         Log::info('Creando Solicitud. ' . $texto_log);
 
+        //throw new \Exception("Simulando un error.");
+
         $solicitud = Solicitud::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
             'delegacion_id' => $user->delegacion_id,
@@ -176,6 +178,7 @@ class SolicitudesController extends Controller
             'gpo_nuevo_id' => $request->input('gpo_nuevo'),
             'gpo_actual_id' => $request->input('gpo_actual'),
             'comment' => $request->input('comment'),
+            'status_sol_id' => 1, //En revisión DSPA
             'rechazo_id' => $request->input('rechazo'),
             'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
             'user_id' => $user->id,
@@ -207,6 +210,7 @@ class SolicitudesController extends Controller
             'movimiento_id' => $request->input('tipo_movimiento'),
             'gpo_nuevo_id' => $request->input('gpo_nuevo'),
             'gpo_actual_id' => $request->input('gpo_actual'),
+            'status_sol_id' => 1, //En revisión DSPA
             'comment' => $request->input('comment'),
             'rechazo_id' => $request->input('rechazo'),
             'final_remark' => $request->input('final_remark'),
@@ -294,6 +298,7 @@ class SolicitudesController extends Controller
             'movimiento_id'         => $solicitud_original->movimiento_id,
             'gpo_nuevo_id'          => $solicitud_original->gpo_nuevo_id,
             'gpo_actual_id'         => $solicitud_original->gpo_actual_id,
+            'status_sol_id'         => $solicitud_original->status_sol_id,
             'comment'               => $solicitud_original->comment,
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'archivo'               => $solicitud_original->archivo,
@@ -356,6 +361,7 @@ class SolicitudesController extends Controller
             'movimiento_id'         => $solicitud_original->movimiento_id,
             'gpo_nuevo_id'          => $solicitud_original->gpo_nuevo_id,
             'gpo_actual_id'         => $solicitud_original->gpo_actual_id,
+            'status_sol_id'         => $solicitud_original->status_sol_id,
             'comment'               => $solicitud_original->comment,
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'final_remark'          => $solicitud_original->final_remark,
@@ -385,6 +391,7 @@ class SolicitudesController extends Controller
         $solicitud->movimiento_id           = $request->input('tipo_movimiento');
         $solicitud->gpo_nuevo_id            = $request->input('gpo_nuevo');
         $solicitud->gpo_actual_id           = $request->input('gpo_actual');
+        $solicitud->status_sol_id           = $solicitud_original->status_sol_id;
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->final_remark            = $request->input('final_remark');

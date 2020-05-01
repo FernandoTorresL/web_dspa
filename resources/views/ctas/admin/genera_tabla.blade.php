@@ -75,6 +75,9 @@
         <h5 class="text-danger">No hay solicitudes sin lote para tramitar</h5>
         <br>
     @endforelse
+    <tr>
+        <th scope="row"><br></th>
+    </tr>
     </tbody>
 
     @if( count($tabla_movimientos) )

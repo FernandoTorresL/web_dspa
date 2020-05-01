@@ -31,17 +31,42 @@ class SolicitudesDelController extends Controller
                     'delegacion',
                     'subdelegacion',
                     'movimiento',
-                    'rechazo',
                     'grupo1',
                     'grupo2',
                     'lote',
-                    'resultado_solicitud',
-                    'resultado_solicitud.rechazo_mainframe'])
+                    'status_sol',
+                    'resultado_solicitud'])
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
                 //if is a 'Delegational' user, add delegacion_id to the query
                 $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
+            }
+
+            if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') ) {
+                //if is a 'CCEVyD' user, add only some groups to the query
+                $groups_ccevyd = array(env('CCEVYD_GROUP_01'), env('CCEVYD_GROUP_02'), env('CCEVYD_GROUP_03'),
+                    env('CCEVYD_GROUP_04'), env('CCEVYD_GROUP_05'), env('CCEVYD_GROUP_06'),
+                    env('CCEVYD_GROUP_07'));
+                $solicitudes = $solicitudes->where(function ($list_where) use ($user_id) {
+                    $list_where
+                        ->where('solicitudes.gpo_actual_id', 4 )
+                        ->orWhere('solicitudes.gpo_actual_id', 5 )
+                        ->orWhere('solicitudes.gpo_actual_id', 8 )
+                        ->orWhere('solicitudes.gpo_actual_id', 9 )
+                        ->orWhere('solicitudes.gpo_actual_id', 10 )
+                        ->orWhere('solicitudes.gpo_actual_id', 11 )
+                        ->orWhere('solicitudes.gpo_actual_id', 24 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 4 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 5 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 8 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 9 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 10 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 11 )
+                        ->orWhere('solicitudes.gpo_nuevo_id', 24 )
+                        ->orWhere('solicitudes.user_id', $user_id )
+                        ;
+                });
             }
 
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
@@ -65,7 +90,7 @@ class SolicitudesDelController extends Controller
             Log::info('Buscar solicitudes ' . $texto_log);
             return view('ctas.solicitudes.delegacion_list',
                     ['solicitudes' => $solicitudes,
-                     'search_word'      => $search_word]
+                    'search_word'      => $search_word]
                 );
         }
         else {
@@ -93,7 +118,7 @@ class SolicitudesDelController extends Controller
     {
         setlocale(LC_TIME, 'es-ES');
         Carbon::setUtf8(false);
-      
+
         $del = Auth::user()->delegacion_id;
 
         Log::info('Ver timeline solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);
