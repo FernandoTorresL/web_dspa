@@ -81,7 +81,6 @@ Remember that you must use the same values that you define on your **_.env_** fi
 ------
 
 #### Follow me 
-[fertorresmx.dev](http://fertorresmx.dev/)
-[fertorresmx.com](http://fertorresmx.com/)
+[fertorresmx.dev](https://fertorresmx.dev/)
 
-#### :globe_with_meridians: Twitter, Instagram: @fertorresmx
+#### :globe_with_meridians: [Twitter](https://twitter.com/FerTorresMx), [Instagram](https://www.instagram.com/fertorresmx/): @fertorresmx
