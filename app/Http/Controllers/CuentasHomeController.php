@@ -444,9 +444,7 @@ class CuentasHomeController extends Controller
                 'nuevos_SSOPER', 
                 'cambio_nuevos_SSOPER', 
                 'bajas_SSOPER', 
-                'cambio_anteriores_SSOPER',
-
-                ) );
+                'cambio_anteriores_SSOPER') );
         }
         else return "No estas autorizado a ver esta página";
     }
@@ -517,7 +515,7 @@ class CuentasHomeController extends Controller
 
             Log::info('Genera Tabla' . $texto_log);
 
-            $id_lote = NULL;
+            $id_lote = 790;
             $solicitud_id = NULL;
 
             $info_lote = Lote::find($id_lote);
