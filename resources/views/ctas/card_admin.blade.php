@@ -12,7 +12,16 @@
 
             @can('genera_tabla_oficio')
                 <a href="ctas/admin/generatabla" target="_blank" class="btn btn-outline-primary">
-                    Generar Tabla
+                    Ver Tabla
+                </a>
+            @endcan
+
+            <br>
+            <br>
+
+            @can('crear_lote')
+                <a href="ctas/admin/captura_lote" target="_blank" class="btn btn-outline-secondary">
+                    Capturar nuevo lote
                 </a>
             @endcan
 

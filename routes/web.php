@@ -28,6 +28,10 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/valijas/editNC/{valija}', 'ValijasController@show_for_edit');
     Route::post('/ctas/valijas/editNC/{valija}', 'ValijasController@editNC');
 
+    //Lotes
+    Route::get('/ctas/admin/captura_lote', 'CuentasAdminCrearLoteController@captura_lote');
+    Route::post('/ctas/admin/crear_lote', 'CuentasAdminCrearLoteController@crear_lote');
+
     //Solicitudes
 
     //Create 'solicitudes'
