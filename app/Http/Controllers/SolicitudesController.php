@@ -335,7 +335,7 @@ class SolicitudesController extends Controller
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
-    public function editNC(CreateSolicitudNCRequest $request, $id)
+    public function editNC(\Illuminate\Http\Request $request, $id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -368,18 +368,27 @@ class SolicitudesController extends Controller
             'comment'               => $solicitud_original->comment,
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'final_remark'          => $solicitud_original->final_remark,
-            'archivo'               => $archivo->store('solicitudes/' . $delegacion, 'public'),
+            'archivo'               => $solicitud_original->archivo,
+            //'archivo'               => $archivo->store('solicitudes/' . $delegacion, 'public'),
             'user_id'               => $solicitud_original->user_id,
         ]);
 
         Log::info('Nva Solicitud Hist. Nivel Central:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($id);
-        
+
         $archivo = $request->file('archivo');
 
         if ($request->input('valija') <> 0) {
             $solicitud->valija_id           = $request->input('valija');
+        }
+
+        if ($request->hasfile('archivo')) {
+            $nuevo_archivo = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        }
+        else
+        {
+            $nuevo_archivo = $solicitud_original->archivo;
         }
 
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
@@ -398,7 +407,8 @@ class SolicitudesController extends Controller
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->final_remark            = $request->input('final_remark');
-        $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        //$solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        $solicitud->archivo                 = $nuevo_archivo;
         $solicitud->user_id                 = $user_id;
 
         $solicitud->save();

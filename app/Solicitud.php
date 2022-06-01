@@ -97,7 +97,7 @@ class Solicitud extends Model
         return !$solicitud->hist_solicitudes->isEmpty();
     }
 
-    public function getArchivoAttribute($archivo)
+/*     public function getArchivoAttribute($archivo)
     {
 
         if (!$archivo || starts_with($archivo, 'http')) {
@@ -105,7 +105,7 @@ class Solicitud extends Model
         }
 
         return Storage::disk('public')->url($archivo);
-    }
+    } */
 
     public function grupo1()
     {
