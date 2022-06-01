@@ -6,6 +6,7 @@ use App\Group;
 use App\Hist_solicitud;
 use App\Http\Requests\CreateSolicitudNCRequest;
 use App\Http\Requests\CreateSolicitudRequest;
+use App\Http\Requests\EditSolicitudNCRequest;
 use App\Movimiento;
 use App\Rechazo;
 use App\Solicitud;
@@ -335,7 +336,7 @@ class SolicitudesController extends Controller
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
-    public function editNC(\Illuminate\Http\Request $request, $id)
+    public function editNC(EditSolicitudNCRequest $request, $id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -369,7 +370,6 @@ class SolicitudesController extends Controller
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'final_remark'          => $solicitud_original->final_remark,
             'archivo'               => $solicitud_original->archivo,
-            //'archivo'               => $archivo->store('solicitudes/' . $delegacion, 'public'),
             'user_id'               => $solicitud_original->user_id,
         ]);
 
@@ -407,7 +407,6 @@ class SolicitudesController extends Controller
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->final_remark            = $request->input('final_remark');
-        //$solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
         $solicitud->archivo                 = $nuevo_archivo;
         $solicitud->user_id                 = $user_id;
 
