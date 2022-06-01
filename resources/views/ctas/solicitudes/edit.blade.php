@@ -16,6 +16,17 @@
         <form action="{{ $sol_original->id }}" method="POST" enctype="multipart/form-data">
     @endcan
         {{ csrf_field() }}
+
+        @if (count($errors) > 0)
+        <div class="alert alert-danger">
+        <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+        </ul>
+        </div>
+        @endif
+
         <div class="container">
             <br>
             <div class="row">
@@ -29,12 +40,8 @@
                             @endif
                         </p>
                         <div class="input-group">
-                            <input type="file" name="archivo" class="form-control-file @if($errors->has('archivo')) is-invalid @else is-valid @endif">
-                            @if ($errors->has('archivo'))
-                                @foreach($errors->get('archivo') as $error)
-                                    <div class="invalid-feedback">{{ $error }}</div>
-                                @endforeach
-                            @endif
+                            <input type="file" name="archivo" value="{{ $sol_original->archivo }}" class="form-control-file is-valid">
+
                         </div>
                     </div>
                 </div>
@@ -45,7 +52,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="valija">Valija/Oficio</label>
-                            <select class="form-control @if($errors->has('valija')) is-invalid @endif" id="valija" name="valija">
+                            <select class="form-control" id="valija" name="valija">
                                 <option value="0" selected>Selecciona...</option>
                                 @forelse($valijas as $valija)
                                     @if(isset($sol_original->valija))

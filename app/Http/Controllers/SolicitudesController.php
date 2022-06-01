@@ -341,10 +341,13 @@ class SolicitudesController extends Controller
         $user_name = Auth::user()->name;
         $user_del_id = Auth::user()->delegacion_id;
         $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        $archivo = $request->file('archivo');
 
-        Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log);
+        Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log . '|Archivo:' . $archivo);
 
         $solicitud_original = Solicitud::find($id);
+        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+
         $solicitud_hist = Hist_solicitud::create([
             'solicitud_id'          => $solicitud_original->id,
             'valija_id'             => $solicitud_original->valija_id,
@@ -365,14 +368,14 @@ class SolicitudesController extends Controller
             'comment'               => $solicitud_original->comment,
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'final_remark'          => $solicitud_original->final_remark,
-            'archivo'               => $solicitud_original->archivo,
+            'archivo'               => $archivo->store('solicitudes/' . $delegacion, 'public'),
             'user_id'               => $solicitud_original->user_id,
         ]);
 
         Log::info('Nva Solicitud Hist. Nivel Central:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($id);
-        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+        
         $archivo = $request->file('archivo');
 
         if ($request->input('valija') <> 0) {
