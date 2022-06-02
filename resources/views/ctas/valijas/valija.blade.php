@@ -4,7 +4,7 @@
     </strong>
     <span class="text-muted float-right">
         @if (isset($valija->archivo))
-            <a href="{{ $valija->archivo }}" target="_blank">Ver PDF</a>
+            <a href="{{ Storage::disk('public')->url($valija->archivo) }}" target="_blank">Ver PDF</a>
         @endif
     </span>
 </h4>

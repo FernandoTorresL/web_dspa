@@ -15,6 +15,7 @@ use App\Valija;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudesController extends Controller
 {
@@ -140,6 +141,7 @@ class SolicitudesController extends Controller
         //All OK. Return values to the view
         $rechazos = Rechazo::all();
         $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
+
         if ($allowToShowSolicitudes) {
             Log::info('Consultando solicitud' . $texto_log);
 
@@ -344,7 +346,7 @@ class SolicitudesController extends Controller
         $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
         $archivo = $request->file('archivo');
 
-        Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log . '|Archivo:' . $archivo);
+        Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log);
 
         $solicitud_original = Solicitud::find($id);
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;

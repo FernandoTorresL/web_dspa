@@ -55,7 +55,7 @@
                 <strong>Fecha en solicitud:</strong>
                 {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d-%b-%Y') }}
                 @if (isset($solicitud->archivo))
-                    <a class="btn btn-info" href="{{ $solicitud->archivo }}" target="_blank">PDF</a>
+                    <a class="btn btn-info" href="{{ Storage::disk('public')->url($solicitud->archivo) }}" target="_blank">PDF</a>
                 @endif
             </span>
         </h5>

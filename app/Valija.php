@@ -43,7 +43,7 @@ class Valija extends Model
         return !$valija->hist_valijas->isEmpty();
     }
 
-    public function getArchivoAttribute($archivo)
+    /* public function getArchivoAttribute($archivo)
     {
 
         if (!$archivo || starts_with($archivo, 'http')) {
@@ -51,5 +51,5 @@ class Valija extends Model
         }
 
         return Storage::disk('public')->url($archivo);
-    }
+    } */
 }

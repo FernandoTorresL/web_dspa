@@ -25,6 +25,7 @@ class EditSolicitudNCRequest extends FormRequest
     public function rules()
     {
         return [
+            //Comment to allow edit form without upload new pdf file
             //'archivo' => ['required', 'file', 'mimes:pdf', 'between:1,9000'],
             'valija' => ['required'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
@@ -48,7 +49,7 @@ class EditSolicitudNCRequest extends FormRequest
         return [
             'archivo.required' => 'Adjuntar un archivo PDF con el formato y tarjetón es obligatorio',
             'archivo.mimes' => 'Archivo debe ser de formato: pdf',
-//            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
+            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
 //            'valija.required' => 'Valija es dato obligatorio.',
             'fecha_solicitud.before_or_equal' => 'Fecha de Solicitud debe ser anterior o igual al día de hoy',
             'fecha_solicitud.required' => 'Fecha de Solicitud es dato obligatorio.',

@@ -18,13 +18,13 @@
         {{ csrf_field() }}
 
         @if (count($errors) > 0)
-        <div class="alert alert-danger">
-        <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-        </ul>
-        </div>
+            <div class="alert alert-danger">
+            <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+            </div>
         @endif
 
         <div class="container">
@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <p>Archivo PDF actual:
                             @if (isset($sol_original->archivo))
-                                <a href="{{ $sol_original->archivo }}" target="_new">PDF Valija</a>
+                                <a href="{{ Storage::disk('public')->url($sol_original->archivo) }}" target="_new">PDF Solicitud</a>
                             @else
 
                             @endif
