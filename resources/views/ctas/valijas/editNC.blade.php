@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <p>Archivo Actual:
                             @if (isset($val_original->archivo))
-                                <a href="{{ $val_original->archivo }}" target="_new">PDF Valija</a>
+                                <a href="{{ Storage::disk('public')->url($val_original->archivo) }}" target="_new">PDF Valija</a>
                             @else
 
                             @endif
