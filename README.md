@@ -27,7 +27,6 @@ First approach. Initially with pure php, later using MVC model.
 
 Here are some of the screencaptures of the latest version: 
 
-![Imgur](https://i.imgur.com/ATnyAi3.png)
 ![Imgur](https://i.imgur.com/bFp4HBl.png)
 ![Imgur](https://i.imgur.com/GX2zfaV.png)
 ![Imgur](https://i.imgur.com/QxCuBU3.png)
