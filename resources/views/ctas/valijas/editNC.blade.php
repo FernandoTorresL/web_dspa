@@ -12,6 +12,17 @@
 
     <form action="{{ $val_original->id }}" method="POST" enctype="multipart/form-data">
         {{ csrf_field() }}
+
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+            <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+            </div>
+        @endif
+
         <div class="container">
             <br>
             <div class="row">

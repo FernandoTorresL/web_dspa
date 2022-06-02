@@ -6,6 +6,7 @@ use App\Group;
 use App\Hist_solicitud;
 use App\Http\Requests\CreateSolicitudNCRequest;
 use App\Http\Requests\CreateSolicitudRequest;
+use App\Http\Requests\EditSolicitudNCRequest;
 use App\Movimiento;
 use App\Rechazo;
 use App\Solicitud;
@@ -14,6 +15,7 @@ use App\Valija;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudesController extends Controller
 {
@@ -139,6 +141,7 @@ class SolicitudesController extends Controller
         //All OK. Return values to the view
         $rechazos = Rechazo::all();
         $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
+
         if ($allowToShowSolicitudes) {
             Log::info('Consultando solicitud' . $texto_log);
 
@@ -335,16 +338,19 @@ class SolicitudesController extends Controller
         return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
     }
 
-    public function editNC(CreateSolicitudNCRequest $request, $id)
+    public function editNC(EditSolicitudNCRequest $request, $id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_del_id = Auth::user()->delegacion_id;
         $texto_log = '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        $archivo = $request->file('archivo');
 
         Log::info('Editando Solicitud Nivel Central' . '|ID:' . $id . $texto_log);
 
         $solicitud_original = Solicitud::find($id);
+        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+
         $solicitud_hist = Hist_solicitud::create([
             'solicitud_id'          => $solicitud_original->id,
             'valija_id'             => $solicitud_original->valija_id,
@@ -372,11 +378,19 @@ class SolicitudesController extends Controller
         Log::info('Nva Solicitud Hist. Nivel Central:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($id);
-        $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
+
         $archivo = $request->file('archivo');
 
         if ($request->input('valija') <> 0) {
             $solicitud->valija_id           = $request->input('valija');
+        }
+
+        if ($request->hasfile('archivo')) {
+            $nuevo_archivo = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        }
+        else
+        {
+            $nuevo_archivo = $solicitud_original->archivo;
         }
 
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
@@ -395,7 +409,7 @@ class SolicitudesController extends Controller
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->final_remark            = $request->input('final_remark');
-        $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        $solicitud->archivo                 = $nuevo_archivo;
         $solicitud->user_id                 = $user_id;
 
         $solicitud->save();

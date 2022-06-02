@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Delegacion;
 use App\Hist_valija;
 use App\Http\Requests\CreateValijaNCRequest;
+use App\Http\Requests\EditValijaNCRequest;
 use App\Valija;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -70,7 +71,7 @@ class ValijasController extends Controller
         }
     }
 
-    public function editNC(CreateValijaNCRequest $request, $id)
+    public function editNC(EditValijaNCRequest $request, $id)
     {
         $user = Auth::user();
 
@@ -94,7 +95,16 @@ class ValijasController extends Controller
         Log::info('Nva Valija Hist:' . $valija_hist->id . '| Usuario:' . $user->username );
 
         $valija = Valija::find($id);
-        $archivo = $request->file('archivo');
+        //$archivo = $request->file('archivo');
+
+        if ($request->hasfile('archivo')) {
+            $nuevo_archivo = $request->file('archivo')->store('valijas/' . $request->input('delegacion'), 'public');
+        }
+        else
+        {
+            $nuevo_archivo = $valija_original->archivo;
+        }
+
 
         $valija->num_oficio_ca      = $request->input('num_oficio_ca');
         $valija->fecha_recepcion_ca = $request->input('fecha_recepcion_ca');
@@ -102,7 +112,7 @@ class ValijasController extends Controller
         $valija->num_oficio_del     = $request->input('num_oficio_del');
         $valija->fecha_valija_del   = $request->input('fecha_valija_del');
         $valija->comment            = $request->input('comment');
-        $valija->archivo            = $archivo->store('valijas/' . $request->input('delegacion'), 'public');
+        $valija->archivo            = $nuevo_archivo;
         $valija->user_id            = $user->id;
 
         $valija->save();
