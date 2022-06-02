@@ -152,7 +152,7 @@
                         {{ isset($solicitud->rechazo) ? 'NO PROCEDE' : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? 'NO PROCEDE' : 'ATENDIDA') : 'EN ESPERA DE RESPUESTA' ) }}</td>
                     <td class="small">{{ $solicitud->comment . (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->comment) ? '/ ' : '').$solicitud->resultado_solicitud->comment : '') }}</td>
                     {{--<td class="small">{{ $solicitud->comment }}</td>--}}
-                    <td class="small"><a target="_blank" href="{{ $solicitud->archivo }}">{{$solicitud->id}}-PDF</a></td>
+                    <td class="small"><a target="_blank" href="{{ Storage::disk('public')->url($solicitud->archivo) }}">{{$solicitud->id}}-PDF</a></td>
                 </tr>
                 </tbody>
             @empty

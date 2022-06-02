@@ -515,7 +515,7 @@ class CuentasHomeController extends Controller
 
             Log::info('Genera Tabla' . $texto_log);
 
-            $id_lote = 790;
+            $id_lote = NULL;
             $solicitud_id = NULL;
 
             $info_lote = Lote::find($id_lote);
