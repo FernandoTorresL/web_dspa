@@ -6,6 +6,7 @@ use App\Group;
 use App\Hist_solicitud;
 use App\Http\Requests\CreateSolicitudNCRequest;
 use App\Http\Requests\CreateSolicitudRequest;
+use App\Http\Requests\EditSolicitudRequest;
 use App\Http\Requests\EditSolicitudNCRequest;
 use App\Movimiento;
 use App\Rechazo;
@@ -275,7 +276,7 @@ class SolicitudesController extends Controller
         ]);
     }
 
-    public function edit(CreateSolicitudRequest $request, $id)
+    public function edit(EditSolicitudRequest $request, $id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -314,6 +315,14 @@ class SolicitudesController extends Controller
         $delegacion = Subdelegacion::find($request->input('subdelegacion'))->delegacion->id;
         $archivo = $request->file('archivo');
 
+        if ($request->hasfile('archivo')) {
+            $nuevo_archivo = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        }
+        else
+        {
+            $nuevo_archivo = $solicitud_original->archivo;
+        }
+
         $solicitud->fecha_solicitud_del     = $request->input('fecha_solicitud');
         $solicitud->delegacion_id           = $delegacion;
         $solicitud->subdelegacion_id        = $request->input('subdelegacion');
@@ -328,7 +337,7 @@ class SolicitudesController extends Controller
         $solicitud->gpo_actual_id           = $request->input('gpo_actual');
         $solicitud->comment                 = $request->input('comment');
         $solicitud->rechazo_id              = $request->input('rechazo');
-        $solicitud->archivo                 = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+        $solicitud->archivo                 = $nuevo_archivo;
         $solicitud->user_id                 = $user_id;
 
         $solicitud->save();
