@@ -231,37 +231,48 @@ class SolicitudesController extends Controller
         $user_name = Auth::user()->name;
         $user_del_id = Auth::user()->delegacion_id;
         $texto_log = '|ID:' . $solicitud->id . '|User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id;
+        $bolEditar = false;
+        $estatus_solicitud = $solicitud->status_sol_id;
 
-        if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || $user_id == 1 ) )
-            if ((Gate::allows('editar_solicitudes_user_nc') || Gate::allows('editar_solicitudes_del'))) {
-                //Get the common information
-                $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-                $gruposNuevo = Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
-                $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
-                $rechazos = Rechazo::all();
+        if  ( Auth::user()->hasRole('admin_dspa')               && in_array( $estatus_solicitud, [1, 2, 3, 4, 5]    ) )
+            $bolEditar = true;
 
-                //Get the particular information
-                if (Gate::allows('editar_solicitudes_user_nc')) {
-                    Log::info('Editando Solicitud NC' . $texto_log);
-                    $valijas = Valija::with('delegacion')
-                        ->orderBy('num_oficio_ca', 'desc')->get();
-                    $subdelegaciones = Subdelegacion::with('delegacion')
-                        ->where('status', '<>', 0)
-                        ->orderBy('id', 'asc')->get();
-                } elseif (Gate::allows('editar_solicitudes_del')) {
-                    Log::info('Editando Solicitud Del' . $texto_log);
-                    $valijas = '';
-                    $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)
-                        ->where('status', '<>', 0)
-                        ->orderBy('num_sub', 'asc')->get();
-                }
-            } else {
-                Log::warning('Sin permiso-Editar Solicitud' . $texto_log);
-                return redirect('ctas')->with('message', 'No tiene permitido editar solicitudes.');
+        if  ( Auth::user()->hasRole('admin_dspa')               && in_array( $estatus_solicitud, [1, 2, 3, 4, 5]    )   )
+            $bolEditar = true;
+
+        if  ( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd'))        && in_array( $estatus_solicitud, [1, 4]             )   )
+            $bolEditar = true;
+
+        //if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || $user_id == 1 ) )
+        if ( $bolEditar )
+        {
+            //Get the common information
+            $movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
+            $gruposNuevo = Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
+            $gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
+            $rechazos = Rechazo::all();
+
+            //Get the particular information
+            if (Gate::allows('editar_solicitudes_user_nc')) {
+                Log::info('Editando Solicitud NC' . $texto_log);
+                $valijas = Valija::with('delegacion')
+                    ->where('status', '<>', 0)
+                    ->orderBy('num_oficio_ca', 'desc')->get();
+                $subdelegaciones = Subdelegacion::with('delegacion')
+                    ->where('status', '<>', 0)
+                    ->orderBy('id', 'asc')->get();
+            } elseif (Gate::allows('editar_solicitudes_del')) {
+                Log::info('Editando Solicitud Del' . $texto_log);
+                $valijas = '';
+                $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)
+                    ->where('status', '<>', 0)
+                    ->orderBy('num_sub', 'asc')->get();
             }
-        else {
-            Log::warning('Sin condiciones para editar Solicitud' . $texto_log);
-            return redirect('ctas')->with('message', 'La solicitud ya no se puede editar.');
+        }
+        else
+        {
+        Log::warning('Sin condiciones para editar Solicitud' . $texto_log);
+        return redirect('ctas')->with('message', 'La solicitud ya no se puede editar.');
         }
 
         return view(

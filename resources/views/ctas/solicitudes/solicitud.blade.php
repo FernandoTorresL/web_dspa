@@ -4,6 +4,7 @@
     \Carbon\Carbon::setUtf8(false);
 
     $estatus_solicitud = $solicitud->status_sol_id;
+    $bolMostrarBotonEditar = false;
 
     switch($estatus_solicitud) {
         case 1:     $color = 'light';       $color_text = 'dark';       $possible_status = [ 2, 3, 4, 5 ]; break;
@@ -37,7 +38,26 @@
                 ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
                 {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
                 {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
-                @if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || Auth::user()->id == 1 ) )
+
+                @if( Auth::user()->hasRole('admin_dspa') && in_array( $estatus_solicitud, [1, 2, 3, 4, 5] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if( Auth::user()->hasRole('capturista_delegacional') && in_array( $estatus_solicitud, [1, 2] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $estatus_solicitud, [1, 4] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if ($bolMostrarBotonEditar)
                     @can('editar_solicitudes_user_nc')
                         <a class="btn btn-success" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}" role="button">
                             Editar solicitud
@@ -48,6 +68,7 @@
                         </a>
                     @endcan
                 @endif
+
             <span class="card-text float-right">
                 @can('ver_timeline_solicitudes')
                     <a class="btn btn-warning btn-sm" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Timeline</a>
@@ -145,7 +166,7 @@
 
     <div class="card-footer">
         <div>
-            <strong>Status:</strong>
+            <strong>Estado Actual:</strong>
             <span class="badge badge-pill badge-{{$color_text}}">
                 {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
             </span>
@@ -170,7 +191,8 @@
 
 <br>
 
-@if($solicitud->status_sol_id == 4 )
+{{-- @if($solicitud->status_sol_id == 4 ) --}}
+@if( Auth::user()->hasRole('autorizador_cceyvd') && $estatus_solicitud == 4 )
 
     @can('autorizar_solicitudes_cceyvd')
 
