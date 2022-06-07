@@ -267,6 +267,14 @@
                         @endif
                     @endif
 
+                    @if ($estatus_solicitud <> 2)
+                        @if (Auth::user()->hasRole('admin_dspa') || Auth::user()->hasRole('capturista_dspa') )
+                            <button type="submit" name="action" value="enviar_a_correccion" class="btn btn-outline-warning" data-toggle="tooltip"
+                                data-placement="top" title="Solicitar corrección a la delegación">Requiere corrección
+                            </button>
+                        @endif
+                    @endif
+
                     {{--Si no es capturista delegacional...--}}
                     @if (!Auth::user()->hasRole('capturista_delegacional'))
                         @if ($estatus_solicitud<>3)
