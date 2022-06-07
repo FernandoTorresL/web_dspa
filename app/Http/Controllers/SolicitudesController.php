@@ -234,13 +234,16 @@ class SolicitudesController extends Controller
         $bolEditar = false;
         $estatus_solicitud = $solicitud->status_sol_id;
 
-        if  ( Auth::user()->hasRole('admin_dspa')               && in_array( $estatus_solicitud, [1, 2, 3, 4, 5]    ) )
+        if  ( Auth::user()->hasRole('admin_dspa')               && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
             $bolEditar = true;
 
-        if  ( Auth::user()->hasRole('admin_dspa')               && in_array( $estatus_solicitud, [1, 2, 3, 4, 5]    )   )
+        if  ( Auth::user()->hasRole('admin_dspa')               && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
             $bolEditar = true;
 
-        if  ( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd'))        && in_array( $estatus_solicitud, [1, 4]             )   )
+        if  ( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd')) && in_array( $estatus_solicitud, [1, 4]) )
+            $bolEditar = true;
+
+        if  ( Auth::user()->hasRole('capturista_delegacional')  && in_array($estatus_solicitud, [1, 2]) )
             $bolEditar = true;
 
         //if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || $user_id == 1 ) )

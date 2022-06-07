@@ -55,7 +55,7 @@ class SolChangeStatusController extends Controller
                 $solicitud->status_sol_id = 1;
                 $solicitud->rechazo_id    = NULL;
                 $msg_type = 'message';
-                $message = '¡La solicitud ha sido devuelta para revisión de la DSPA y se ha eliminado la causa de rechazo!';
+                $message = '¡La solicitud ha sido devuelta para nueva revisión de la DSPA!';
                 break;
             break;
 

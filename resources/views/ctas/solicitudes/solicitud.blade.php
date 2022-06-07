@@ -194,73 +194,92 @@
 @if (   ( Auth::user()->hasRole('autorizador_cceyvd')   && in_array($estatus_solicitud, [4, 5]) )
         ||
         ( Auth::user()->hasRole('admin_dspa')           && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
+        ||
+        ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
     )
 
     <form action="change_status/{{ $solicitud->id }}" method="POST">
     {{ csrf_field() }}
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label for="rechazo">Causa de Rechazo</label>
-                    <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
-                        <option value="" selected>0 - Sin rechazo</option>
-                        @if (!isset($solicitud->rechazo->id))
-                            @php
-                                $id_rechazo = 0;
-                            @endphp
-                        @else
-                            @php
-                                $id_rechazo = $solicitud->rechazo->id;
-                            @endphp
+        @if (!Auth::user()->hasRole('capturista_delegacional'))
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                    
+                        <label for="rechazo">Causa de Rechazo</label>
+                        <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
+                            <option value="" selected>0 - Sin rechazo</option>
+                            @if (!isset($solicitud->rechazo->id))
+                                @php
+                                    $id_rechazo = 0;
+                                @endphp
+                            @else
+                                @php
+                                    $id_rechazo = $solicitud->rechazo->id;
+                                @endphp
+                            @endif
+                            @forelse($rechazos as $rechazo)
+                                @php
+                                    $rechazo->id == old('rechazo', $id_rechazo) ? $str_check = 'selected' : $str_check = '';
+                                @endphp
+                                <option value="{{ $rechazo->id }}" {{ $str_check }}>{{ $rechazo->id }} - {{ $rechazo->full_name }}</option>
+                            @empty
+                            @endforelse
+                        </select>
+                        @if ($errors->has('rechazo'))
+                            @foreach($errors->get('rechazo') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
                         @endif
-                        @forelse($rechazos as $rechazo)
-                            @php
-                                $rechazo->id == old('rechazo', $id_rechazo) ? $str_check = 'selected' : $str_check = '';
-                            @endphp
-                            <option value="{{ $rechazo->id }}" {{ $str_check }}>{{ $rechazo->id }} - {{ $rechazo->full_name }}</option>
-                        @empty
-                        @endforelse
-                    </select>
-                    @if ($errors->has('rechazo'))
-                        @foreach($errors->get('rechazo') as $error)
-                            <div class="invalid-feedback">{{ $error }}</div>
-                        @endforeach
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-8">
-                <div class="input-group mb-4">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Observaciones Nivel Central</p></span>
                     </div>
-                    <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark', $solicitud->final_remark) }}</textarea>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="input-group mb-4">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Observaciones Nivel Central</p></span>
+                        </div>
+                        <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark', $solicitud->final_remark) }}</textarea>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <div class="row">
             <div class="col-sm-6">
+                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+                    <div class="alert alert-danger">
+                        Favor de realizar las correcciones solicitadas en <em class="alert-success">("Editar Solicitud") </em>y al finalizar dar click al botón siguiente:
+                    </div>
+                @endif
                 <div class="form-group">
                     {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
                     @if ($estatus_solicitud<>1)
-                        <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
-                            data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Enviar a Revisión DSPA
-                        </button>
+                        @if (Auth::user()->hasRole('capturista_delegacional'))
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Correcciones realizadas, enviar de nuevo a Revisión DSPA
+                            </button>
+                        @else
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Enviar a Revisión DSPA
+                            </button>
+                        @endif
                     @endif
 
-                    @if ($estatus_solicitud<>3)
-                        <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
-                            data-placement="top" title="Rechazar solicitud">No autorizar
-                        </button>
-                    @endif
+                    {{--Si no es capturista delegacional...--}}
+                    @if (!Auth::user()->hasRole('capturista_delegacional'))
+                        @if ($estatus_solicitud<>3)
+                            <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
+                                data-placement="top" title="Rechazar solicitud">No autorizar
+                            </button>
+                        @endif
 
-                    @if ($estatus_solicitud<>5)
-                        <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
-                            data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
-                        </button>
+                        @if ($estatus_solicitud<>5)
+                            <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
+                                data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>
