@@ -49,9 +49,19 @@ class SolChangeStatusController extends Controller
         Log::info('Nva Solicitud Hist x cambio de status Nivel Central:' . $solicitud_hist->id . $texto_log);
 
         $solicitud = Solicitud::find($changing_sol_id);
+        $solicitud->final_remark    = $request->input('final_remark');
 
         switch($request->input('action')) {
+            case 'enviar_a_correccion':
+                $solicitud->rechazo_id    = $request->input('rechazo');
+                $solicitud->status_sol_id = 2;
+                $msg_type = 'warning';
+                $message = '¡La solicitud ha sido devuelta a la delegación para correcciones!';
+                break;
+            break;
+
             case 'en_revision_dspa':
+                $solicitud->final_remark    = $solicitud_original->final_remark . ' (Corregida)';
                 $solicitud->status_sol_id = 1;
                 $solicitud->rechazo_id    = NULL;
                 $msg_type = 'message';
@@ -62,7 +72,7 @@ class SolChangeStatusController extends Controller
             case 'no_autorizar':
                 $solicitud->rechazo_id    = $request->input('rechazo');
                 //Si no se colocó causa de rechazo...
-                if(!isset($solicitud->rechazo_id)) 
+                if(!isset($solicitud->rechazo_id))
                 {
                     $msg_type = 'error';
                     $message = 'No se colocó causa de rechazo';
@@ -86,7 +96,7 @@ class SolChangeStatusController extends Controller
                 break;
         }
 
-        $solicitud->final_remark    = $request->input('final_remark');
+        //$solicitud->final_remark    = $request->input('final_remark');
         $solicitud->user_id         = $user_id;
 
         $solicitud->save();
