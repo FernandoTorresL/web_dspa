@@ -3,6 +3,24 @@
 @section('title', 'Editar Solicitud')
 
 @section('content')
+    @php
+
+        $estatus_solicitud = $sol_original->status_sol_id;
+
+        switch($estatus_solicitud) {
+            case 1:     $color = 'light';       $color_text = 'dark';       $possible_status = [ 2, 3, 4, 5 ]; break;
+            case 2:     $color = 'warning';     $color_text = 'warning';    $possible_status = [ 1 ]; break;
+            case 3:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 1, 2 ]; break;
+            case 4:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 5 ]; break;
+            case 5:     $color = 'primary';     $color_text = 'primary';    $possible_status = [ ]; break;
+            case 6:     $color = 'info';        $color_text= 'dark';        $possible_status = [ 7, 8, 9 ]; break;
+            case 7:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 0 ]; break;
+            case 8:     $color = 'success';     $color_text = 'success';    $possible_status = [ 0 ]; break;
+            case 9:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 7, 8 ]; break;
+            default:    $color = 'secondary';
+        }
+    @endphp
+
     <div class="row">
         <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </div>
@@ -28,6 +46,18 @@
         @endif
 
         <div class="container">
+
+            <div>
+                <strong>Estado actual:</strong>
+                <span class="badge badge-pill badge-{{$color_text}}">
+                    {{ isset($sol_original->status_sol) ? $sol_original->status_sol->name : 'Indefinido' }}
+                </span>
+                <span class="text-{{$color_text}}">
+                    {{--{{ isset($sol_original->rechazo) ? $sol_original->rechazo->full_name : '' }}--}}
+                    {{ isset($sol_original->rechazo) ? $sol_original->rechazo->full_name : (isset($sol_original->resultado_solicitud) ? '/ '.(isset($sol_original->resultado_solicitud->rechazo_mainframe) ? $sol_original->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
+                </span>
+            </div>
+
             <br>
             <div class="row">
                 <div class="col-sm-4">

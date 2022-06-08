@@ -4,6 +4,7 @@
     \Carbon\Carbon::setUtf8(false);
 
     $estatus_solicitud = $solicitud->status_sol_id;
+    $bolMostrarBotonEditar = false;
 
     switch($estatus_solicitud) {
         case 1:     $color = 'light';       $color_text = 'dark';       $possible_status = [ 2, 3, 4, 5 ]; break;
@@ -37,7 +38,26 @@
                 ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
                 {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
                 {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
-                @if( ( !isset($solicitud->lote_id) && (!isset($solicitud->rechazo) && !isset($solicitud->resultado_solicitud->rechazo_mainframe)) || Auth::user()->id == 1 ) )
+
+                @if( Auth::user()->hasRole('admin_dspa') && in_array( $estatus_solicitud, [1, 2, 3, 4, 5] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if( Auth::user()->hasRole('capturista_delegacional') && in_array( $estatus_solicitud, [1, 2] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $estatus_solicitud, [1, 4] ) )
+                    @php
+                        $bolMostrarBotonEditar = true;
+                    @endphp
+                @endif
+
+                @if ($bolMostrarBotonEditar)
                     @can('editar_solicitudes_user_nc')
                         <a class="btn btn-success" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}" role="button">
                             Editar solicitud
@@ -48,6 +68,7 @@
                         </a>
                     @endcan
                 @endif
+
             <span class="card-text float-right">
                 @can('ver_timeline_solicitudes')
                     <a class="btn btn-warning btn-sm" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Timeline</a>
@@ -145,7 +166,7 @@
 
     <div class="card-footer">
         <div>
-            <strong>Status:</strong>
+            <strong>Estado Actual:</strong>
             <span class="badge badge-pill badge-{{$color_text}}">
                 {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
             </span>
@@ -170,16 +191,20 @@
 
 <br>
 
-@if($solicitud->status_sol_id == 4 )
+@if (   ( Auth::user()->hasRole('autorizador_cceyvd')   && in_array($estatus_solicitud, [4, 5]) )
+        ||
+        ( Auth::user()->hasRole('admin_dspa')           && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
+        ||
+        ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+    )
 
-    @can('autorizar_solicitudes_cceyvd')
-
-        <form action="change_status/{{ $solicitud->id }}" method="POST">
-        {{ csrf_field() }}
-
+    <form action="change_status/{{ $solicitud->id }}" method="POST">
+    {{ csrf_field() }}
+        @if (!Auth::user()->hasRole('capturista_delegacional'))
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
+                    
                         <label for="rechazo">Causa de Rechazo</label>
                         <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
                             <option value="" selected>0 - Sin rechazo</option>
@@ -214,32 +239,58 @@
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Observaciones Nivel Central</p></span>
-
                         </div>
                         <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark', $solicitud->final_remark) }}</textarea>
                     </div>
                 </div>
             </div>
-        <!--
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="input-group mb-4">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Observaciones al Autorizar/No Autorizar</span>
-                        </div>
-                        <textarea class="form-control" id="final_remark" name="final_remark" placeholder="(Opcional)" rows="2">{{ old('final_remark') }}</textarea>
-                    </div>
-                </div>
-            </div> -->
+        @endif
 
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="input-group mb-4">
-                        <button type="submit" name="action" value="no_autorizar" class="btn btn-danger">No autorizar</button>
-                        <button type="submit" name="action" value="autorizar" class="btn btn-primary">Autorizar (CCEyVD)</button>
+        <div class="row">
+            <div class="col-sm-6">
+                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+                    <div class="alert alert-danger">
+                        Favor de realizar las correcciones solicitadas en <em class="alert-success">("Editar Solicitud") </em>y al finalizar dar click al botón siguiente:
                     </div>
+                @endif
+                <div class="form-group">
+                    {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
+                    @if ($estatus_solicitud<>1)
+                        @if (Auth::user()->hasRole('capturista_delegacional'))
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Correcciones realizadas, enviar de nuevo a Revisión DSPA
+                            </button>
+                        @else
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Enviar a Revisión DSPA
+                            </button>
+                        @endif
+                    @endif
+
+                    @if ($estatus_solicitud <> 2)
+                        @if (Auth::user()->hasRole('admin_dspa') || Auth::user()->hasRole('capturista_dspa') )
+                            <button type="submit" name="action" value="enviar_a_correccion" class="btn btn-outline-warning" data-toggle="tooltip"
+                                data-placement="top" title="Solicitar corrección a la delegación">Requiere corrección
+                            </button>
+                        @endif
+                    @endif
+
+                    {{--Si no es capturista delegacional...--}}
+                    @if (!Auth::user()->hasRole('capturista_delegacional'))
+                        @if ($estatus_solicitud<>3)
+                            <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
+                                data-placement="top" title="Rechazar solicitud">No autorizar
+                            </button>
+                        @endif
+
+                        @if ($estatus_solicitud<>5)
+                            <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
+                                data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
+                            </button>
+                        @endif
+                    @endif
                 </div>
             </div>
-        </form>
-    @endcan
+        </div>
+    </form>
 @endif

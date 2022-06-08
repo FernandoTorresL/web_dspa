@@ -32,7 +32,7 @@ class CuentasHomeController extends Controller
 
         $primer_renglon = $user->delegacion->name;
 
-        if ( $user->hasRole('capturista_dspa') || $user->hasRole('capturista_cceyvd') ) {
+        if ( $user->hasRole('capturista_dspa') || $user->hasRole('capturista_cceyvd') || $user->hasRole('autorizador_cceyvd')) {
 
             $primer_renglon .= ' - ' . $user->job->name;
 
