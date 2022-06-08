@@ -12,7 +12,7 @@
         case 3:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 1, 2 ]; break;
         case 4:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 5 ]; break;
         case 5:     $color = 'primary';     $color_text = 'primary';    $possible_status = [ ]; break;
-        case 6:     $color = 'info';        $color_text= 'dark';        $possible_status = [ 7, 8, 9 ]; break;
+        case 6:     $color = 'info';        $color_text = 'dark';       $possible_status = [ 7, 8, 9 ]; break;
         case 7:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 0 ]; break;
         case 8:     $color = 'success';     $color_text = 'success';    $possible_status = [ 0 ]; break;
         case 9:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 7, 8 ]; break;
@@ -165,25 +165,30 @@
     </div>
 
     <div class="card-footer">
-        <div>
-            <strong>Estado Actual:</strong>
-            <span class="badge badge-pill badge-{{$color_text}}">
-                {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
-            </span>
-            <span class="text-{{$color_text}}">
-                {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
-                {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
-            </span>
-        </div>
 
-        <div>
-            <strong>Observaciones Nivel Central:</strong>
-            {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
-        </div>
+        <div class="table-{{$color}}">
+            <div>
+                <strong>Estado Actual:</strong>
 
-        <div>
-            <strong>Observaciones Mainframe:</strong>
-            @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+                <span class="btn btn-outline-{{$color_text}} btn-sm">
+                    {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
+                </span>
+
+                <span class="text-{{$color_text}}">
+                    {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
+                    {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
+                </span>
+            </div>
+
+            <div>
+                <strong>Observaciones Nivel Central:</strong>
+                {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
+            </div>
+
+            <div>
+                <strong>Observaciones Mainframe:</strong>
+                @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+            </div>
         </div>
     </div>
 
@@ -204,7 +209,6 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                    
                         <label for="rechazo">Causa de Rechazo</label>
                         <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
                             <option value="" selected>0 - Sin rechazo</option>
