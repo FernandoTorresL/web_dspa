@@ -165,25 +165,27 @@
     </div>
 
     <div class="card-footer">
-        <div>
-            <strong>Estado Actual:</strong>
-            <span class="badge badge-pill badge-{{$color_text}}">
-                {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
-            </span>
-            <span class="text-{{$color_text}}">
-                {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
-                {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
-            </span>
-        </div>
+        <div class="table-{{$color}}">
+            <div>
+                <strong>Estado Actual:</strong>
+                <span class="badge badge-pill badge-{{$color_text}}">
+                    {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
+                </span>
+                <span class="text-{{$color_text}}">
+                    {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
+                    {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
+                </span>
+            </div>
 
-        <div>
-            <strong>Observaciones Nivel Central:</strong>
-            {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
-        </div>
+            <div>
+                <strong>Observaciones Nivel Central:</strong>
+                {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
+            </div>
 
-        <div>
-            <strong>Observaciones Mainframe:</strong>
-            @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+            <div>
+                <strong>Observaciones Mainframe:</strong>
+                @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+            </div>
         </div>
     </div>
 
