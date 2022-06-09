@@ -1,8 +1,13 @@
-
-    {{--Solicitudes List--}}
-    @if(count($tabla_movimientos))
+    @if(count($solicitudes_sin_respuesta_mainframe))
         <br>
-        <h5 class="text-info">Total de pre-autorizadas listas para enviar a Mainframe: {{ $tabla_movimientos->count() }}</h5>
+        <h5 class="text-warning">Total de solicitudes sin respuesta Mainframe: {{ $solicitudes_sin_respuesta_mainframe->count() }}</h5>
+        <h6 class="text-warning">
+            @if( isset( $info_lote ) )
+                Lote: {{ $info_lote->num_lote }}
+            @else
+                Sin lote asignado
+            @endif
+        </h6>
 
         <div class="table table-hover table-sm">
             <table class="table">
@@ -30,7 +35,7 @@
         @endphp
     @endif
 
-    @forelse( $tabla_movimientos as $row_tabla_mov )
+    @forelse( $solicitudes_sin_respuesta_mainframe as $row_tabla_mov )
         @php
             $estatus_solicitud = $row_tabla_mov->status_sol_id;
             // Setting the color row by the result of the solicitud
@@ -48,7 +53,7 @@
             }
         @endphp
 
-        @if( isset($id_movimiento_anterior) && ($row_tabla_mov->mov_id <> $id_movimiento_anterior) )
+        @if( isset($id_movimiento_anterior) && ($row_tabla_mov->movimiento->id <> $id_movimiento_anterior) )
             @php
                 $var = 1;
             @endphp
@@ -62,21 +67,21 @@
                 <td class="small">{{ $row_tabla_mov->primer_apellido}}</td>
                 <td class="small">{{ $row_tabla_mov->segundo_apellido }}</td>
                 <td class="small">{{ $row_tabla_mov->nombre }}</td>
-                <td class="small">{{ isset($row_tabla_mov->gpo_a_name) ? $row_tabla_mov->gpo_a_name : '--' }}</td>
-                <td class="small">{{ isset($row_tabla_mov->gpo_n_name) ? $row_tabla_mov->gpo_n_name : '--' }}</td>
+                <td class="small">{{ isset($row_tabla_mov->gpo_actual->name) ? $row_tabla_mov->gpo_actual->name : '--' }}</td>
+                <td class="small">{{ isset($row_tabla_mov->gpo_nuevo->name) ? $row_tabla_mov->gpo_nuevo->name : '--' }}</td>
                 <td class="small">
-                    <a target="_blank" href="/ctas/solicitudes/{{ $row_tabla_mov->sol_id }}">
+                    <a target="_blank" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
                         {{ $row_tabla_mov->cuenta }}
                     </a>
                 </td>
                 <td class="small">{{ $row_tabla_mov->matricula }}</td>
                 <td class="small">{{ $row_tabla_mov->curp }}</td>
                 <td class="small">
-                    <a target="_blank" href="/ctas/valijas/{{ $row_tabla_mov->val_id }}">
-                        {{ $row_tabla_mov->num_oficio_ca }}
+                    <a target="_blank" href="/ctas/valijas/{{ isset($row_tabla_mov->valija_oficio) ? $row_tabla_mov->valija_oficio->id : ''}}">
+                        {{ isset($row_tabla_mov->valija_oficio) ? $row_tabla_mov->valija_oficio->num_oficio_ca : '--'}}
                     </a>
                 </td>
-                <td class="small">{{ $row_tabla_mov->mov_name }}</td>
+                <td class="small">{{ $row_tabla_mov->movimiento->name }}</td>
                 <td class="small">
                     <a target="_blank" href="{{ Storage::disk('public')->url($row_tabla_mov->archivo) }}">
                         PDF
@@ -85,27 +90,26 @@
                 <th scope="row">{{ $var }}</th>
             </tr>
         @php
-            $id_movimiento_anterior = $row_tabla_mov->mov_id;
+            $id_movimiento_anterior = $row_tabla_mov->movimiento->id;
             $var += 1;
         @endphp
     @empty
-        <h5 class="text-danger">
-            No hay solicitudes pre-autorizadas para tramitar
+        <h4 class="text-success">
+            Mainframe dio respuesta a todas las solicitudes
             @if( isset( $info_lote ) )
-            <p>Lote: {{ $info_lote->num_lote }} id: {{ $info_lote->id }}</p>
+                Lote: {{ $info_lote->num_lote }}
             @else
                 (Sin lote asignado)
             @endif
 
-        </h5>
-        <br>
+        </h4>
     @endforelse
     <tr>
         <th scope="row"><br></th>
     </tr>
     </tbody>
 
-    @if( count($tabla_movimientos) )
+    @if( count($solicitudes_sin_respuesta_mainframe) )
         </table>
     </div>
     @endif

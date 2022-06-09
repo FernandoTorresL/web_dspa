@@ -520,20 +520,41 @@ class CuentasHomeController extends Controller
 
             $info_lote = Lote::find($id_lote);
 
-            $tabla_movimientos = DB::table('solicitudes')
-                ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
-                ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
-                ->leftjoin('groups as gpo_a', 'solicitudes.gpo_actual_id', '=', 'gpo_a.id')
-                ->leftjoin('groups as gpo_n', 'solicitudes.gpo_nuevo_id', '=', 'gpo_n.id')
-                ->select('valijas.id as val_id', 'valijas.num_oficio_ca',
-                    'solicitudes.id as sol_id', 'solicitudes.primer_apellido', 'solicitudes.segundo_apellido', 'solicitudes.nombre',
-                    'solicitudes.cuenta', 'solicitudes.matricula', 'solicitudes.curp', 'solicitudes.archivo',
-                    'gpo_a.name as gpo_a_name', 'gpo_n.name as gpo_n_name', 'movimientos.id as mov_id', 'movimientos.name as mov_name')
+            $solicitudes_preautorizadas = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'status_sol'] )
+                ->where('solicitudes.lote_id', NULL)
+                ->where('solicitudes.status_sol_id', 5)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta');
+
+            $solicitudes_sin_preautorizacion = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'status_sol'] )
+                ->where('solicitudes.lote_id', NULL)
+                ->where('solicitudes.status_sol_id', '<>', 5)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta');
+
+            $solicitudes_con_respuesta_mainframe_ok = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud'] )
+                ->where('solicitudes.lote_id', $id_lote)
+                ->whereHas('resultado_solicitud.resultado_lote', function ( $list_where ) {
+                    $list_where
+                        ->whereNull('rechazo_mainframe_id'); }
+                )
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta');
+
+            $solicitudes_con_respuesta_mainframe_error = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud'] )
+                ->where('solicitudes.lote_id', $id_lote)
+                ->whereHas('resultado_solicitud.resultado_lote', function ( $list_where ) {
+                    $list_where
+                        ->whereNotNull('rechazo_mainframe_id'); }
+                )
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta');
+
+            $solicitudes_sin_respuesta_mainframe = Solicitud::whereDoesntHave('resultado_solicitud')
                 ->where('solicitudes.lote_id', $id_lote)
                 ->where('solicitudes.rechazo_id', NULL)
                 ->orderBy('solicitudes.movimiento_id')
-                ->orderBy('solicitudes.cuenta')
-                ->orderBy('valijas.num_oficio_ca');
+                ->orderBy('solicitudes.cuenta');
 
             $first_query =
                 DB::table('solicitudes')
@@ -571,41 +592,31 @@ class CuentasHomeController extends Controller
                         'solicitudes.delegacion_id')
                     ->orderBy('valijas.delegacion_id');
 
-            $listado_mov_rechazados =
-                    Solicitud::with([
-                        'valija',
-                        'delegacion',
-                        'subdelegacion',
-                        'movimiento',
-                        'rechazo',
-                        'gpo_actual',
-                        'gpo_nuevo',
-                        'lote'])
-                    ->where('lote_id', $id_lote)
-                    ->where('rechazo_id', '<>', NULL)
-                    ->orderBy('solicitudes.movimiento_id')
-                    ->orderBy('solicitudes.cuenta');
+            $solicitudes_con_respuesta_mainframe_ok = $solicitudes_con_respuesta_mainframe_ok->get();
+            $solicitudes_con_respuesta_mainframe_error = $solicitudes_con_respuesta_mainframe_error->get();
+            $solicitudes_sin_respuesta_mainframe = $solicitudes_sin_respuesta_mainframe->get();
 
             if ( isset( $solicitud_id ) ) {
-                $tabla_movimientos = $tabla_movimientos->where('solicitudes.id', '<=', $solicitud_id)->get();
-                $first_query = $first_query->where('solicitudes.id', '<=', $solicitud_id);
+                $solicitudes_preautorizadas = $solicitudes_preautorizadas->where('solicitudes.id', '<=', $solicitud_id)->get();
+                $solicitudes_sin_preautorizacion = $solicitudes_sin_preautorizacion->where('solicitudes.id', '<=', $solicitud_id)->get();
                 $listado_valijas = $listado_valijas->where('solicitudes.id', '<=', $solicitud_id)->union($first_query)->get();
-                $listado_mov_rechazados = $listado_mov_rechazados->where('solicitudes.id', '<=', $solicitud_id)->get();
-
             }
             else {
-                $tabla_movimientos = $tabla_movimientos->get();
-                $first_query = $first_query;
+                $solicitudes_preautorizadas = $solicitudes_preautorizadas->get();
+                $solicitudes_sin_preautorizacion = $solicitudes_sin_preautorizacion->get();
                 $listado_valijas = $listado_valijas->union($first_query)->get();
-                $listado_mov_rechazados = $listado_mov_rechazados->get();
             }
 
-            //dd($tabla_movimientos);
             return view(
                 'ctas.admin.show_tabla', compact (
-                    'tabla_movimientos',
+                    'solicitudes_preautorizadas',
+                    'solicitudes_sin_preautorizacion',
+                    'solicitudes_con_respuesta_mainframe_ok',
+                    'solicitudes_con_respuesta_mainframe_error',
+                    'solicitudes_sin_respuesta_mainframe',
+
                     'listado_valijas',
-                    'listado_mov_rechazados',
+
                     'info_lote',
                     'solicitud_id'
                 )
