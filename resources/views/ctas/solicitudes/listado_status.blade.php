@@ -63,8 +63,8 @@
                         <td class="small">{{ $solicitud->primer_apellido }} - {{ $solicitud->segundo_apellido }} - {{ $solicitud->nombre }}</td>
                         <td class="small">
                             <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
-                                  {{ isset($solicitud->rechazo) ? $solicitud->cuenta : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->cuenta : $solicitud->resultado_solicitud->cuenta) : $solicitud->cuenta )  }}
-                             ({{$solicitud->movimiento->name }})
+                                {{ isset($solicitud->rechazo) ? $solicitud->cuenta : (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->cuenta : $solicitud->resultado_solicitud->cuenta) : $solicitud->cuenta )  }}
+                                ({{$solicitud->movimiento->name }})
                             </a> Lote: {{ isset($solicitud->lote) ? $solicitud->lote->num_lote : '--' }}
                         </td>
                         <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }} -> {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
@@ -73,7 +73,6 @@
                         <td class="small @if(isset($solicitud->rechazo) || isset($solicitud->resultado_solicitud->rechazo_mainframe)) text-danger @endif">
                             {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}</td>
                         <td class="small">{{ $solicitud->comment . (isset($solicitud->resultado_solicitud) ? (isset($solicitud->resultado_solicitud->comment) ? '/ ' : '').$solicitud->resultado_solicitud->comment : '') }}</td>
-                    {{--<td class="small"><a target="_blank" href="{{ $solicitud->archivo }}">{{$solicitud->id}}-PDF</a></td>--}}
                 </tr>
                 </tbody>
             @empty
@@ -83,10 +82,6 @@
         @if(count($listado_solicitudes))
                 </table>
             </div>
-
-            {{--<div class="mt-2 mx-auto">--}}
-                {{--{{ $listado_solicitudes->links() }}--}}
-            {{--</div>--}}
         @endif
     @endif
 
