@@ -73,7 +73,8 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //Routes to admin options
     Route::get('/ctas/admin', 'CuentasAdminController@home');
     Route::get('/ctas/admin/resumen', 'CuentasHomeController@show_resume');
-    Route::get('/ctas/admin/generatabla', 'CuentasHomeController@show_admin_tabla');
+    //Route::get('/ctas/admin/generatabla/', 'CuentasHomeController@show_admin_tabla');
+    Route::get('/ctas/admin/generatabla/{lote_id?}', 'CuentasHomeController@show_admin_tabla');
 
     /*Route::get('/ctas/admin/show_create_file_valijas', 'CuentasAdminController@show_create_file_valijas');
     Route::post('/ctas/admin/create_file_valijas', 'CuentasAdminController@create_file_valijas');
