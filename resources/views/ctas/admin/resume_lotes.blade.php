@@ -9,7 +9,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col"># Lote</th>
+                    <th scope="col"># Lote (ID)</th>
                     <th scope="col">Oficio CA</th>
                     <th scope="col">Fecha oficio</th>
                     <th scope="col"># Ticket MSI</th>
@@ -25,7 +25,7 @@
 @forelse($lista_ultimos_lotes as $lote)
     <tbody>
     <tr>
-        <td class="small">{{ $lote->num_lote}}</td>
+        <td class="small">{{ $lote->num_lote}} - {{$lote->id}}</td>
         <td class="small">{{ $lote->num_oficio_ca }}</td>
         <td class="small">{{ $lote->fecha_oficio_lote }}</td>
         <td class="small">{{ $lote->ticket_msi }}</td>
