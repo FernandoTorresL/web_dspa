@@ -2,7 +2,7 @@
     {{--Solicitudes List--}}
     @if(count($solicitudes_preautorizadas))
         <br>
-        <h5 class="text-info">Total de solicitudes: {{ $solicitudes_preautorizadas->count() }}</h5>
+        <h5 class="text-info">Total de solicitudes preautorizadas: {{ $solicitudes_preautorizadas->count() }}</h5>
 
         <div class="table table-hover table-sm">
             <table class="table">
@@ -20,6 +20,7 @@
                     <th scope="col"># de la Valija</th>
                     <th scope="col">Tipo Mov</th>
                     <th scope="col">PDF</th>
+                    <th scope="col">Status</th>
                     <th scope="col">#</th>
                 </tr>
             </thead>
@@ -80,6 +81,14 @@
                 <td class="small">
                     <a target="_blank" href="{{ Storage::disk('public')->url($row_tabla_mov->archivo) }}">
                         PDF
+                    </a>
+                </td>
+                <td class="text-danger text-center">
+                    <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
+                    <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
+                        title="{{ isset($row_tabla_mov->rechazo) ? $row_tabla_mov->rechazo->full_name . '/' . $row_tabla_mov->final_remark : ''}}">
+                        {{ isset($row_tabla_mov->status_sol_id) ? $row_tabla_mov->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
+                    </button>
                     </a>
                 </td>
                 <th scope="row">{{ $var }}</th>

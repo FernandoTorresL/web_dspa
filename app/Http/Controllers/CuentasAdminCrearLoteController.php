@@ -31,9 +31,9 @@ class CuentasAdminCrearLoteController extends Controller
             $lista_ultimos_lotes = DB::table('lotes')
                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
                 ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
-                ->select( 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', 'lotes.created_at', 'lotes.updated_at',
+                ->select( 'lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', 'lotes.created_at', 'lotes.updated_at',
                     DB::raw('COUNT(solicitudes.id) as total_solicitudes') )
-                ->groupBy('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', 'lotes.created_at', 'lotes.updated_at')
+                ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', 'lotes.created_at', 'lotes.updated_at')
                 ->orderBy( 'lotes.id', 'desc')->limit(5)->get();
 
             return view(

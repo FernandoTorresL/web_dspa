@@ -3,6 +3,13 @@
 @section('title', 'Genera Tabla')
 
 @section('content')
+
+<script>
+    function myFunction(val) {
+        alert("The input value has changed. The new value is: " + val);
+    }
+</script>
+
     <p>
         <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
     </p>
@@ -20,6 +27,33 @@
         @endif
         <br>
     </div>
+
+    <form action="/ctas/admin/generatabla/" >
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="loteID">Lote a visualizar:</label>
+                {{-- <select class="form-control" id="lote" name="lote" onchange="myFunction(this.value)"> --}}
+                <select class="form-control" id="lote" name="loteid" onchange="this.form.submit()">
+                    <option value="" selected>Selecciona un lote...</option>
+                    @forelse($lista_de_lotes as $lote)
+                        @if ($lote->id == old('lote'))
+                            @php
+                                $str_check = 'selected';
+                            @endphp
+                        @else
+                            @php
+                                $str_check = '';
+                            @endphp
+                        @endif
+                        <option value="{{ $lote->id }}" {{ $str_check }}>{{ $lote->num_lote }}</option>
+                    @empty
+                    @endforelse
+                </select>
+            </div>
+        </div>
+    </div>
+    </form>
 
         {{-- @include('ctas.admin.genera_tabla_con_lote')
 
