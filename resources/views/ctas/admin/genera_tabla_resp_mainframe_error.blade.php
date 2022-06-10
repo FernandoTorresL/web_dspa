@@ -24,6 +24,7 @@
                     <th scope="col"># de la Valija</th>
                     <th scope="col">Tipo Mov</th>
                     <th scope="col">PDF</th>
+                    <th scope="col">Status</th>
                     <th scope="col">#</th>
                 </tr>
             </thead>
@@ -86,6 +87,14 @@
                         PDF
                     </a>
                 </td>
+                <td class="text-danger text-center">
+                    <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
+                    <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
+                        title="{{ isset($row_tabla_mov->rechazo) ? $row_tabla_mov->rechazo->full_name . '/' . $row_tabla_mov->final_remark : ''}}">
+                        {{ isset($row_tabla_mov->status_sol_id) ? $row_tabla_mov->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
+                    </button>
+                    </a>
+                </td>
                 <th scope="row">{{ $var }}</th>
             </tr>
         @php
@@ -93,8 +102,8 @@
             $var += 1;
         @endphp
     @empty
-        <h5 class="text-warning">
-            No hay solicitudes con respuesta Mainframe
+        <h5 class="text-success">
+            ¡No hay rechazos de parte de Mainframe!
             @if( isset( $info_lote ) )
                 Lote: {{ $info_lote->num_lote }}
             @else

@@ -14,19 +14,20 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th class="align-text-top" scope="col">#</th>
-                    <th class="align-text-top" scope="col">Primer Apellido</th>
-                    <th class="align-text-top" scope="col">Segundo Apellido</th>
-                    <th class="align-text-top" scope="col">Nombre(s)</th>
-                    <th class="align-text-top" scope="col">Gpo Actual</th>
-                    <th class="align-text-top" scope="col">Gpo Nuevo</th>
-                    <th class="align-text-top" scope="col">Usuario</th>
-                    <th class="align-text-top" scope="col">Matrícula</th>
-                    <th class="align-text-top" scope="col">CURP</th>
-                    <th class="align-text-top" scope="col">Valija</th>
-                    <th class="align-text-top" scope="col">Tipo Mov</th>
-                    <th class="align-text-top" scope="col">PDF</th>
-                    <th class="align-text-top" scope="col">Status</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Primer Apellido</th>
+                    <th scope="col">Segundo Apellido</th>
+                    <th scope="col">Nombre(s)</th>
+                    <th scope="col">Gpo Actual</th>
+                    <th scope="col">Gpo Nuevo</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Matrícula</th>
+                    <th scope="col">CURP</th>
+                    <th scope="col">Valija</th>
+                    <th scope="col">Tipo Mov</th>
+                    <th scope="col">PDF</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">#</th>
                 </tr>
             </thead>
             <tbody class="text-monospace">
@@ -46,7 +47,7 @@
                 case 3:     $color = 'danger';      $color_text = 'danger';     break;
                 case 4:     $color = 'secondary';   $color_text = 'secondary';  break;
                 case 5:     $color = 'primary';     $color_text = 'primary';    break;
-                case 6:     $color = 'info';        $color_text= 'dark';        break;
+                case 6:     $color = 'info';        $color_text = 'dark';       break;
                 case 7:     $color = 'danger';      $color_text = 'danger';     break;
                 case 8:     $color = 'success';     $color_text = 'success';    break;
                 case 9:     $color = 'secondary';   $color_text = 'secondary';  break;
@@ -87,8 +88,6 @@
                     PDF
                 </a>
             </td>
-            {{-- Setting the solicitud status --}}
-            {{-- Solicitud was denny by DSPA... --}}
             <td class="text-danger text-center">
                 <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
                 <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
@@ -97,6 +96,7 @@
                 </button>
                 </a>
             </td>
+            <th scope="row">{{ $var }}</th>
         </tr>
         @php
             $id_movimiento_anterior = $row_tabla_mov->movimiento->id;

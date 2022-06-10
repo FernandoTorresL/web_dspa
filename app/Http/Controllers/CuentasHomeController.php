@@ -480,9 +480,9 @@ class CuentasHomeController extends Controller
             $listado_lotes = DB::table('lotes')
                                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
                                 ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
-                                ->select('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
-                                ->groupBy('lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
-                                ->orderBy('lotes.id', 'desc')->limit(20)->get();
+                                ->select('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
+                                ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
+                                ->orderBy('lotes.id', 'desc')->limit(40)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'final_remark', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
@@ -505,7 +505,7 @@ class CuentasHomeController extends Controller
         }
     }
 
-    public function show_admin_tabla() {
+    public function show_admin_tabla($lote_id = NULL) {
 
         $user = Auth::user();
 
@@ -515,10 +515,16 @@ class CuentasHomeController extends Controller
 
             Log::info('Genera Tabla' . $texto_log);
 
-            $id_lote = NULL;
-            $solicitud_id = NULL;
+            if (!isset($lote_id))
+                $id_lote = NULL;
+            else
+                $id_lote = $lote_id;
+
+                $solicitud_id = NULL;
 
             $info_lote = Lote::find($id_lote);
+
+            $lista_de_lotes = Lote::orderBy('id', 'desc')->get();
 
             $solicitudes_preautorizadas = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'status_sol'] )
                 ->where('solicitudes.lote_id', NULL)
@@ -616,6 +622,7 @@ class CuentasHomeController extends Controller
                     'solicitudes_sin_respuesta_mainframe',
 
                     'listado_valijas',
+                    'lista_de_lotes',
 
                     'info_lote',
                     'solicitud_id'
