@@ -165,25 +165,27 @@
     </div>
 
     <div class="card-footer">
-        <div>
-            <strong>Estado Actual:</strong>
-            <span class="badge badge-pill badge-{{$color_text}}">
-                {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
-            </span>
-            <span class="text-{{$color_text}}">
-                {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
-                {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
-            </span>
-        </div>
+        <div class="table-{{$color}}">
+            <div>
+                <strong>Estado Actual:</strong>
+                <span class="badge badge-pill badge-{{$color_text}}">
+                    {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
+                </span>
+                <span class="text-{{$color_text}}">
+                    {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
+                    {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
+                </span>
+            </div>
 
-        <div>
-            <strong>Observaciones Nivel Central:</strong>
-            {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
-        </div>
+            <div>
+                <strong>Observaciones Nivel Central:</strong>
+                {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
+            </div>
 
-        <div>
-            <strong>Observaciones Mainframe:</strong>
-            @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+            <div>
+                <strong>Observaciones Mainframe:</strong>
+                @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+            </div>
         </div>
     </div>
 
@@ -200,11 +202,11 @@
 
     <form action="change_status/{{ $solicitud->id }}" method="POST">
     {{ csrf_field() }}
+        {{-- Si no es el capturista delegacional, puede elegir una causa de Rechazo y agregar comentarios --}}
         @if (!Auth::user()->hasRole('capturista_delegacional'))
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                    
                         <label for="rechazo">Causa de Rechazo</label>
                         <select class="form-control @if($errors->has('rechazo')) is-invalid @endif" id="rechazo" name="rechazo">
                             <option value="" selected>0 - Sin rechazo</option>
@@ -275,7 +277,7 @@
                         @endif
                     @endif
 
-                    {{--Si no es capturista delegacional...--}}
+                    {{--Si no es capturista delegacional puede pre-autorizar o rechazar...--}}
                     @if (!Auth::user()->hasRole('capturista_delegacional'))
                         @if ($estatus_solicitud<>3)
                             <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
@@ -289,6 +291,7 @@
                             </button>
                         @endif
                     @endif
+
                 </div>
             </div>
         </div>
