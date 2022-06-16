@@ -515,12 +515,11 @@ class CuentasHomeController extends Controller
 
             Log::info('Genera Tabla' . $texto_log);
 
-            if (!isset($lote_id))
-                $id_lote = NULL;
-            else
-                $id_lote = $lote_id;
+            $id_lote = NULL;
+            $solicitud_id = NULL;
 
-                $solicitud_id = NULL;
+            if (isset($lote_id))
+                $id_lote = $lote_id;
 
             $info_lote = Lote::find($id_lote);
 
@@ -559,6 +558,12 @@ class CuentasHomeController extends Controller
             $solicitudes_sin_respuesta_mainframe = Solicitud::whereDoesntHave('resultado_solicitud')
                 ->where('solicitudes.lote_id', $id_lote)
                 ->where('solicitudes.rechazo_id', NULL)
+                ->orderBy('solicitudes.movimiento_id')
+                ->orderBy('solicitudes.cuenta');
+
+            $solicitudes_rechazadas_con_lote = Solicitud::with( ['valija_oficio', 'gpo_actual', 'gpo_nuevo', 'status_sol'] )
+                ->where('solicitudes.lote_id', $id_lote)
+                ->whereIn('solicitudes.status_sol_id', [3, 9, 10])
                 ->orderBy('solicitudes.movimiento_id')
                 ->orderBy('solicitudes.cuenta');
 
@@ -606,11 +611,13 @@ class CuentasHomeController extends Controller
                 $solicitudes_preautorizadas = $solicitudes_preautorizadas->where('solicitudes.id', '<=', $solicitud_id)->get();
                 $solicitudes_sin_preautorizacion = $solicitudes_sin_preautorizacion->where('solicitudes.id', '<=', $solicitud_id)->get();
                 $listado_valijas = $listado_valijas->where('solicitudes.id', '<=', $solicitud_id)->union($first_query)->get();
+                $solicitudes_rechazadas_con_lote = $solicitudes_rechazadas_con_lote->where('solicitudes.id', '<=', $solicitud_id)->get();
             }
             else {
                 $solicitudes_preautorizadas = $solicitudes_preautorizadas->get();
                 $solicitudes_sin_preautorizacion = $solicitudes_sin_preautorizacion->get();
                 $listado_valijas = $listado_valijas->union($first_query)->get();
+                $solicitudes_rechazadas_con_lote = $solicitudes_rechazadas_con_lote->get();
             }
 
             return view(
@@ -620,6 +627,7 @@ class CuentasHomeController extends Controller
                     'solicitudes_con_respuesta_mainframe_ok',
                     'solicitudes_con_respuesta_mainframe_error',
                     'solicitudes_sin_respuesta_mainframe',
+                    'solicitudes_rechazadas_con_lote',
 
                     'listado_valijas',
                     'lista_de_lotes',
