@@ -11,7 +11,7 @@
             @endcan
 
             @can('genera_tabla_oficio')
-                <a href="ctas/admin/generatabla/loteid" target="_blank" class="btn btn-outline-primary">
+                <a href="ctas/admin/generatabla/" target="_blank" class="btn btn-outline-primary">
                     Ver Tabla
                 </a>
             @endcan
