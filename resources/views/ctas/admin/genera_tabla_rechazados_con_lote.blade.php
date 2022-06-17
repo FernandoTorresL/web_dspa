@@ -2,7 +2,7 @@
     {{--Solicitudes List--}}
     @if(count($solicitudes_rechazadas_con_lote))
         <br>
-        <h5 class="text-danger">Total de solicitudes rechazadas en lote: {{ $solicitudes_rechazadas_con_lote->count() }}</h5>
+        <h5 class="text-danger">Total de solicitudes rechazadas previo envío (No enviadas a Mainframe): {{ $solicitudes_rechazadas_con_lote->count() }}</h5>
 
         <div class="table table-hover table-sm">
             <table class="table">

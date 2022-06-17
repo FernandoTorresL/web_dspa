@@ -478,11 +478,11 @@ class CuentasHomeController extends Controller
 
 
             $listado_lotes = DB::table('lotes')
-                                ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
-                                ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
-                                ->select('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
-                                ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
-                                ->orderBy('lotes.id', 'desc')->limit(40)->get();
+                ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
+                ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
+                ->select('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
+                ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
+                ->orderBy('lotes.id', 'desc')->limit(40)->get();
 
             $solicitudes_sin_lote2 = Solicitud::select('id', 'lote_id', 'valija_id', 'archivo', 'created_at', 'updated_at', 'delegacion_id', 'subdelegacion_id',
                 'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id', 'rechazo_id', 'final_remark', 'comment', 'user_id', 'gpo_actual_id', 'gpo_nuevo_id', 'matricula', 'curp')
@@ -520,10 +520,7 @@ class CuentasHomeController extends Controller
             else
                 $id_lote = $lote_id;
 
-                $solicitud_id = NULL;
-
-            if (isset($lote_id))
-                $id_lote = $lote_id;
+            $solicitud_id = NULL;
 
             $info_lote = Lote::find($id_lote);
 
