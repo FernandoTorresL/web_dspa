@@ -90,7 +90,7 @@
                 <td class="text-danger text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
                     <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
-                        title="{{ isset($row_tabla_mov->rechazo) ? $row_tabla_mov->rechazo->full_name . '/' . $row_tabla_mov->final_remark : ''}}">
+                        title="{{ isset($row_tabla_mov->resultado_solicitud) ? $row_tabla_mov->resultado_solicitud->rechazo_mainframe->name . '/' . $row_tabla_mov->resultado_solicitud->comment : ''}}">
                         {{ isset($row_tabla_mov->status_sol_id) ? $row_tabla_mov->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
                     </button>
                     </a>
