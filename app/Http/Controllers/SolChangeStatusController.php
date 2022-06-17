@@ -52,11 +52,11 @@ class SolChangeStatusController extends Controller
         $solicitud->final_remark    = $request->input('final_remark');
 
         switch($request->input('action')) {
-            case 'enviar_a_correccion':
-                $solicitud->rechazo_id    = $request->input('rechazo');
-                $solicitud->status_sol_id = 2;
-                $msg_type = 'warning';
-                $message = '¡La solicitud ha sido devuelta a la delegación para correcciones!';
+            case 'pedir_vobo':
+                $solicitud->status_sol_id = 4;
+                $solicitud->rechazo_id    = NULL;
+                $msg_type = 'message';
+                $message = '¡La solicitud ha sido enviada a CCEyVD para su VoBo!';
                 break;
             break;
 
