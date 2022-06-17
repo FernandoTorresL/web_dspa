@@ -250,11 +250,13 @@
 
         <div class="row">
             <div class="col-sm-6">
+
                 @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
                     <div class="alert alert-danger">
                         Favor de realizar las correcciones solicitadas en <em class="alert-success">("Editar Solicitud") </em>y al finalizar dar click al botón siguiente:
                     </div>
                 @endif
+
                 <div class="form-group">
                     {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
                     @if ($estatus_solicitud<>1)
@@ -288,6 +290,27 @@
                         @if ($estatus_solicitud<>5)
                             <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
                                 data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
+                            </button>
+                        @endif
+
+                        @php
+                            $groups_ccevyd = array(env('CCEVYD_GROUP_01'), env('CCEVYD_GROUP_02'), env('CCEVYD_GROUP_03'),
+                                env('CCEVYD_GROUP_04'), env('CCEVYD_GROUP_05'), env('CCEVYD_GROUP_06'),
+                                env('CCEVYD_GROUP_07'));
+
+                            $esGroupCCEVyD = false;
+                            if (isset($solicitud->gpo_nuevo))
+                                if (in_array($solicitud->gpo_nuevo->name, $groups_ccevyd))
+                                    $esGroupCCEVyD = true;
+
+                            if (isset($solicitud->gpo_actual))
+                                if (in_array($solicitud->gpo_actual->name, $groups_ccevyd))
+                                    $esGroupCCEVyD = true;
+                        @endphp
+
+                        @if ( ($estatus_solicitud == 1) && $esGroupCCEVyD )
+                            <button type="submit" name="action" value="pedir_vobo" class="btn btn-secondary" data-toggle="tooltip"
+                                data-placement="top" title="Dar VoBo a la solicitud">Solicitar VoBo a CCEyVD
                             </button>
                         @endif
                     @endif
