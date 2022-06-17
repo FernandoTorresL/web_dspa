@@ -1,6 +1,6 @@
     @if(count($solicitudes_sin_respuesta_mainframe))
         <br>
-        <h5 class="text-warning">Total de solicitudes sin respuesta Mainframe: {{ $solicitudes_sin_respuesta_mainframe->count() }}</h5>
+        <h5 class="text-warning">Total de solicitudes aún sin respuesta de Mainframe: {{ $solicitudes_sin_respuesta_mainframe->count() }}</h5>
         <h6 class="text-warning">
             @if( isset( $info_lote ) )
                 Lote: {{ $info_lote->num_lote }}
@@ -91,7 +91,7 @@
                 <td class="text-danger text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $row_tabla_mov->id }}">
                     <button type="button" class="btn btn-outline-{{$color_text}} btn-sm" data-toggle="tooltip" data-placement="top"
-                        title="{{ isset($row_tabla_mov->rechazo) ? $row_tabla_mov->rechazo->full_name . '/' . $row_tabla_mov->final_remark : ''}}">
+                        title="{{ isset($row_tabla_mov->rechazo) ? $row_tabla_mov->rechazo->full_name . '/' . $row_tabla_mov->final_remark : 'Sin respuesta de Mainframe'}}">
                         {{ isset($row_tabla_mov->status_sol_id) ? $row_tabla_mov->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
                     </button>
                     </a>
