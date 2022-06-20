@@ -276,6 +276,11 @@
                             <button type="submit" name="action" value="enviar_a_correccion" class="btn btn-outline-warning" data-toggle="tooltip"
                                 data-placement="top" title="Solicitar corrección a la delegación">Requiere corrección
                             </button>
+                            @if ($estatus_solicitud == 5)
+                                <button type="submit" name="action" value="enviar_a_mainframe" class="btn btn-info" data-toggle="tooltip"
+                                    data-placement="top" title="Dar VoBo a la solicitud">Asignar Lote - Enviar a Mainframe
+                                </button>
+                            @endif
                         @endif
                     @endif
 
