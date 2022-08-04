@@ -42,6 +42,7 @@
 
         <div class="row">
             @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
+                @include('ctas.card_active_accounts')
                 @include('ctas.card_inventario')
             @endcanany
 
