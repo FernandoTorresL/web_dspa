@@ -41,8 +41,11 @@
         <hr>
 
         <div class="row">
-            @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
+            @canany( ['ver_lista_ctas_vigentes_del'] )
                 @include('ctas.card_active_accounts')
+            @endcanany
+
+            @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
                 @include('ctas.card_inventario')
             @endcanany
 

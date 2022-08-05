@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Cuentas Activas')
+@section('title', 'Cuentas activas Afiliación - OOAD')
 
 @section('content')
 
@@ -17,13 +17,13 @@
 
             <div class="card-header card text-white bg-primary">
                 <p class="h4">
-                    Cuentas Activas - Delegación {{ str_pad($user_del_id, 2, '0', STR_PAD_LEFT) }} {{ $user_del_name }}
+                    Cuentas activas Afiliación - OOAD {{ $user_del_name }} ({{ str_pad($user_del_id, 2, '0', STR_PAD_LEFT) }})
                 </p>
                 <p>TOTAL: {{ number_format( $total_active_accounts ) }} cuentas vigentes
             </div>
             <br>
 
-        @include('ctas.inventario.list_active_accounts')
+        @include('ctas.inventario.list_active_accounts_del')
     @endif
 
 @endsection

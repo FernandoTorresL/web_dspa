@@ -71,7 +71,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/inventario', 'InventarioController@search_inventario');
 
     //Route to show Active Accounts list
-    Route::get('/ctas/lista_vigentes', 'ActiveAccountsController@show_active_accounts');
+    Route::get('/ctas/lista_ctas_vigentes_del', 'ActiveAccountsDelController@show_active_accounts_del');
 
     //Routes to admin options
     Route::get('/ctas/admin', 'CuentasAdminController@home');
