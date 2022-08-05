@@ -22,7 +22,6 @@
                 <p>TOTAL: {{ number_format( $total_active_accounts ) }} cuentas vigentes
             </div>
             <br>
-        <hr>
 
         @include('ctas.inventario.list_active_accounts')
     @endif
