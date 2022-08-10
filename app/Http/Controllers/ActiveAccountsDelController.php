@@ -36,6 +36,7 @@ class ActiveAccountsDelController extends Controller
                         IC.name             AS Nombre,
                         G.name              AS Gpo_actual,
                         "--"                AS Gpo_nuevo,
+                        "--"                AS Gpo_unificado,
                         IC.install_data     AS Matricula,
                         I.cut_off_date      AS Fecha_mov'
                     ))
@@ -52,10 +53,11 @@ class ActiveAccountsDelController extends Controller
                     ->select(DB::Raw(
                         'RS.cuenta      AS Cuenta,
                         M.name          AS Mov,
-                        concat(S.nombre, " ", S.primer_apellido, " ", S.segundo_apellido)
+                        concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
                                         AS Nombre,
                         GA.name         AS Gpo_actual,
                         GB.name         AS Gpo_nuevo,
+                        "--"            AS Gpo_unificado,
                         S.matricula     AS Matricula,
                         RL.attended_at  AS Fecha_mov'
                     ))
@@ -92,6 +94,13 @@ class ActiveAccountsDelController extends Controller
                             // It's not BAJA, we keep this record on the new array
                             if ( ($registro_anterior->Mov == "Inventario") && !( in_array($registro_anterior->Gpo_actual, $grupos_a_eliminar) )
                                 || ($registro_anterior->Mov <> "Inventario") && !( in_array($registro_anterior->Gpo_nuevo, $grupos_a_eliminar) ) )
+                                // Show only the last group
+                                if ($registro_anterior->Mov == "Inventario")
+                                    $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_actual;
+                                else
+                                    $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
+
+                                // Finally, add the record data to the final list
                                 array_push($active_accounts_list, $registro_anterior);
                         }
                     }

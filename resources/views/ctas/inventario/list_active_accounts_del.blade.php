@@ -7,10 +7,9 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Cuenta</th>
-                        <th scope="col">Movimiento</th>
+                        <th scope="col">Origen</th>
                         <th scope="col">Nombre</th>
-                        <th scope="col">Gpo Actual</th>
-                        <th scope="col">Gpo Nuevo</th>
+                        <th scope="col">Grupo</th>
                         <th scope="col">Matricula</th>
                         <th scope="col">Fecha Mov</th>
                     </tr>
@@ -31,8 +30,7 @@
             <td class="small">{{ $row_active_accounts->Cuenta }}</td>
             <td class="small">{{ $row_active_accounts->Mov }}</td>
             <td class="small">{{ $row_active_accounts->Nombre }}</td>
-            <td class="small">{{ $row_active_accounts->Gpo_actual }}</td>
-            <td class="small">{{ $row_active_accounts->Gpo_nuevo }}</td>
+            <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
             <td class="small">{{ $row_active_accounts->Matricula }}</td>
             <td class="small">{{ $row_active_accounts->Fecha_mov }}</td>
             </td>
