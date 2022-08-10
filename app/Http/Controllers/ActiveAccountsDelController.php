@@ -77,6 +77,7 @@ class ActiveAccountsDelController extends Controller
             // Filtrar los registros:
             $registro_anterior = NULL;
             $active_accounts_list = [];
+            $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE"];
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
             foreach ($active_accounts as $registro ) {
@@ -89,7 +90,9 @@ class ActiveAccountsDelController extends Controller
                     if ($registro_actual->Cuenta <> $registro_anterior->Cuenta) {
                         if ($registro_anterior->Mov <> "BAJA") {
                             // It's not BAJA, we keep this record on the new array
-                            array_push($active_accounts_list, $registro_anterior);
+                            if ( ($registro_anterior->Mov == "Inventario") && !( in_array($registro_anterior->Gpo_actual, $grupos_a_eliminar) )
+                                || ($registro_anterior->Mov <> "Inventario") && !( in_array($registro_anterior->Gpo_nuevo, $grupos_a_eliminar) ) )
+                                array_push($active_accounts_list, $registro_anterior);
                         }
                     }
                 }
@@ -99,11 +102,11 @@ class ActiveAccountsDelController extends Controller
             $total_active_accounts = count($active_accounts_list);
         }
         else {
-            Log::warning('Sin permiso-Consultar Listado de Cuentas Vigentes|' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido consultar el listado de cuentas vigentes.');
+            Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Del|' . $texto_log);
+            return redirect('ctas')->with('message', 'No tiene permitido consultar el Listado de Ctas Vigentes-Del.');
         }
 
-        Log::info('Ver Lista Ctas Vigentes Del|' . $texto_log);
+        Log::info('Ver Lista Ctas Vigentes-Del|' . $texto_log);
 
         return view('ctas/inventario/home_active_accounts_del',
             compact('active_accounts_list',
