@@ -91,15 +91,15 @@ class ActiveAccountsDelController extends Controller
                     // ...to keep this record or not
                     if ($registro_actual->Cuenta <> $registro_anterior->Cuenta) {
                         if ($registro_anterior->Mov <> "BAJA") {
-                            // It's not BAJA, we keep this record on the new array
-                            if ( ($registro_anterior->Mov == "Inventario") && !( in_array($registro_anterior->Gpo_actual, $grupos_a_eliminar) )
-                                || ($registro_anterior->Mov <> "Inventario") && !( in_array($registro_anterior->Gpo_nuevo, $grupos_a_eliminar) ) )
-                                // Show only the last group
-                                if ($registro_anterior->Mov == "Inventario")
-                                    $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_actual;
-                                else
-                                    $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
 
+                            // Show only the last group
+                            if ($registro_anterior->Mov == "Inventario")
+                                $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_actual;
+                            else
+                                $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
+
+                            // It's not BAJA and it's an Afiliación Group, we keep this record on the new array
+                            if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) )
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_list, $registro_anterior);
                         }
