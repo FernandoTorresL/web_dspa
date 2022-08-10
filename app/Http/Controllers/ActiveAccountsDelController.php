@@ -30,16 +30,18 @@ class ActiveAccountsDelController extends Controller
                 DB::table('inventory_ctas AS IC')
                 ->join('groups AS G',       'IC.gpo_owner_id', '=', 'G.id')
                 ->join('inventories AS I',  'IC.inventory_id', '=', 'I.id')
-                    ->select(DB::Raw(
-                        'IC.cuenta          AS Cuenta,
-                        "Inventario"        AS Mov,
-                        IC.name             AS Nombre,
-                        G.name              AS Gpo_actual,
-                        "--"                AS Gpo_nuevo,
-                        "--"                AS Gpo_unificado,
-                        IC.install_data     AS Matricula,
-                        I.cut_off_date      AS Fecha_mov'
-                    ))
+                ->select(DB::Raw(
+                    'IC.cuenta          AS Cuenta,
+                    ""                  AS id,
+                    "Inventario"        AS Mov,
+                    IC.name             AS Nombre,
+                    G.name              AS Gpo_actual,
+                    "--"                AS Gpo_nuevo,
+                    "--"                AS Gpo_unificado,
+                    IC.install_data     AS Matricula,
+                    IC.work_area_id     AS Work_area_id,
+                    I.cut_off_date      AS Fecha_mov'
+                ))
             ->where('IC.inventory_id', $inventory_id);
 
             // ...and the list of approved changes from Solicitudes
@@ -50,17 +52,19 @@ class ActiveAccountsDelController extends Controller
                 ->leftjoin('groups AS GA', 'S.gpo_actual_id', '=', 'GA.id')
                 ->leftjoin('groups AS GB', 'S.gpo_nuevo_id',  '=', 'GB.id')
                 ->join('movimientos AS M', 'S.movimiento_id', '=', 'M.id')
-                    ->select(DB::Raw(
-                        'RS.cuenta      AS Cuenta,
-                        M.name          AS Mov,
-                        concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
-                                        AS Nombre,
-                        GA.name         AS Gpo_actual,
-                        GB.name         AS Gpo_nuevo,
-                        "--"            AS Gpo_unificado,
-                        S.matricula     AS Matricula,
-                        RL.attended_at  AS Fecha_mov'
-                    ))
+                ->select(DB::Raw(
+                    'RS.cuenta      AS Cuenta,
+                    RS.solicitud_id AS id,
+                    M.name          AS Mov,
+                    concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
+                                    AS Nombre,
+                    GA.name         AS Gpo_actual,
+                    GB.name         AS Gpo_nuevo,
+                    "--"            AS Gpo_unificado,
+                    S.matricula     AS Matricula,
+                    0               AS Work_area_id,
+                    RL.attended_at  AS Fecha_mov'
+                ))
             ->whereNull('RS.rechazo_mainframe_id');
 
             //if is a 'Delegational' user, add delegacion_id to the query
@@ -79,7 +83,7 @@ class ActiveAccountsDelController extends Controller
             // Filtrar los registros:
             $registro_anterior = NULL;
             $active_accounts_list = [];
-            $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE"];
+            $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE", "EEAPM", "EECOP", "EESCF", "EEEMI"];
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
             foreach ($active_accounts as $registro ) {
