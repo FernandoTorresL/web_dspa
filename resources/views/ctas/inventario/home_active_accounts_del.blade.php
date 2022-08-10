@@ -23,6 +23,7 @@
             </div>
             <br>
 
+        @include('ctas.inventario.cifras_active_accounts_del')
         @include('ctas.inventario.list_active_accounts_del')
     @endif
 

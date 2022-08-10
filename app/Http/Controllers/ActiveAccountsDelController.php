@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Subdelegacion;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,13 @@ class ActiveAccountsDelController extends Controller
         if ( Gate::allows( 'ver_lista_ctas_vigentes_del') )
         {
             $inventory_id = env('INVENTORY_ID');
+
+            // Get subdelegaciones
+            $subdelegaciones = 
+                Subdelegacion::where('delegacion_id', $user_del_id)
+                    ->where('status', '<>', 0)
+                    ->orderBy('num_sub', 'asc')
+                    ->get();
 
             // Get the account list from last inventory
             $active_accounts_inventory =
@@ -85,6 +93,24 @@ class ActiveAccountsDelController extends Controller
             $active_accounts_list = [];
             $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE", "EEAPM", "EECOP", "EESCF", "EEEMI"];
 
+            $total_ctas_SSJSAV = 0;
+            $total_ctas_SSJDAV = 0;
+            $total_ctas_SSJOFA = 0;
+            $total_ctas_SSJVIG = 0;
+
+            $total_ctas_SSCONS = 0;
+            $total_ctas_SSADIF = 0;
+            $total_ctas_SSOPER = 0;
+
+            $total_ctas_SSCERT = 0;
+            $total_ctas_SSCAMC = 0;
+            $total_ctas_SSCAUM = 0;
+            $total_ctas_SSCAPC = 0;
+            $total_ctas_SSCAMP = 0;
+
+            $total_ctas_Genericas = 0;
+            $total_ctas_SVC       = 0;
+
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
             foreach ($active_accounts as $registro ) {
                 $registro_actual = $registro;
@@ -103,9 +129,32 @@ class ActiveAccountsDelController extends Controller
                                 $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
 
                             // It's not BAJA and it's an Afiliación Group, we keep this record on the new array
-                            if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) )
+                            if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) ) {
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_list, $registro_anterior);
+
+                                switch($registro_anterior->Gpo_unificado) {
+                                    case 'SSJSAV': $total_ctas_SSJSAV += 1; break;
+                                    case 'SSJDAV': $total_ctas_SSJDAV += 1; break;
+                                    case 'SSJOFA': $total_ctas_SSJOFA += 1; break;
+                                    case 'SSJVIG': $total_ctas_SSJVIG += 1; break;
+
+                                    case 'SSCONS': $total_ctas_SSCONS += 1; break;
+                                    case 'SSADIF': $total_ctas_SSADIF += 1; break;
+                                    case 'SSOPER': $total_ctas_SSOPER += 1; break;
+
+                                    case 'SSCERT': $total_ctas_SSCERT += 1; break;
+                                    case 'SSCAMC': $total_ctas_SSCAMC += 1; break;
+                                    case 'SSCAUM': $total_ctas_SSCAUM += 1; break;
+                                    case 'SSCAPC': $total_ctas_SSCAPC += 1; break;
+                                    case 'SSCAMP': $total_ctas_SSCAMP += 1; break;
+
+                                    case 'TSEM':   $total_ctas_SVC    += 1; break;
+                                }
+
+                                if ($registro_anterior->Work_area_id == '2')
+                                    $total_ctas_Genericas += 1;
+                            }
                         }
                     }
                 }
@@ -125,6 +174,26 @@ class ActiveAccountsDelController extends Controller
             compact('active_accounts_list',
                     'total_active_accounts',
                     'user_del_name',
-                    'user_del_id') );
-    }
+                    'user_del_id',
+                    'subdelegaciones',
+
+                    'total_ctas_SSJSAV',
+                    'total_ctas_SSJDAV',
+                    'total_ctas_SSJOFA',
+                    'total_ctas_SSJVIG',
+
+                    'total_ctas_SSCONS',
+                    'total_ctas_SSADIF',
+                    'total_ctas_SSOPER',
+
+                    'total_ctas_SSCERT',
+                    'total_ctas_SSCAMC',
+                    'total_ctas_SSCAUM',
+                    'total_ctas_SSCAPC',
+                    'total_ctas_SSCAMP',
+
+                    'total_ctas_Genericas',
+                    'total_ctas_SVC',
+                    ) );
+                }
 }
