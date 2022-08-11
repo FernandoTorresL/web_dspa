@@ -39,6 +39,7 @@ class ExportActiveAccountsDelController extends Controller
                 DB::table('inventory_ctas AS IC')
                 ->join('groups AS G',       'IC.gpo_owner_id', '=', 'G.id')
                 ->join('inventories AS I',  'IC.inventory_id', '=', 'I.id')
+                ->leftjoin('work_areas AS W',  'IC.work_area_id', '=', 'W.id')
                 ->select(DB::Raw(
                     'IC.cuenta          AS Cuenta,
                     ""                  AS id,
@@ -49,6 +50,7 @@ class ExportActiveAccountsDelController extends Controller
                     "--"                AS Gpo_unificado,
                     IC.install_data     AS Matricula,
                     IC.work_area_id     AS Work_area_id,
+                    W.name              AS Work_area,
                     I.cut_off_date      AS Fecha_mov'
                 ))
             ->where('IC.inventory_id', $inventory_id);
@@ -72,6 +74,7 @@ class ExportActiveAccountsDelController extends Controller
                     "--"            AS Gpo_unificado,
                     S.matricula     AS Matricula,
                     0               AS Work_area_id,
+                    ""              AS Work_area,
                     RL.attended_at  AS Fecha_mov'
                 ))
             ->whereNull('RS.rechazo_mainframe_id');
@@ -157,7 +160,7 @@ class ExportActiveAccountsDelController extends Controller
         ?> */
 
 
-        $var = 0;
+        $var = 1;
         $delimiter = ",";
         $filename = "CtasVigentesDel" . $user_del_id . "_" . date('d-M-Y') . ".csv";
 
@@ -165,19 +168,21 @@ class ExportActiveAccountsDelController extends Controller
         $f = fopen('php://memory', 'w');
 
         // Set column headers
-        $fields = array('USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
+        $fields = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
         fputcsv($f, $fields, $delimiter);
 
         foreach ( $active_accounts_list as $row_active_accounts ) {
             $lineData = array(
+                $var,
                 $row_active_accounts->Cuenta,
                 $row_active_accounts->Mov,
                 $row_active_accounts->Nombre,
                 $row_active_accounts->Gpo_unificado,
                 $row_active_accounts->Matricula,
-                $row_active_accounts->Work_area_id);
+                $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "");
 
             fputcsv($f, $lineData, $delimiter);
+            $var += 1;
         }
 
         // Move back to beginning of file

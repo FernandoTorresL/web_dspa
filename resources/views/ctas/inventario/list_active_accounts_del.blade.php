@@ -34,7 +34,7 @@
             @if($row_active_accounts->id == "")
                 {{ $row_active_accounts->Cuenta }}
             @else
-                <a target="_blank" alt="Ver detalle cta" 
+                <a target="_blank" alt="Ver detalle cta"
                     href="/ctas/solicitudes/search/cta?search_word={{ substr($row_active_accounts->Cuenta, 0, 6) }}">
                         {{ $row_active_accounts->Cuenta }}
                 </a>

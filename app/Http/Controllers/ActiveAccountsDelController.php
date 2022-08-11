@@ -38,6 +38,7 @@ class ActiveAccountsDelController extends Controller
                 DB::table('inventory_ctas AS IC')
                 ->join('groups AS G',       'IC.gpo_owner_id', '=', 'G.id')
                 ->join('inventories AS I',  'IC.inventory_id', '=', 'I.id')
+                ->leftjoin('work_areas AS W',  'IC.work_area_id', '=', 'W.id')
                 ->select(DB::Raw(
                     'IC.cuenta          AS Cuenta,
                     ""                  AS id,
@@ -48,6 +49,7 @@ class ActiveAccountsDelController extends Controller
                     "--"                AS Gpo_unificado,
                     IC.install_data     AS Matricula,
                     IC.work_area_id     AS Work_area_id,
+                    W.name              AS Work_area,
                     I.cut_off_date      AS Fecha_mov'
                 ))
             ->where('IC.inventory_id', $inventory_id);
@@ -71,6 +73,7 @@ class ActiveAccountsDelController extends Controller
                     "--"            AS Gpo_unificado,
                     S.matricula     AS Matricula,
                     0               AS Work_area_id,
+                    ""              AS Work_area,
                     RL.attended_at  AS Fecha_mov'
                 ))
             ->whereNull('RS.rechazo_mainframe_id');
