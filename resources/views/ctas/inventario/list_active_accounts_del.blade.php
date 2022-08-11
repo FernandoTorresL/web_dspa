@@ -1,6 +1,9 @@
-<div class="container">
-
+<div>
     @if(count($active_accounts_list))
+        <div>
+            <a href="lista_ctas_vigentes_del/download" target="_blank" class="btn btn-danger">Exportar lista a archivo</a>
+        </div>
+        <br>
         <div>
             <table class="table table-sm table-striped">
                 <thead>
@@ -45,8 +48,8 @@
         </tr>
     @empty
         <p>No hay cuentas registradas en esta delegación</p>
-    <br>
-    <hr>
+        <br>
+        <hr>
     @endforelse
 
     @if(count($active_accounts_list))

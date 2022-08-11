@@ -72,6 +72,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
 
     //Route to show Active Accounts list
     Route::get('/ctas/lista_ctas_vigentes_del', 'ActiveAccountsDelController@show_active_accounts_del');
+    Route::get('/ctas/lista_ctas_vigentes_del/download', 'ExportActiveAccountsDelController@export_active_accounts');
 
     //Routes to admin options
     Route::get('/ctas/admin', 'CuentasAdminController@home');
