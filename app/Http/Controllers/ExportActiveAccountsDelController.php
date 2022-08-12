@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Subdelegacion;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +21,7 @@ class ExportActiveAccountsDelController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Gate::allows( 'ver_lista_ctas_vigentes_del') )
+        if ( Gate::allows( 'export_lista_ctas_vigentes_del') )
         {
             $inventory_id = env('INVENTORY_ID');
 
