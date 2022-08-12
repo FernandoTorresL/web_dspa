@@ -28,14 +28,6 @@
         </div>
         <br>
 
-        @can('export_lista_ctas_vigentes_del')
-            @if(count($active_accounts_list))
-                <div>
-                    <a href="lista_ctas_vigentes_del/download" target="_blank" class="btn btn-danger">Exportar lista a archivo</a>
-                </div>
-            @endif
-        @endcan
-
         @can('ver_lista_ctas_vigentes_del')
             @include('ctas.inventario.list_active_accounts_del')
         @endcan
