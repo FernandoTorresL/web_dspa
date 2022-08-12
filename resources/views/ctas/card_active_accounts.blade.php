@@ -5,7 +5,7 @@
         </div>
         <div class="card-body">
             <p class="card-text">
-                <a href="ctas/lista_ctas_vigentes_del" target="_blank" class="btn btn-primary">Ir al listado de cuentas vigentes</a>
+                <a href="ctas/lista_ctas_vigentes_del" target="_blank" class="btn btn-primary">Ver listado</a>
             </p>
         </div>
     </div>

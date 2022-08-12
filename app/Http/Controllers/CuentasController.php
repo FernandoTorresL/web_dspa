@@ -41,8 +41,8 @@ class CuentasController extends Controller
         {
             $del_id = Auth::user()->delegacion_id;
 
-            $primer_renglon = 'Delegación ' . Auth::user()->delegacion_id .'-' . Auth::user()->delegacion->name;
-            $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
+            $primer_renglon = 'OOAD ' . Auth::user()->delegacion_id . '-' . Auth::user()->delegacion->name;
+            /* $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
 
             $total_ctas =
                 DB::table('detalle_ctas')->select('cuenta', 'gpo_owner_id', 'work_area_id')->where('delegacion_id', $del_id)->distinct()->get();
@@ -84,11 +84,11 @@ class CuentasController extends Controller
 
             $total_ctas_SSOPER =
                 DB::table('detalle_ctas')->select('cuenta')->
-                where('delegacion_id', $del_id)->where('gpo_owner_id', 6)->distinct()->get()->count();
+                where('delegacion_id', $del_id)->where('gpo_owner_id', 6)->distinct()->get()->count(); */
 
         return view('ctas.home_ctas', [
                 'primer_renglon'    => $primer_renglon,
-                'subdelegaciones' => $subdelegaciones,
+                /* 'subdelegaciones' => $subdelegaciones,
                 'total_ctas' => $total_ctas,
                 'total_ctas_genericas' => $total_ctas_genericas,
                 'total_ctas_clas' => $total_ctas_clas,
@@ -99,7 +99,7 @@ class CuentasController extends Controller
                 'total_ctas_SSJOFA' => $total_ctas_SSJOFA,
                 'total_ctas_SSCONS' => $total_ctas_SSCONS + $total_ctas_SSCONX,
                 'total_ctas_SSADIF' => $total_ctas_SSADIF,
-                'total_ctas_SSOPER' => $total_ctas_SSOPER,
+                'total_ctas_SSOPER' => $total_ctas_SSOPER, */
             ]);
         }
         else return "No estas autorizado a ver esta página";
