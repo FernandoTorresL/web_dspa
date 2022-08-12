@@ -94,7 +94,7 @@ class ActiveAccountsDelController extends Controller
             // Filtrar los registros:
             $registro_anterior = NULL;
             $active_accounts_list = [];
-            $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE", "EEAPM", "EECOP", "EESCF", "EEEMI"];
+            $grupos_a_eliminar = explode(',', env('GROUPS_EXC'));
 
             $total_ctas_SSJSAV = 0;
             $total_ctas_SSJDAV = 0;

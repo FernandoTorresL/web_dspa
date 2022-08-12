@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
-use Illuminate\Http\Request;
-
 class ExportActiveAccountsDelController extends Controller
 {
+
     public function export_active_accounts ()
     {
         $user_id = Auth::user()->id;
@@ -26,13 +25,6 @@ class ExportActiveAccountsDelController extends Controller
         if ( Gate::allows( 'ver_lista_ctas_vigentes_del') )
         {
             $inventory_id = env('INVENTORY_ID');
-
-            // Get subdelegaciones
-            $subdelegaciones =
-                Subdelegacion::where('delegacion_id', $user_del_id)
-                    ->where('status', '<>', 0)
-                    ->orderBy('num_sub', 'asc')
-                    ->get();
 
             // Get the account list from last inventory
             $active_accounts_inventory =
@@ -95,25 +87,7 @@ class ExportActiveAccountsDelController extends Controller
             // Filtrar los registros:
             $registro_anterior = NULL;
             $active_accounts_list = [];
-            $grupos_a_eliminar = ["SSCLAS", "SSCFIZ", "DDSUBD", "SSAREE", "EEAPM", "EECOP", "EESCF", "EEEMI"];
-
-            $total_ctas_SSJSAV = 0;
-            $total_ctas_SSJDAV = 0;
-            $total_ctas_SSJOFA = 0;
-            $total_ctas_SSJVIG = 0;
-
-            $total_ctas_SSCONS = 0;
-            $total_ctas_SSADIF = 0;
-            $total_ctas_SSOPER = 0;
-
-            $total_ctas_SSCERT = 0;
-            $total_ctas_SSCAMC = 0;
-            $total_ctas_SSCAUM = 0;
-            $total_ctas_SSCAPC = 0;
-            $total_ctas_SSCAMP = 0;
-
-            $total_ctas_Genericas = 0;
-            $total_ctas_SVC       = 0;
+            $grupos_a_eliminar = explode(',', env('GROUPS_EXC'));
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
             foreach ($active_accounts as $registro ) {
@@ -152,17 +126,10 @@ class ExportActiveAccountsDelController extends Controller
 
         Log::info('Exportar Lista Ctas Vigentes-Del|' . $texto_log);
 
-        //Code to export data to csv
-        /* <?php
-        $out = fopen('php://output', 'w');
-        fputcsv($out, array('this','is some', 'csv "stuff", you know.'));
-        fclose($out);
-        ?> */
-
-
         $var = 1;
         $delimiter = ",";
-        $filename = "CtasVigentesDel" . $user_del_id . "_" . date('d-M-Y') . ".csv";
+        $num_delegacion = str_pad($user_del_id, 2, '0', STR_PAD_LEFT);
+        $filename = $num_delegacion . " CtasVig " . date('dMY H:i:s') . ".csv";
 
         // Create a file pointer
         $f = fopen('php://memory', 'w');
@@ -191,9 +158,8 @@ class ExportActiveAccountsDelController extends Controller
         // Set headers to download file rather than displayed
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '";');
-        //fclose($f);
 
-        //output all remaining data on a file pointer
+        // Output all remaining data on a file pointer
         fpassthru($f);
     }
 }
