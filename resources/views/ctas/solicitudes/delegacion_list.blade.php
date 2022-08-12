@@ -11,7 +11,7 @@
     @if(Auth::check())
         <div class="card text-white bg-primary">
             <div class="card-header">
-                <p class="h4">Listado solicitudes - OOAD {{ Auth::user()->delegacion->name }} ({{ str_pad(Auth::user()->delegacion->id, 2, '0', STR_PAD_LEFT) }})</p>
+                <p class="h4">Listado solicitudes - @if(Auth::user()->delegacion->id <> 9) OOAD @endif {{ Auth::user()->delegacion->name }} ({{ str_pad(Auth::user()->delegacion->id, 2, '0', STR_PAD_LEFT) }})</p>
             </div>
         </div>
         <br>

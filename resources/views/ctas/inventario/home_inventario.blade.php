@@ -17,7 +17,7 @@
 
             <div class="card-header card text-white bg-primary">
                 <p class="h4">
-                    Inventario - Delegación {{ str_pad($user_del_id, 2, '0', STR_PAD_LEFT) }} {{ $user_del_name }}
+                    Inventario - @if(Auth::user()->delegacion->id <> 9) OOAD @endif {{ $user_del_name }} ({{ str_pad($user_del_id, 2, '0', STR_PAD_LEFT) }})
                 </p>
                 <p>TOTAL: {{ number_format( $total_inventario ) }} + {{ number_format( $solicitudes->count() ) }} cuentas nuevas
                 Corte: {{ \Carbon\Carbon::parse($cut_off_date)->formatLocalized('%d de %B, %Y') }}</p>
