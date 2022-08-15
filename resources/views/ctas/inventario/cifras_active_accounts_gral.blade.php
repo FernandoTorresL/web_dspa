@@ -67,12 +67,23 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJSAV == count($delegaciones_gral_list) - 1 )
+                    @if($delegacion_a_consultar->id == 0)
+                        @php
+                            $comparador = count($delegaciones_gral_list) - 1;
+                        @endphp
+                    @else
+                        @php
+                            $comparador = 1;
+                        @endphp
+                    @endif
+
+
+                    @if($total_ctas_SSJSAV == $comparador )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJSAV < count($delegaciones_gral_list) - 1 )
+                    @elseif($total_ctas_SSJSAV < $comparador )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -81,7 +92,7 @@
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = '¡Como máximo deben existir ' . count($delegaciones_gral_list) . ' cuentas!';
+                            $mensaje = '¡Como máximo deben existir ' . $comparador . ' cuentas!';
                         @endphp
                     @endif
                     <li class="list-group-item">
