@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Gate;
 class ExportActiveAccountsDelController extends Controller
 {
 
-    public function export_active_accounts ()
+    public function export_active_accounts_del ()
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;

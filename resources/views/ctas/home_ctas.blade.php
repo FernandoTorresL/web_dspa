@@ -36,6 +36,9 @@
             @can('ver_resumen_del')
                 {{-- @include('ctas.card_resumen') --}}
             @endcan
+            @canany( ['ver_lista_ctas_vigentes_gral'] )
+                @include('ctas.card_active_accounts_gral')
+            @endcanany
         </div>
 
         <div>
@@ -57,7 +60,7 @@
 
         <div class="row">
             @canany( ['ver_lista_ctas_vigentes_del'] )
-                @include('ctas.card_active_accounts')
+                @include('ctas.card_active_accounts_del')
             @endcanany
 
             @canany( ['ver_inventario_del', 'ver_inventario_gral'] )

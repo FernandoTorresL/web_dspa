@@ -1,31 +1,49 @@
 <div class="col-12 ">
+    <h5>
+        Ver listado de: 
+    </h5>
+    @forelse($delegaciones_gral_list as $delegacion)
+        <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" target="_blank" class="btn btn-outline-primary btn-sm">
+            {{ str_pad($delegacion->id, 2, '0', STR_PAD_LEFT) }} - {{ $delegacion->name }}
+        </a>
+    @empty
+        <p>
+            ¡No hay OOAD's registradas!
+        </p>
+    @endforelse
+    <br>
+    <br>
+
     <div class="card-group">
+        @if ($delegacion_a_consultar->id <> 0)
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-center">Subdelegaciones</h5>
+                </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title text-center">Subdelegaciones</h5>
-            </div>
-
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    @forelse($subdelegaciones as $subdelegacion)
-                        @if ($subdelegacion->num_sub <> 0)
-                            <li class="list-group-item text-truncate">
-                                {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $subdelegacion->name }}
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @forelse($subdelegaciones_gral_list as $subdelegacion)
+                            @if ($subdelegacion->num_sub <> 0)
+                                <li class="list-group-item text-truncate">
+                                    {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $subdelegacion->name }}
+                                </li>
+                            @endif
+                        @empty
+                            <li class="list-group-item">
+                                No hay subdelegaciones registradas
                             </li>
-                        @endif
-                    @empty
-                        <li class="list-group-item">
-                            No hay subdelegaciones registradas
-                        </li>
-                    @endforelse
-                </ul>
+                        @endforelse
+                    </ul>
+                </div>
             </div>
-        </div>
+        @endif
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Conteo de cuentas</h5>
+                <h5 class="card-title text-center">Conteo
+                    {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
+                </h5>
             </div>
 
             <div class="card-body">
@@ -49,12 +67,12 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJSAV == 1 )
+                    @if($total_ctas_SSJSAV == count($delegaciones_gral_list) - 1 )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJSAV < 1 )
+                    @elseif($total_ctas_SSJSAV < count($delegaciones_gral_list) - 1 )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -63,7 +81,7 @@
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = '¡Sólo debe existir una cuenta!';
+                            $mensaje = '¡Como máximo deben existir ' . count($delegaciones_gral_list) . ' cuentas!';
                         @endphp
                     @endif
                     <li class="list-group-item">
@@ -73,12 +91,12 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
+                    @if($total_ctas_SSJDAV == count($subdelegaciones_gral_list) - 1 )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJDAV < count($subdelegaciones_gral_list) - 1 )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -97,13 +115,13 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
+                    @if($total_ctas_SSJOFA == count($subdelegaciones_gral_list) - 1 )
                         @php
                             $guion = '-';
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones_gral_list) - 1 )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -147,7 +165,10 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Conteo de cuentas</h5>
+                <h5 class="card-title text-center">
+                    Conteo
+                    {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
+                </h5>
             </div>
 
             <div class="card-body">
@@ -189,21 +210,22 @@
                         </button>
                     </li>
 
-                    @if($total_ctas_SVC == 1 )
+                    @if($total_ctas_SVC == ( count($delegaciones_gral_list) - 1 ) )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SVC == 0 )
+                    @elseif($total_ctas_SVC < ( count($delegaciones_gral_list) - 1 ) )
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = 'Revisar';
+                            $mensaje = 'No hay una cuenta por cada OOAD';
                         @endphp
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = 'Debe existir sólo una';
+                            $mensaje = '¡Como máximo deben existir ' . count($delegaciones_gral_list) . ' cuentas!';
+
                         @endphp
                     @endif
                     <li class="list-group-item">
