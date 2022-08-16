@@ -56,7 +56,7 @@
         <tr class="text-monospace">
             <th scope="row">{{ $var }}</th>
             <td class="small">
-            @if($row_active_accounts->id == "")
+            @if($row_active_accounts->Id == "")
                 {{ $row_active_accounts->Cuenta }}
             @else
                 <a target="_blank" alt="Ver detalle cta"

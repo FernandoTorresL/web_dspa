@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Subdelegacion;
 use App\Delegacion;
 
+use App\Http\Controllers\AccountsListController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,90 +27,11 @@ class ActiveAccountsGralController extends Controller
         //Si cuenta con los permisos...
         if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('ver_lista_ctas_vigentes_gral') )
         {
-            $inventory_id = env('INVENTORY_ID');
+            $AccountsListController = new AccountsListController;
+            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
 
-            // Get subdelegaciones
-            $subdelegaciones_gral_list =
-                Subdelegacion::where('delegacion_id', '=', $p_delegacion_id)
-                    ->where('status', '<>', 0)
-                    ->orderBy('delegacion_id', 'asc')
-                    ->orderBy('num_sub', 'asc')
-                    ->get();
-
-            // Get Delegaciones (OOAD's)
-            $delegaciones_gral_list =
-                Delegacion::where('status', '<>', 0)
-                    ->orderBy('id', 'asc')
-                    ->get();
-
-            $delegacion_a_consultar = 
-                Delegacion::find($p_delegacion_id);
-
-            // Get the account list from last inventory
-            $active_accounts_gral_inventory =
-                DB::table('inventory_ctas AS IC')
-                ->join('delegaciones AS D',   'IC.delegacion_id', '=', 'D.id')
-                ->join('groups AS G',         'IC.gpo_owner_id',  '=', 'G.id')
-                ->join('inventories AS I',    'IC.inventory_id',  '=', 'I.id')
-                ->leftjoin('work_areas AS W', 'IC.work_area_id',  '=', 'W.id')
-                ->select(DB::Raw(
-                    'IC.cuenta      AS Cuenta,
-                    ""              AS Id,
-                    D.id            AS Del_id,
-                    D.name          AS Del_name,
-                    "Inventario"    AS Mov,
-                    IC.name         AS Nombre,
-                    G.name          AS Gpo_actual,
-                    "--"            AS Gpo_nuevo,
-                    "--"            AS Gpo_unificado,
-                    IC.install_data AS Matricula,
-                    IC.work_area_id AS Work_area_id,
-                    W.name          AS Work_area_name,
-                    I.cut_off_date  AS Fecha_mov'
-                ))
-            ->where('IC.inventory_id', $inventory_id);
-
-            // ...and the list of approved changes from Solicitudes
-            $active_accounts_gral_solicitudes =
-                DB::table('solicitudes AS S')
-                ->join('delegaciones AS D',           'S.delegacion_id',      '=', 'D.id')
-                ->join('resultado_solicitudes AS RS', 'RS.solicitud_id',       '=', 'S.id')
-                ->join('resultado_lotes AS RL',       'RS.resultado_lote_id', '=', 'RL.id')
-                ->leftjoin('groups AS GA',            'S.gpo_actual_id',      '=', 'GA.id')
-                ->leftjoin('groups AS GB',            'S.gpo_nuevo_id',       '=', 'GB.id')
-                ->join('movimientos AS M',            'S.movimiento_id',      '=', 'M.id')
-                ->select(DB::Raw(
-                    'RS.cuenta      AS Cuenta,
-                    RS.solicitud_id AS Id,
-                    D.id            AS Del_id,
-                    D.name          AS Del_name,
-                    M.name          AS Mov,
-                    concat(S.primer_apellido, "-", S.segundo_apellido, "-", S.nombre)
-                                    AS Nombre,
-                    GA.name         AS Gpo_actual,
-                    GB.name         AS Gpo_nuevo,
-                    "--"            AS Gpo_unificado,
-                    S.matricula     AS Matricula,
-                    0               AS Work_area_id,
-                    ""              AS Work_area_name,
-                    RL.attended_at  AS Fecha_mov'
-                ))
-            ->whereNull('RS.rechazo_mainframe_id');
-
-            //if we had a parameter var 'Delegational_id', add delegacion_id to the query
-            if ( $delegacion_a_consultar->id <> 0 ) {
-                $active_accounts_gral_inventory =
-                    $active_accounts_gral_inventory->where('IC.delegacion_id', $delegacion_a_consultar->id);
-                $active_accounts_gral_solicitudes =
-                    $active_accounts_gral_solicitudes->where('S.delegacion_id', $delegacion_a_consultar->id);
-            }
-
-            //Finally, make UNION
-            $active_accounts_gral = $active_accounts_gral_solicitudes
-                ->union($active_accounts_gral_inventory)
-                    ->orderby('Cuenta')
-                    ->orderby('Fecha_mov')
-                ->get();
+            //dd($accounts_list_items);
+            // dd($accounts_list_items['delegacion_a_consultar']);
 
             // Filtrar los registros:
             $registro_anterior = NULL;
@@ -135,7 +58,7 @@ class ActiveAccountsGralController extends Controller
             $total_ctas_SVC       = 0;
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
-            foreach ($active_accounts_gral as $registro ) {
+            foreach ($accounts_list_items['active_accounts_list'] as $registro ) {
                 $registro_actual = $registro;
 
                 // If we have data to check on registro_anterior...
@@ -156,7 +79,6 @@ class ActiveAccountsGralController extends Controller
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_gral_list, $registro_anterior);
                                 array_push($user_id_gral_list, $registro_anterior->Cuenta);
-
 
                                 switch($registro_anterior->Gpo_unificado) {
                                     case 'SSJSAV': $total_ctas_SSJSAV += 1; break;
@@ -194,6 +116,11 @@ class ActiveAccountsGralController extends Controller
 
             $total_active_accounts_gral = count($active_accounts_gral_list);
             $total_user_id_gral_list = count(array_unique($user_id_gral_list));
+
+            $subdelegaciones_gral_list = $accounts_list_items['subdelegaciones_list'];
+            $delegaciones_gral_list = $accounts_list_items['delegaciones_list'];
+            $delegacion_a_consultar = $accounts_list_items['delegacion_a_consultar'];
+
         }
         else {
             Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Nacional|' . $texto_log);
