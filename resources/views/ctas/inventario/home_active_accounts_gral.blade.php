@@ -20,8 +20,8 @@
                 Cuentas activas Afiliación - {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
             </p>
             <p>
-                Núm. total de registros: {{ number_format( $total_active_accounts_gral ) }} |
-                Cuentas vigentes únicas: {{ number_format( $total_user_id_gral_list ) }}
+                Núm. total de registros: {{ number_format( $total_active_accounts ) }} |
+                Cuentas vigentes únicas: {{ number_format( $total_user_id_list ) }}
             </p>
         </div>
 

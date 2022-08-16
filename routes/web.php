@@ -71,7 +71,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas/inventario', 'InventarioController@search_inventario');
 
     //Route to show Active Accounts list
-    Route::get('/ctas/lista_ctas_vigentes_del', 'ActiveAccountsDelController@show_active_accounts_del');
+    Route::get('/ctas/lista_ctas_vigentes_del/{delegacion_id}', 'ActiveAccountsDelController@show_active_accounts_del');
     Route::get('/ctas/lista_ctas_vigentes_del/download', 'ExportActiveAccountsDelController@export_active_accounts_del');
 
     //Route to show General Active Accounts List

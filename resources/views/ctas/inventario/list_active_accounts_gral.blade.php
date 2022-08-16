@@ -20,7 +20,7 @@
                 </li>
             </ul>
             @can('export_lista_ctas_vigentes_gral')
-                @if(count($active_accounts_gral_list))
+                @if(count($active_accounts_list))
                     <div>
                         <a href="download/{{ $delegacion_a_consultar->id }}" target="_blank" class="btn btn-danger">Exportar lista
                             {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}</a>
@@ -31,7 +31,7 @@
     </div>
 
     @if( $delegacion_a_consultar->id <> 0 )
-        @if(count($active_accounts_gral_list))
+        @if(count($active_accounts_list))
             <div>
                 <table class="table table-sm table-striped">
                     <thead>
@@ -57,7 +57,7 @@
             $var = 0;
         @endphp
 
-        @forelse( $active_accounts_gral_list as $row_active_accounts )
+        @forelse( $active_accounts_list as $row_active_accounts )
             @php
                 $var += 1;
             @endphp
@@ -99,7 +99,7 @@
             <hr>
         @endforelse
 
-        @if(count($active_accounts_gral_list))
+        @if(count($active_accounts_list))
                     </tbody>
                 </table>
             </div>

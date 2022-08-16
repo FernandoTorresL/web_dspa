@@ -23,23 +23,29 @@ class CuentasHomeController extends Controller
     {
         $user = Auth::user();
 
-        $texto_log = 'User_id:' . $user->id . '|User:' . $user->name . '|Del:' . $user->delegacion_id . '|Job:' . $user->job->id;
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_job_id = Auth::user()->job_id;
+        $user_del_id = Auth::user()->delegacion_id;
+        $user_del_name = Auth::user()->delegacion->name;
+
+        $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         Log::info('Visitando Ctas-Home ' . $texto_log);
 
-        $primer_renglon = $user->delegacion->name;
+        $primer_renglon = $user_del_name;
 
         if ( $user->hasRole('capturista_dspa') || $user->hasRole('capturista_cceyvd') || $user->hasRole('autorizador_cceyvd')) {
 
             $primer_renglon .= ' - ' . $user->job->name;
 
-            return view('ctas.home_ctas', compact('primer_renglon') );
+            return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }
         elseif ( $user->hasRole('capturista_delegacional') )
             {
-            $primer_renglon = 'OOAD ' . $primer_renglon . ' (' . str_pad($user->delegacion->id, 2, '0', STR_PAD_LEFT) . ')';
+            $primer_renglon = 'OOAD ' . $primer_renglon . ' (' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ')';
 
-            return view('ctas.home_ctas', compact('primer_renglon') );
+            return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }
         else return "No estas autorizado a ver esta página";
     }

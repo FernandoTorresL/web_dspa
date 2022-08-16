@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Gate;
 class ActiveAccountsDelController extends Controller
 {
 
-    public function show_active_accounts_del()
+    public function show_active_accounts_del($p_delegacion_id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -24,10 +24,10 @@ class ActiveAccountsDelController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Gate::allows( 'ver_lista_ctas_vigentes_del') )
+        if ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'ver_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
         {
             $AccountsListController = new AccountsListController;
-            $accounts_list_items = $AccountsListController->getAccountsListController($user_del_id);
+            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
 
             //dd($accounts_list_items);
             // dd($accounts_list_items['delegacion_a_consultar']);
@@ -111,10 +111,15 @@ class ActiveAccountsDelController extends Controller
             }
 
             $total_active_accounts = count($active_accounts_list);
+
+            $subdelegaciones = $accounts_list_items['subdelegaciones_list'];
+            $delegacion_a_consultar = $accounts_list_items['delegacion_a_consultar'];
+
+
         }
         else {
             Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Del|' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido consultar el Listado de Ctas Vigentes-Del.');
+            return redirect('ctas')->with('message', 'No tiene permitido consultar el Listado de Ctas Vigentes-Del:' . $p_delegacion_id);
         }
 
         Log::info('Ver Lista Ctas Vigentes-Del|' . $texto_log);
@@ -125,6 +130,7 @@ class ActiveAccountsDelController extends Controller
                     'user_del_name',
                     'user_del_id',
                     'subdelegaciones',
+                    'delegacion_a_consultar',
 
                     'total_ctas_SSJSAV',
                     'total_ctas_SSJDAV',

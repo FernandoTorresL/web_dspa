@@ -17,7 +17,7 @@
 
         <div class="card-header card text-white bg-primary">
             <p class="h4">
-                Cuentas activas Afiliación - OOAD {{ $user_del_name }} ({{ str_pad($user_del_id, 2, '0', STR_PAD_LEFT) }})
+                Cuentas activas Afiliación - OOAD {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
             </p>
             <p>TOTAL: {{ number_format( $total_active_accounts ) }} cuentas vigentes
         </div>
