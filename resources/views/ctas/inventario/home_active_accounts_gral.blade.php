@@ -19,7 +19,8 @@
             <p class="h4">
                 Cuentas activas Afiliación - {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
             </p>
-            <p>TOTAL: {{ number_format( $total_active_accounts_gral ) }} cuentas vigentes
+            <p>Cuenta vigentes:         {{ number_format( $total_active_accounts_gral ) }} |
+            Cuentas vigentes únicas:    {{ number_format( $total_user_id_gral_list ) }} </p>
         </div>
 
         <br>

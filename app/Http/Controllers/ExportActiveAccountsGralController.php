@@ -131,6 +131,11 @@ class ExportActiveAccountsGralController extends Controller
                             }
                         }
                     }
+                    // If there's a connect, it has to be added too
+                    else if ($registro_anterior->Mov == "CONNECT") {
+                        $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
+                        array_push($active_accounts_gral_list, $registro_anterior);
+                    }
                 }
                 $registro_anterior = $registro_actual;
             }

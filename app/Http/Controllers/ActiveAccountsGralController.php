@@ -113,6 +113,7 @@ class ActiveAccountsGralController extends Controller
             // Filtrar los registros:
             $registro_anterior = NULL;
             $active_accounts_gral_list = [];
+            $user_id_gral_list = [];
             $grupos_a_eliminar = explode(',', env('GROUPS_EXC'));
 
             $total_ctas_SSJSAV = 0;
@@ -154,6 +155,8 @@ class ActiveAccountsGralController extends Controller
                             if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) ) {
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_gral_list, $registro_anterior);
+                                array_push($user_id_gral_list, $registro_anterior->Cuenta);
+
 
                                 switch($registro_anterior->Gpo_unificado) {
                                     case 'SSJSAV': $total_ctas_SSJSAV += 1; break;
@@ -179,11 +182,18 @@ class ActiveAccountsGralController extends Controller
                             }
                         }
                     }
+                    // If there's a connect, it has to be added too
+                    else if ($registro_anterior->Mov == "CONNECT") {
+                        $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
+                        array_push($active_accounts_gral_list, $registro_anterior);
+                        array_push($user_id_gral_list, $registro_anterior->Cuenta);
+                    }
                 }
                 $registro_anterior = $registro_actual;
             }
 
             $total_active_accounts_gral = count($active_accounts_gral_list);
+            $total_user_id_gral_list = count(array_unique($user_id_gral_list));
         }
         else {
             Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Nacional|' . $texto_log);
@@ -196,6 +206,7 @@ class ActiveAccountsGralController extends Controller
         return view('ctas/inventario/home_active_accounts_gral',
             compact('active_accounts_gral_list',
                     'total_active_accounts_gral',
+                    'total_user_id_gral_list',
                     'user_del_name',
                     'user_del_id',
                     'delegaciones_gral_list',

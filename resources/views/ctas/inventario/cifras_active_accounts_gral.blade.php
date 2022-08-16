@@ -1,6 +1,6 @@
 <div class="col-12 ">
     <h5>
-        Ver listado de: 
+        Ver listado de:
     </h5>
     @forelse($delegaciones_gral_list as $delegacion)
         <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" target="_blank" class="btn btn-outline-primary btn-sm">
