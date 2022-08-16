@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Subdelegacion;
+use App\Delegacion;
+
+use App\Http\Controllers\AccountsListController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +14,7 @@ use Illuminate\Support\Facades\Gate;
 class ExportActiveAccountsDelController extends Controller
 {
 
-    public function export_active_accounts_del ()
+    public function export_active_accounts_del ($p_delegacion_id)
     {
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
@@ -21,67 +25,12 @@ class ExportActiveAccountsDelController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Gate::allows( 'export_lista_ctas_vigentes_del') )
+        if ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'export_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
+
         {
-            $inventory_id = env('INVENTORY_ID');
-
-            // Get the account list from last inventory
-            $active_accounts_inventory =
-                DB::table('inventory_ctas AS IC')
-                ->join('groups AS G',       'IC.gpo_owner_id', '=', 'G.id')
-                ->join('inventories AS I',  'IC.inventory_id', '=', 'I.id')
-                ->leftjoin('work_areas AS W',  'IC.work_area_id', '=', 'W.id')
-                ->select(DB::Raw(
-                    'IC.cuenta          AS Cuenta,
-                    ""                  AS id,
-                    "Inventario"        AS Mov,
-                    IC.name             AS Nombre,
-                    G.name              AS Gpo_actual,
-                    "--"                AS Gpo_nuevo,
-                    "--"                AS Gpo_unificado,
-                    IC.install_data     AS Matricula,
-                    IC.work_area_id     AS Work_area_id,
-                    W.name              AS Work_area,
-                    I.cut_off_date      AS Fecha_mov'
-                ))
-            ->where('IC.inventory_id', $inventory_id);
-
-            // ...and the list of approved changes from Solicitudes
-            $active_accounts_solicitudes =
-                DB::table('solicitudes AS S')
-                ->join('resultado_solicitudes AS RS', 'S.id', '=', 'RS.solicitud_id')
-                ->join('resultado_lotes AS RL', 'RS.resultado_lote_id', '=', 'RL.id')
-                ->leftjoin('groups AS GA', 'S.gpo_actual_id', '=', 'GA.id')
-                ->leftjoin('groups AS GB', 'S.gpo_nuevo_id',  '=', 'GB.id')
-                ->join('movimientos AS M', 'S.movimiento_id', '=', 'M.id')
-                ->select(DB::Raw(
-                    'RS.cuenta      AS Cuenta,
-                    RS.solicitud_id AS id,
-                    M.name          AS Mov,
-                    concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
-                                    AS Nombre,
-                    GA.name         AS Gpo_actual,
-                    GB.name         AS Gpo_nuevo,
-                    "--"            AS Gpo_unificado,
-                    S.matricula     AS Matricula,
-                    0               AS Work_area_id,
-                    ""              AS Work_area,
-                    RL.attended_at  AS Fecha_mov'
-                ))
-            ->whereNull('RS.rechazo_mainframe_id');
-
-            //if is a 'Delegational' user, add delegacion_id to the query
-            if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
-                $active_accounts_inventory = $active_accounts_inventory->where('IC.delegacion_id', $user_del_id);
-                $active_accounts_solicitudes = $active_accounts_solicitudes->where('S.delegacion_id', $user_del_id);
-            }
-
-            //Finally, make UNION
-            $active_accounts = $active_accounts_solicitudes
-                ->union($active_accounts_inventory)
-                    ->orderby('Cuenta')
-                    ->orderby('Fecha_mov')
-                ->get();
+            $AccountsListController = new AccountsListController;
+            // Call to this function to get AccountList
+            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
 
             // Filtrar los registros:
             $registro_anterior = NULL;
@@ -89,7 +38,7 @@ class ExportActiveAccountsDelController extends Controller
             $grupos_a_eliminar = explode(',', env('GROUPS_EXC'));
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
-            foreach ($active_accounts as $registro ) {
+            foreach ($accounts_list_items['active_accounts_list'] as $registro ) {
                 $registro_actual = $registro;
 
                 // If we have data to check on registro_anterior...
