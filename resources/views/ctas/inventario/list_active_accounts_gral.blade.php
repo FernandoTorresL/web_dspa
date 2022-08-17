@@ -44,7 +44,8 @@
                             <th scope="col">Nombre</th>
                             <th scope="col">Grupo</th>
                             <th scope="col">Matricula</th>
-                            <th scope="col">Work_area</th>
+                            <th scope="col">CURP</th>
+                            <th scope="col">Tipo_Cta</th>
                             <th scope="col">Fecha_mov</th>
                         </tr>
                     </thead>
@@ -81,11 +82,12 @@
                     </a>
                 @endif
                 </td>
-                <td class="small">{{ str_pad($row_active_accounts->Del_id, 2, '0', STR_PAD_LEFT) }}</td>
+                <td class="small">{{ $row_active_accounts->Del_id }}</td>
                 <td class="small">{{ $row_active_accounts->Mov }}</td>
                 <td class="small">{{ $row_active_accounts->Nombre }}</td>
                 <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
                 <td class="small">{{ $row_active_accounts->Matricula }}</td>
+                <td class="small">{{ $row_active_accounts->CURP }}</td>
                 <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica': '' }}</td>
                 <td class="small">{{ $row_active_accounts->Fecha_mov }}</td>
             </tr>

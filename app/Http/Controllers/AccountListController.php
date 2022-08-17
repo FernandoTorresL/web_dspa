@@ -51,6 +51,7 @@ class AccountListController extends Controller
                 "--"            AS Gpo_nuevo,
                 "--"            AS Gpo_unificado,
                 IC.install_data AS Matricula,
+                "--"            AS CURP,
                 IC.work_area_id AS Work_area_id,
                 W.name          AS Work_area_name,
                 I.cut_off_date  AS Fecha_mov'
@@ -78,6 +79,7 @@ class AccountListController extends Controller
                 GB.name         AS Gpo_nuevo,
                 "--"            AS Gpo_unificado,
                 S.matricula     AS Matricula,
+                S.curp          AS CURP,
                 0               AS Work_area_id,
                 ""              AS Work_area_name,
                 RL.attended_at  AS Fecha_mov'
@@ -129,31 +131,40 @@ class AccountListController extends Controller
 
             $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
-            $filename_Admin = "ADMIN-Nacional-CtasVig_";
-            $filename_Del   = "Del_" . $p_delegacion_id . "-CtasVig ";
+            if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user) {
+                if ($p_delegacion_id == 0)
+                    $filename = "ADMIN_Todas_CtasVig_";
+                else
+                    $filename = "ADMIN_Del" . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . "_CtasVig_";
+                $fields = array('#', 'Solicitud_id', 'Cuenta', 'Del_id', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta', 'Fecha_mov');
+            }
+            else {
+                $filename = "Del_" . $p_delegacion_id . "-CtasVig ";
+                $fields = array('#', 'Cuenta', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
+            }
 
-            $filename = ($delegacion_a_consultar->id == 0) ? $filename_Admin : $filename_Del;
             $filename = $filename . date('dMY H:i:s') . ".csv";
 
             // Create a file pointer
             $f = fopen('php://memory', 'w');
 
             // Set column headers
-            $fields_Admin = array('#', 'USER-ID', 'Id', 'Del_id', 'Del_name', 'Origen', 'Nombre', 'Grupo actual', 'Gpo_nuevo', 'Gpo_unificado', 'Matrícula', 'work_area_id', 'work_area_name', 'Fecha_mov');
-            $fields_Del   = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
-
-            $fields = $p_bol_Del_user ? $fields_Del : $fields_Admin;
             fputcsv($f, $fields, $delimiter);
 
             foreach ( $p_active_accounts_list as $row_active_accounts ) {
                 $lineData_Admin = array(
                     $var,
+                    $row_active_accounts->Id,
                     $row_active_accounts->Cuenta,
+                    $row_active_accounts->Del_id,
                     $row_active_accounts->Mov,
                     $row_active_accounts->Nombre,
                     $row_active_accounts->Gpo_unificado,
                     $row_active_accounts->Matricula,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "");
+                    $row_active_accounts->CURP,
+                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "",
+                    $row_active_accounts->Fecha_mov
+                );
                 $lineData_Del = array(
                     $var,
                     $row_active_accounts->Cuenta, $row_active_accounts->Id,
@@ -162,9 +173,13 @@ class AccountListController extends Controller
                     $row_active_accounts->Nombre,
                     $row_active_accounts->Gpo_actual, $row_active_accounts->Gpo_nuevo, $row_active_accounts->Gpo_unificado,
                     $row_active_accounts->Matricula,
-                    $row_active_accounts->Work_area_id, $row_active_accounts->Work_area_name, $row_active_accounts->Fecha_mov);
+                    $row_active_accounts->Work_area_id, $row_active_accounts->Work_area_name, $row_active_accounts->Fecha_mov
+                );
 
-                    $lineData = $p_bol_Del_user ? $lineData_Admin : $lineData_Del;
+                if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)
+                    $lineData = $lineData_Admin;
+                else
+                    $lineData = $lineData_Del;
 
                 fputcsv($f, $lineData, $delimiter);
                 $var += 1;
