@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Subdelegacion;
 use App\Delegacion;
 
@@ -9,22 +10,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
+class AccountListController extends Controller {
 
-class AccountsListController extends Controller
-{
-    public function downloadAccountsList($p_active_accounts_list, $p_delegacion_id, $p_bol_Del_user)
-    {
-        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') )
-        {
+    public function exportAccountList($p_active_accounts_list, $p_delegacion_id, $p_bol_Del_user) {
+        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') ) {
             $var = 1;
             $delimiter = ",";
-            // $p_delegacion_id = str_pad($delegacion_a_consultar->id, 2, '0', STR_PAD_LEFT);
 
-            $delegacion_a_consultar =
-                Delegacion::find($p_delegacion_id);
+            $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
             $filename_Admin = "ADMIN-Nacional-CtasVig ";
-            $filename_Del = "ADMIN-" . $p_delegacion_id . "-CtasVig ";
+            $filename_Del   = "ADMIN-" . $p_delegacion_id . "-CtasVig ";
 
             $filename = ($delegacion_a_consultar->id == 0) ? $filename_Admin : $filename_Del;
             $filename = $filename . date('dMY H:i:s') . ".csv";
@@ -34,7 +30,7 @@ class AccountsListController extends Controller
 
             // Set column headers
             $fields_Admin = array('#', 'USER-ID', 'Id', 'Del_id', 'Del_name', 'Origen', 'Nombre', 'Grupo actual', 'Gpo_nuevo', 'Gpo_unificado', 'Matrícula', 'work_area_id', 'work_area_name', 'Fecha_mov');
-            $fields_Del = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
+            $fields_Del   = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
 
             $fields = $p_bol_Del_user ? $fields_Del : $fields_Admin;
             fputcsv($f, $fields, $delimiter);
@@ -80,8 +76,7 @@ class AccountsListController extends Controller
         }
     }
 
-    public function getAccountsListController($p_delegacion_id)
-    {
+    public function getAccountList($p_delegacion_id) {
         $inventory_id = env('INVENTORY_ID');
 
         // Get subdelegaciones
@@ -98,8 +93,7 @@ class AccountsListController extends Controller
                 ->orderBy('id', 'asc')
                 ->get();
 
-        $delegacion_a_consultar =
-            Delegacion::find($p_delegacion_id);
+        $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
         // Get the account list from last inventory
         $active_accounts_inventory =
@@ -129,7 +123,7 @@ class AccountsListController extends Controller
         $active_accounts_solicitudes =
             DB::table('solicitudes AS S')
             ->join('delegaciones AS D',           'S.delegacion_id',      '=', 'D.id')
-            ->join('resultado_solicitudes AS RS', 'RS.solicitud_id',       '=', 'S.id')
+            ->join('resultado_solicitudes AS RS', 'RS.solicitud_id',      '=', 'S.id')
             ->join('resultado_lotes AS RL',       'RS.resultado_lote_id', '=', 'RL.id')
             ->leftjoin('groups AS GA',            'S.gpo_actual_id',      '=', 'GA.id')
             ->leftjoin('groups AS GB',            'S.gpo_nuevo_id',       '=', 'GB.id')
@@ -152,35 +146,29 @@ class AccountsListController extends Controller
             ))
             ->whereNull('RS.rechazo_mainframe_id');
 
-/*         //if is a 'Delegational' user, add delegacion_id to the query
-        if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
-            $active_accounts_inventory = $active_accounts_inventory->where('IC.delegacion_id', $user_del_id);
-            $active_accounts_solicitudes = $active_accounts_solicitudes->where('S.delegacion_id', $user_del_id);
-        } */
-
         //if we had a parameter var 'Delegational_id', add delegacion_id to the query
-        if ( $delegacion_a_consultar->id <> 0 ) {
-            $active_accounts_inventory =
-                $active_accounts_inventory
-                ->where('IC.delegacion_id', $delegacion_a_consultar->id);
-            $active_accounts_solicitudes =
+        if ( is_null($delegacion_a_consultar) )
+            return null;
+        else {
+            if ( $delegacion_a_consultar->id <> 0 ) {
+                $active_accounts_inventory   = $active_accounts_inventory->where('IC.delegacion_id', $delegacion_a_consultar->id);
+                $active_accounts_solicitudes = $active_accounts_solicitudes->where('S.delegacion_id', $delegacion_a_consultar->id);
+            }
+
+            //Finally, make UNION
+            $active_accounts_list =
                 $active_accounts_solicitudes
-                ->where('S.delegacion_id', $delegacion_a_consultar->id);
+                ->union($active_accounts_inventory)
+                    ->orderby('Cuenta')
+                    ->orderby('Fecha_mov')
+                ->get();
+
+            return [
+                'active_accounts_list'   => $active_accounts_list,
+                'delegacion_a_consultar' => $delegacion_a_consultar,
+                'delegaciones_list'      => $delegaciones_list,
+                'subdelegaciones_list'   => $subdelegaciones_list,
+            ];
         }
-
-        //Finally, make UNION
-        $active_accounts_list =
-            $active_accounts_solicitudes
-            ->union($active_accounts_inventory)
-                ->orderby('Cuenta')
-                ->orderby('Fecha_mov')
-            ->get();
-
-        return [
-            'active_accounts_list'  => $active_accounts_list,
-            'delegacion_a_consultar' => $delegacion_a_consultar,
-            'delegaciones_list'     => $delegaciones_list,
-            'subdelegaciones_list'  => $subdelegaciones_list,
-        ];
     }
 }

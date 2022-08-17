@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Subdelegacion;
 use App\Delegacion;
 
-use App\Http\Controllers\AccountsListController;
+use App\Http\Controllers\AccountListController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,12 +25,10 @@ class ExportActiveAccountsDelController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'export_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
-
-        {
-            $AccountsListController = new AccountsListController;
+        if ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'export_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) ) {
+            $AccountListController = new AccountListController;
             // Call to this function to get AccountList
-            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
+            $accounts_list_items = $AccountListController->getAccountList($p_delegacion_id);
 
             // Filtrar los registros:
             $registro_anterior = NULL;
@@ -70,7 +68,6 @@ class ExportActiveAccountsDelController extends Controller
                 }
                 $registro_anterior = $registro_actual;
             }
-
         }
         else {
             Log::warning('Sin permiso-Exportar Lista Ctas Vigentes-Del|' . $texto_log);

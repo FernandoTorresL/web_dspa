@@ -1,16 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Subdelegacion;
 
-use App\Http\Controllers\AccountsListController;
+use App\Http\Controllers\AccountListController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
-class ActiveAccountsDelController extends Controller
+class ActiveAccountDelController extends Controller
 {
 
     public function show_active_accounts_del($p_delegacion_id)
@@ -26,11 +27,8 @@ class ActiveAccountsDelController extends Controller
         //Si cuenta con los permisos...
         if ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'ver_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
         {
-            $AccountsListController = new AccountsListController;
-            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
-
-            //dd($accounts_list_items);
-            // dd($accounts_list_items['delegacion_a_consultar']);
+            $AccountListController = new AccountListController;
+            $accounts_list_items = $AccountListController->getAccountList($p_delegacion_id);
 
             // Filtrar los registros:
             $registro_anterior = NULL;
@@ -114,8 +112,6 @@ class ActiveAccountsDelController extends Controller
 
             $subdelegaciones = $accounts_list_items['subdelegaciones_list'];
             $delegacion_a_consultar = $accounts_list_items['delegacion_a_consultar'];
-
-
         }
         else {
             Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Del|' . $texto_log);

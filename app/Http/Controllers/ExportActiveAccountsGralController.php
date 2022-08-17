@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Subdelegacion;
 use App\Delegacion;
 
-use App\Http\Controllers\AccountsListController;
+use App\Http\Controllers\AccountListController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +26,10 @@ class ExportActiveAccountsGralController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') )
-        {
-            $AccountsListController = new AccountsListController;
+        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') ) {
+            $AccountListController = new AccountListController;
             // Call to this function to get AccountList
-            $accounts_list_items = $AccountsListController->getAccountsListController($p_delegacion_id);
+            $accounts_list_items = $AccountListController->getAccountList($p_delegacion_id);
 
             // Filtrar los registros:
             $registro_anterior = NULL;
@@ -57,7 +57,6 @@ class ExportActiveAccountsGralController extends Controller
                             if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) ) {
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_list, $registro_anterior);
-
                             }
                         }
                     }
@@ -69,7 +68,6 @@ class ExportActiveAccountsGralController extends Controller
                 }
                 $registro_anterior = $registro_actual;
             }
-
         }
         else {
             Log::warning('Sin permiso-Exportar Lista Ctas Vigentes Nacional|' . $texto_log);
@@ -78,8 +76,8 @@ class ExportActiveAccountsGralController extends Controller
 
         Log::info('Exportar Lista Ctas Vigentes Nacional|' . $texto_log);
 
-        $AccountsListController = new AccountsListController;
+        $AccountListController = new AccountListController;
         // Call to method to export accountlist
-        $AccountsListController->downloadAccountsList($active_accounts_list, $p_delegacion_id, FALSE);
+        $AccountListController->exportAccountList($active_accounts_list, $p_delegacion_id, FALSE);
     }
 }
