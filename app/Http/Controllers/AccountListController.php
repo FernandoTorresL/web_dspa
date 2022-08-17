@@ -136,14 +136,15 @@ class AccountListController extends Controller
                     $filename = "ADMIN_Todas_CtasVig_";
                 else
                     $filename = "ADMIN_Del" . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . "_CtasVig_";
+
                 $fields = array('#', 'Solicitud_id', 'Cuenta', 'Del_id', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta', 'Fecha_mov');
             }
             else {
-                $filename = "Del_" . $p_delegacion_id . "-CtasVig ";
-                $fields = array('#', 'Cuenta', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
+                $filename = "Del_" . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . "-CtasVig ";
+                $fields = array('#', 'Cuenta', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta');
             }
 
-            $filename = $filename . date('dMY H:i:s') . ".csv";
+            $filename = $filename . date('dMY_H:i:s') . ".csv";
 
             // Create a file pointer
             $f = fopen('php://memory', 'w');
@@ -167,13 +168,13 @@ class AccountListController extends Controller
                 );
                 $lineData_Del = array(
                     $var,
-                    $row_active_accounts->Cuenta, $row_active_accounts->Id,
-                    $row_active_accounts->Del_id, $row_active_accounts->Del_name,
+                    $row_active_accounts->Cuenta,
                     $row_active_accounts->Mov,
                     $row_active_accounts->Nombre,
-                    $row_active_accounts->Gpo_actual, $row_active_accounts->Gpo_nuevo, $row_active_accounts->Gpo_unificado,
+                    $row_active_accounts->Gpo_unificado,
                     $row_active_accounts->Matricula,
-                    $row_active_accounts->Work_area_id, $row_active_accounts->Work_area_name, $row_active_accounts->Fecha_mov
+                    $row_active_accounts->CURP,
+                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : ""
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)
