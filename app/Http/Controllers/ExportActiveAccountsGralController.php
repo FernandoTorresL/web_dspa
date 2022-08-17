@@ -78,6 +78,6 @@ class ExportActiveAccountsGralController extends Controller
 
         $AccountListController = new AccountListController;
         // Call to method to export accountlist
-        $AccountListController->exportAccountList($active_accounts_list, $p_delegacion_id, FALSE);
+        $AccountListController->exportAccountList($active_accounts_list, $p_delegacion_id, $p_bol_Del_user = FALSE);
     }
 }

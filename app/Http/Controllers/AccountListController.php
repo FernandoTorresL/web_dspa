@@ -10,73 +10,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
-class AccountListController extends Controller {
+class AccountListController extends Controller
+{
 
-    public function exportAccountList($p_active_accounts_list, $p_delegacion_id, $p_bol_Del_user) {
-        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') ) {
-            $var = 1;
-            $delimiter = ",";
-
-            $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
-
-            $filename_Admin = "ADMIN-Nacional-CtasVig ";
-            $filename_Del   = "ADMIN-" . $p_delegacion_id . "-CtasVig ";
-
-            $filename = ($delegacion_a_consultar->id == 0) ? $filename_Admin : $filename_Del;
-            $filename = $filename . date('dMY H:i:s') . ".csv";
-
-            // Create a file pointer
-            $f = fopen('php://memory', 'w');
-
-            // Set column headers
-            $fields_Admin = array('#', 'USER-ID', 'Id', 'Del_id', 'Del_name', 'Origen', 'Nombre', 'Grupo actual', 'Gpo_nuevo', 'Gpo_unificado', 'Matrícula', 'work_area_id', 'work_area_name', 'Fecha_mov');
-            $fields_Del   = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
-
-            $fields = $p_bol_Del_user ? $fields_Del : $fields_Admin;
-            fputcsv($f, $fields, $delimiter);
-
-            foreach ( $p_active_accounts_list as $row_active_accounts ) {
-                $lineData_Admin = array(
-                    $var,
-                    $row_active_accounts->Cuenta,
-                    $row_active_accounts->Mov,
-                    $row_active_accounts->Nombre,
-                    $row_active_accounts->Gpo_unificado,
-                    $row_active_accounts->Matricula,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "");
-                $lineData_Del = array(
-                    $var,
-                    $row_active_accounts->Cuenta, $row_active_accounts->Id,
-                    $row_active_accounts->Del_id, $row_active_accounts->Del_name,
-                    $row_active_accounts->Mov,
-                    $row_active_accounts->Nombre,
-                    $row_active_accounts->Gpo_actual, $row_active_accounts->Gpo_nuevo, $row_active_accounts->Gpo_unificado,
-                    $row_active_accounts->Matricula,
-                    $row_active_accounts->Work_area_id, $row_active_accounts->Work_area_name, $row_active_accounts->Fecha_mov);
-
-                    $lineData = $p_bol_Del_user ? $lineData_Admin : $lineData_Del;
-
-                fputcsv($f, $lineData, $delimiter);
-                $var += 1;
-            }
-
-            // Move back to beginning of file
-            fseek($f, 0);
-
-            // Set headers to download file rather than displayed
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment; filename="' . $filename . '";');
-
-            // Output all remaining data on a file pointer
-            fpassthru($f);
-        }
-        else {
-            Log::warning('Sin permiso-Exportar Lista Ctas Vigentes|' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido exportar el Listado de Ctas Vigentes');
-        }
-    }
-
-    public function getAccountList($p_delegacion_id) {
+    public function getAccountList($p_delegacion_id)
+    {
         $inventory_id = env('INVENTORY_ID');
 
         // Get subdelegaciones
@@ -169,6 +107,71 @@ class AccountListController extends Controller {
                 'delegaciones_list'      => $delegaciones_list,
                 'subdelegaciones_list'   => $subdelegaciones_list,
             ];
+        }
+    }
+
+    public function exportAccountList($p_active_accounts_list, $p_delegacion_id, $p_bol_Del_user)
+    {
+        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') ) {
+            $var = 1;
+            $delimiter = ",";
+
+            $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
+
+            $filename_Admin = "ADMIN-Nacional-CtasVig ";
+            $filename_Del   = "ADMIN-" . $p_delegacion_id . "-CtasVig ";
+
+            $filename = ($delegacion_a_consultar->id == 0) ? $filename_Admin : $filename_Del;
+            $filename = $filename . date('dMY H:i:s') . ".csv";
+
+            // Create a file pointer
+            $f = fopen('php://memory', 'w');
+
+            // Set column headers
+            $fields_Admin = array('#', 'USER-ID', 'Id', 'Del_id', 'Del_name', 'Origen', 'Nombre', 'Grupo actual', 'Gpo_nuevo', 'Gpo_unificado', 'Matrícula', 'work_area_id', 'work_area_name', 'Fecha_mov');
+            $fields_Del   = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
+
+            $fields = $p_bol_Del_user ? $fields_Del : $fields_Admin;
+            fputcsv($f, $fields, $delimiter);
+
+            foreach ( $p_active_accounts_list as $row_active_accounts ) {
+                $lineData_Admin = array(
+                    $var,
+                    $row_active_accounts->Cuenta,
+                    $row_active_accounts->Mov,
+                    $row_active_accounts->Nombre,
+                    $row_active_accounts->Gpo_unificado,
+                    $row_active_accounts->Matricula,
+                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "");
+                $lineData_Del = array(
+                    $var,
+                    $row_active_accounts->Cuenta, $row_active_accounts->Id,
+                    $row_active_accounts->Del_id, $row_active_accounts->Del_name,
+                    $row_active_accounts->Mov,
+                    $row_active_accounts->Nombre,
+                    $row_active_accounts->Gpo_actual, $row_active_accounts->Gpo_nuevo, $row_active_accounts->Gpo_unificado,
+                    $row_active_accounts->Matricula,
+                    $row_active_accounts->Work_area_id, $row_active_accounts->Work_area_name, $row_active_accounts->Fecha_mov);
+
+                    $lineData = $p_bol_Del_user ? $lineData_Admin : $lineData_Del;
+
+                fputcsv($f, $lineData, $delimiter);
+                $var += 1;
+            }
+
+            // Move back to beginning of file
+            fseek($f, 0);
+
+            // Set headers to download file rather than displayed
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '";');
+
+            // Output all remaining data on a file pointer
+            fpassthru($f);
+        }
+        else {
+            Log::warning('Sin permiso-Exportar Lista Ctas Vigentes|' . $texto_log);
+            return redirect('ctas')->with('message', 'No tiene permitido exportar el Listado de Ctas Vigentes');
         }
     }
 }

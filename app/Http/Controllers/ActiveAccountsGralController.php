@@ -26,8 +26,7 @@ class ActiveAccountsGralController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         //Si cuenta con los permisos...
-        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('ver_lista_ctas_vigentes_gral') )
-        {
+        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('ver_lista_ctas_vigentes_gral') ) {
             $AccountListController = new AccountListController;
             $accounts_list_items = $AccountListController->getAccountList($p_delegacion_id);
 
@@ -158,7 +157,8 @@ class ActiveAccountsGralController extends Controller
                     'total_ctas_SSCAMP',
 
                     'total_ctas_Genericas',
-                    'total_ctas_SVC',
-                    ) );
-                }
+                    'total_ctas_SVC'
+            )
+        );
+    }
 }
