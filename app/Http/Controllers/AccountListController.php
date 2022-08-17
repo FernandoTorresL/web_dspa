@@ -112,14 +112,25 @@ class AccountListController extends Controller
 
     public function exportAccountList($p_active_accounts_list, $p_delegacion_id, $p_bol_Del_user)
     {
-        if ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') ) {
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_job_id = Auth::user()->job_id;
+        $user_del_id = Auth::user()->delegacion_id;
+        $user_del_name = Auth::user()->delegacion->name;
+
+        $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
+
+        if (    ( Auth::user()->hasRole('admin_dspa') && Gate::allows('export_lista_ctas_vigentes_gral') )
+                ||
+                ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'export_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
+            ) {
             $var = 1;
             $delimiter = ",";
 
             $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
-            $filename_Admin = "ADMIN-Nacional-CtasVig ";
-            $filename_Del   = "ADMIN-" . $p_delegacion_id . "-CtasVig ";
+            $filename_Admin = "ADMIN-Nacional-CtasVig_";
+            $filename_Del   = "Del_" . $p_delegacion_id . "-CtasVig ";
 
             $filename = ($delegacion_a_consultar->id == 0) ? $filename_Admin : $filename_Del;
             $filename = $filename . date('dMY H:i:s') . ".csv";

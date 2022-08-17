@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Subdelegacion;
 use App\Delegacion;
 
@@ -56,7 +57,6 @@ class ExportActiveAccountsDelController extends Controller
                             if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) ) {
                                 // Finally, add the record data to the final list
                                 array_push($active_accounts_list, $registro_anterior);
-
                             }
                         }
                     }
@@ -71,45 +71,13 @@ class ExportActiveAccountsDelController extends Controller
         }
         else {
             Log::warning('Sin permiso-Exportar Lista Ctas Vigentes-Del|' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido exportar el Listado de Ctas Vigentes-Del.');
+            return redirect('ctas')->with('message', 'No tiene permitido exportar el Listado de Ctas Vigentes de esta OOAD');
         }
 
         Log::info('Exportar Lista Ctas Vigentes-Del|' . $texto_log);
 
-        $var = 1;
-        $delimiter = ",";
-        $num_delegacion = str_pad($user_del_id, 2, '0', STR_PAD_LEFT);
-        $filename = $num_delegacion . " CtasVig " . date('dMY H:i:s') . ".csv";
-
-        // Create a file pointer
-        $f = fopen('php://memory', 'w');
-
-        // Set column headers
-        $fields = array('#', 'USER-ID', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'Tipo_Cta');
-        fputcsv($f, $fields, $delimiter);
-
-        foreach ( $active_accounts_list as $row_active_accounts ) {
-            $lineData = array(
-                $var,
-                $row_active_accounts->Cuenta,
-                $row_active_accounts->Mov,
-                $row_active_accounts->Nombre,
-                $row_active_accounts->Gpo_unificado,
-                $row_active_accounts->Matricula,
-                $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "");
-
-            fputcsv($f, $lineData, $delimiter);
-            $var += 1;
-        }
-
-        // Move back to beginning of file
-        fseek($f, 0);
-
-        // Set headers to download file rather than displayed
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '";');
-
-        // Output all remaining data on a file pointer
-        fpassthru($f);
+        $AccountListController = new AccountListController;
+        // Call to method to export accountlist
+        $AccountListController->exportAccountList($active_accounts_list, $p_delegacion_id, $p_bol_Del_user = TRUE);
     }
 }

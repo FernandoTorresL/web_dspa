@@ -22,65 +22,67 @@
             @can('export_lista_ctas_vigentes_del')
                 @if(count($active_accounts_list))
                     <div>
-                        <a href="lista_ctas_vigentes_del/export" target="_blank" class="btn btn-danger">Exportar lista a archivo</a>
+                        <a href="export/{{ $delegacion_a_consultar->id }}" target="_blank" class="btn btn-danger">Exportar lista de {{ $delegacion_a_consultar->name }}</a>
                     </div>
                 @endif
             @endcan
         </p>
     </div>
-    @if(count($active_accounts_list))
-        <div>
-            <table class="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Cuenta</th>
-                        <th scope="col">Origen</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Grupo</th>
-                        <th scope="col">Matricula</th>
-                        <th scope="col">Tipo Cta</th>
-                    </tr>
-                </thead>
-                <tbody>
-    @endif
 
-    @php
-        $var = 0;
-    @endphp
+    @if( $delegacion_a_consultar->id <> 0 )
+        @if(count($active_accounts_list))
+            <div>
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Cuenta</th>
+                            <th scope="col">Origen</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Grupo</th>
+                            <th scope="col">Matricula</th>
+                            <th scope="col">Tipo Cta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        @endif
 
-    @forelse( $active_accounts_list as $row_active_accounts )
         @php
-            $var += 1;
+            $var = 0;
         @endphp
-        <tr class="text-monospace">
-            <th scope="row">{{ $var }}</th>
-            <td class="small">
-            @if($row_active_accounts->Id == "")
-                {{ $row_active_accounts->Cuenta }}
-            @else
-                <a target="_blank" alt="Ver detalle cta"
-                    href="/ctas/solicitudes/search/cta?search_word={{ substr($row_active_accounts->Cuenta, 0, 6) }}">
-                        {{ $row_active_accounts->Cuenta }}
-                </a>
-            @endif
-            </td>
-            <td class="small">{{ $row_active_accounts->Mov }}</td>
-            <td class="small">{{ $row_active_accounts->Nombre }}</td>
-            <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
-            <td class="small">{{ $row_active_accounts->Matricula }}</td>
-            <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "" }}</td>
-        </tr>
-    @empty
-        <p>No hay cuentas registradas en esta delegación</p>
-        <br>
-        <hr>
-    @endforelse
 
-    @if(count($active_accounts_list))
-                </tbody>
-            </table>
-        </div>
+        @forelse( $active_accounts_list as $row_active_accounts )
+            @php
+                $var += 1;
+            @endphp
+            <tr class="text-monospace">
+                <th scope="row">{{ $var }}</th>
+                <td class="small">
+                @if($row_active_accounts->Id == "")
+                    {{ $row_active_accounts->Cuenta }}
+                @else
+                    <a target="_blank" alt="Ver detalle cta"
+                        href="/ctas/solicitudes/search/cta?search_word={{ substr($row_active_accounts->Cuenta, 0, 6) }}">
+                            {{ $row_active_accounts->Cuenta }}
+                    </a>
+                @endif
+                </td>
+                <td class="small">{{ $row_active_accounts->Mov }}</td>
+                <td class="small">{{ $row_active_accounts->Nombre }}</td>
+                <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
+                <td class="small">{{ $row_active_accounts->Matricula }}</td>
+                <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "" }}</td>
+            </tr>
+        @empty
+            <p>¡No hay cuentas registradas!</p>
+            <br>
+            <hr>
+        @endforelse
+
+        @if(count($active_accounts_list))
+                    </tbody>
+                </table>
+            </div>
+        @endif
     @endif
-
 </div>

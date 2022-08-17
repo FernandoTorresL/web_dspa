@@ -126,7 +126,7 @@ class ActiveAccountsGralController extends Controller
         else {
             Log::warning('Sin permiso-Consultar Lista Ctas Vigentes-Nacional|' . $texto_log);
             return redirect('ctas')
-                ->with('message', 'No tiene permitido consultar el Listado de Ctas Vigentes-Nacional.');
+                ->with('message', 'No tiene permitido consultar el Listado de Ctas Vigentes-Nacional');
         }
 
         Log::info('Ver Lista Ctas Vigentes-Nacional|' . $texto_log);
