@@ -37,14 +37,12 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Cuenta</th>
                             <th scope="col">id</th>
-                            <th scope="col">Delegación</th>
+                            <th scope="col">Cuenta</th>
+                            <th scope="col">Del</th>
                             <th scope="col">Origen</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Grupo Actual</th>
-                            <th scope="col">Grupo Nuevo</th>
-                            <th scope="col">Grupo Vigente</th>
+                            <th scope="col">Grupo</th>
                             <th scope="col">Matricula</th>
                             <th scope="col">Work_area</th>
                             <th scope="col">Fecha_mov</th>
@@ -64,16 +62,6 @@
             <tr class="text-monospace">
                 <th scope="row">{{ $var }}</th>
                 <td class="small">
-                @if($row_active_accounts->Id == "")
-                    {{ $row_active_accounts->Cuenta }}
-                @else
-                    <a target="_blank" alt="Ver detalle cta"
-                        href="/ctas/solicitudes/search/cta?search_word={{ substr($row_active_accounts->Cuenta, 0, 6) }}">
-                            {{ $row_active_accounts->Cuenta }}
-                    </a>
-                @endif
-                </td>
-                <td class="small">
                     @if($row_active_accounts->Id == "")
                         {{ $row_active_accounts->Id }}
                     @else
@@ -83,14 +71,22 @@
                         </a>
                     @endif
                 </td>
-                <td class="small">{{ $row_active_accounts->Del_name }}</td>
+                <td class="small">
+                @if($row_active_accounts->Id == "")
+                    {{ $row_active_accounts->Cuenta }}
+                @else
+                    <a target="_blank" alt="Ver detalle cta"
+                        href="/ctas/solicitudes/search/cta?search_word={{ substr($row_active_accounts->Cuenta, 0, 6) }}">
+                            {{ $row_active_accounts->Cuenta }}
+                    </a>
+                @endif
+                </td>
+                <td class="small">{{ str_pad($row_active_accounts->Del_id, 2, '0', STR_PAD_LEFT) }}</td>
                 <td class="small">{{ $row_active_accounts->Mov }}</td>
                 <td class="small">{{ $row_active_accounts->Nombre }}</td>
-                <td class="small">{{ $row_active_accounts->Gpo_actual }}</td>
-                <td class="small">{{ $row_active_accounts->Gpo_nuevo }}</td>
                 <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
                 <td class="small">{{ $row_active_accounts->Matricula }}</td>
-                <td class="small">{{ $row_active_accounts->Work_area_name }}</td>
+                <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica': '' }}</td>
                 <td class="small">{{ $row_active_accounts->Fecha_mov }}</td>
             </tr>
         @empty
