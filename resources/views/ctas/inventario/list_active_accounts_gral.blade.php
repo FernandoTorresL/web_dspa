@@ -84,7 +84,7 @@
                 </td>
                 <td class="small">{{ $row_active_accounts->Del_id }}</td>
                 <td class="small">{{ $row_active_accounts->Mov }}</td>
-                <td class="small">{{ $row_active_accounts->Nombre_unificado == "--" ? $row_active_accounts->Nombre : $row_active_accounts->Nombre_unificado }}</td>
+                <td class="small">{{ $row_active_accounts->Nombre == "--" ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre }}</td>
                 <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
                 <td class="small">{{ $row_active_accounts->Matricula }}</td>
                 <td class="small">{{ $row_active_accounts->CURP }}</td>
