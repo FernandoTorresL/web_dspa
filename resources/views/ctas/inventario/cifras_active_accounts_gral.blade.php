@@ -2,9 +2,12 @@
     <h5>
         Ver listado de:
     </h5>
+    <a href="/ctas/lista_ctas_vigentes_gral/0" class="btn btn-outline-primary btn-sm">
+        Lista Nacional
+    </a>
     @forelse($delegaciones as $delegacion)
-        <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" target="_blank" class="btn btn-outline-primary btn-sm">
-            {{ str_pad($delegacion->id, 2, '0', STR_PAD_LEFT) }} - {{ $delegacion->name }}
+        <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" class="btn btn-outline-danger btn-sm">
+            {{ str_pad($delegacion->id, 2, '0', STR_PAD_LEFT) }}-{{ $delegacion->name }}
         </a>
     @empty
         <p>
@@ -18,7 +21,16 @@
         @if ($delegacion_a_consultar->id <> 0)
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title text-center">Subdelegaciones</h5>
+                    <h5 class="card-title text-center">
+                        @if ($delegacion_a_consultar->id == 0)
+                            Nacional
+                        @else
+                        {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                        <p>
+                            Subdelegaciones
+                        </p>
+                        @endif
+                    </h5>
                 </div>
 
                 <div class="card-body">
@@ -41,8 +53,15 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Conteo
-                    {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
+                <h5 class="card-title text-center">
+                    @if ($delegacion_a_consultar->id == 0)
+                        Nacional
+                    @else
+                        {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                    @endif
+                    <p>
+                        Conteo
+                    </p>
                 </h5>
             </div>
 
@@ -177,8 +196,14 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title text-center">
-                    Conteo
-                    {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
+                    @if ($delegacion_a_consultar->id == 0)
+                        Nacional
+                    @else
+                        {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                    @endif
+                    <p>
+                        Conteo
+                    </p>
                 </h5>
             </div>
 

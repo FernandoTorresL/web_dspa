@@ -42,7 +42,8 @@ class AccountListController extends Controller
             ->leftjoin('work_areas AS W', 'IC.work_area_id',  '=', 'W.id')
             ->select(DB::Raw(
                 'IC.cuenta      AS Cuenta,
-                ""              AS Id,
+                ""              AS Id_origen,
+                "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
                 "Inventario"    AS Mov,
@@ -51,7 +52,9 @@ class AccountListController extends Controller
                 G.name          AS Gpo_actual,
                 "--"            AS Gpo_nuevo,
                 "--"            AS Gpo_unificado,
-                IC.install_data AS Matricula,
+                IC.install_data AS Matricula_origen,
+                "--"            AS Matricula,
+                "--"            AS CURP_origen,
                 "--"            AS CURP,
                 IC.work_area_id AS Work_area_id,
                 W.name          AS Work_area_name,
@@ -70,7 +73,8 @@ class AccountListController extends Controller
             ->join('movimientos AS M',            'S.movimiento_id',      '=', 'M.id')
             ->select(DB::Raw(
                 'RS.cuenta      AS Cuenta,
-                RS.solicitud_id AS Id,
+                RS.solicitud_id AS Id_origen,
+                "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
                 M.name          AS Mov,
@@ -80,8 +84,10 @@ class AccountListController extends Controller
                 GA.name         AS Gpo_actual,
                 GB.name         AS Gpo_nuevo,
                 "--"            AS Gpo_unificado,
-                S.matricula     AS Matricula,
-                S.curp          AS CURP,
+                S.matricula     AS Matricula_origen,
+                "--"            AS Matricula,
+                S.curp          AS CURP_origen,
+                "--"            AS CURP,
                 0               AS Work_area_id,
                 ""              AS Work_area_name,
                 RL.attended_at  AS Fecha_mov'

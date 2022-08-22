@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Cuentas activas Afiliación - Nacional')
+@if ($delegacion_a_consultar->id == 0)
+    @section('title', '(Nacional) Listado ADMIN-OOAD Cuentas activas Afiliación')
+@else
+    @section('title', '(' . str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) . ') Listado ADMIN-OOAD Cuentas activas Afiliación')
+@endif
 
 @section('content')
 
@@ -15,9 +19,15 @@
 
     @if(Auth::check())
 
-        <div class="card-header card text-white bg-primary">
+        <div class="card-header card text-white bg-danger">
             <p class="h4">
-                Cuentas activas Afiliación - {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}
+                @if ($delegacion_a_consultar->id == 0)
+                    Cuentas activas Afiliación ADMIN - Nacional
+                @else
+                    Cuentas activas Afiliación ADMIN - OOAD 
+                    {{ $delegacion_a_consultar->name }} 
+                    ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                @endif
             </p>
             <p>
                 Núm. total de registros: {{ number_format( $total_active_accounts ) }} |
