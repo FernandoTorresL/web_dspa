@@ -135,24 +135,24 @@ class AccountListController extends Controller
                 ( Auth::user()->hasRole('capturista_delegacional') && Gate::allows( 'export_lista_ctas_vigentes_del') && ($p_delegacion_id == $user_del_id) )
             ) {
             $var = 1;
-            $delimiter = ",";
+            $delimiter = ',';
 
             $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
             if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user) {
                 if ($p_delegacion_id == 0)
-                    $filename = "ADMIN_Todas_CtasVig_";
+                    $filename = 'ADMIN_Todas_CtasVig_';
                 else
-                    $filename = "ADMIN_Del" . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . "_CtasVig_";
+                    $filename = 'ADMIN_Del' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '_CtasVig_';
 
-                $fields = array('#', 'Solicitud_id', 'Cuenta', 'Del_id', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta', 'Fecha_mov');
+                $fields = array('#', 'Solicitud_id', 'Del_id', 'Cuenta', 'Origen', 'Nombre_origen', 'Nombre', 'Nombre_final', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta', 'Fecha_mov');
             }
             else {
-                $filename = "Del_" . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . "-CtasVig ";
+                $filename = 'Del_' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '-CtasVig ';
                 $fields = array('#', 'Cuenta', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta');
             }
 
-            $filename = $filename . date('dMY_H:i:s') . ".csv";
+            $filename = $filename . date('dMY_H:i:s') . '.csv';
 
             // Create a file pointer
             $f = fopen('php://memory', 'w');
@@ -161,17 +161,39 @@ class AccountListController extends Controller
             fputcsv($f, $fields, $delimiter);
 
             foreach ( $p_active_accounts_list as $row_active_accounts ) {
+
+                $origen_final = '--';
+                $grupo_final = $row_active_accounts->Gpo_unificado;
+
+                if ($row_active_accounts->Id == "--") {
+                    // Resultado en inventario o solicitud
+                    $origen_final = $row_active_accounts->Mov;
+                }
+                else {
+                    if ( ($row_active_accounts->Mov == "Inventario") && ($row_active_accounts->Id == "") ) {
+                        // Múltiples registros en inventario
+                        $origen_final = 'Múltiples registros en ' . $row_active_accounts->Mov;
+                        $grupo_final = $grupo_final . '+(Múltiples grupos)';
+                    }
+                    else {
+                        // Resultado en solicitud e inventario
+                        $origen_final = 'Solicitud e ' . $row_active_accounts->Mov;
+                    }
+                }
+
                 $lineData_Admin = array(
                     $var,
-                    $row_active_accounts->Id,
-                    $row_active_accounts->Cuenta,
+                    $row_active_accounts->Id == '--' ? $row_active_accounts->Id_origen : $row_active_accounts->Id,
                     $row_active_accounts->Del_id,
-                    $row_active_accounts->Mov,
-                    $row_active_accounts->Nombre == "--" ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre,
-                    $row_active_accounts->Gpo_unificado,
-                    $row_active_accounts->Matricula,
-                    $row_active_accounts->CURP,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : "",
+                    $row_active_accounts->Cuenta,
+                    $origen_final,
+                    $row_active_accounts->Nombre_origen,
+                    $row_active_accounts->Nombre,
+                    $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre,
+                    $grupo_final,
+                    $row_active_accounts->Matricula == '--' ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula,
+                    $row_active_accounts->CURP == '--' ? $row_active_accounts->CURP_origen : $row_active_accounts->CURP,
+                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : '',
                     $row_active_accounts->Fecha_mov
                 );
                 $lineData_Del = array(
@@ -182,7 +204,7 @@ class AccountListController extends Controller
                     $row_active_accounts->Gpo_unificado,
                     $row_active_accounts->Matricula,
                     $row_active_accounts->CURP,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : ""
+                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : ''
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)

@@ -147,7 +147,6 @@
                         {{-- Origen --}}
                         <td class="small">
                             <p>
-
                                 <a target="_blank" alt="Ver detalle solicitud"
                                 href="/ctas/solicitudes/{{ $row_active_accounts->Id == "--" ? $row_active_accounts->Id_origen : $row_active_accounts->Id }}">
                                     Solicitud
@@ -173,7 +172,7 @@
                 </td>
 
                 {{-- Grupo --}}
-                <td class="small">{{ $row_active_accounts->Gpo_actual }}</td>
+                <td class="small">{{ $row_active_accounts->Gpo_unificado }}</td>
 
                 {{-- Matricula --}}
                 <td class="small">{{ $row_active_accounts->Matricula == "--" ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula }}</td>

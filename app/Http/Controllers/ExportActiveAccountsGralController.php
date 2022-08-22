@@ -61,6 +61,7 @@ class ExportActiveAccountsGralController extends Controller
                         }
                     }
                     else if ($registro_actual->Mov == "Inventario") {
+                        $registro_actual->Id = $registro_anterior->Id_origen;
                         $registro_actual->Nombre = $registro_anterior->Nombre_origen;
                         $registro_actual->Matricula = $registro_anterior->Matricula_origen;
                         $registro_actual->CURP = $registro_anterior->CURP_origen;
