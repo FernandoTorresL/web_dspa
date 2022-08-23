@@ -149,7 +149,7 @@ class AccountListController extends Controller
             }
             else {
                 $filename = 'Del_' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '-CtasVig ';
-                $fields = array('#', 'Cuenta', 'Origen', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta');
+                $fields = array('#', 'Cuenta', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta');
             }
 
             $filename = $filename . date('dMY_H:i:s') . '.csv';
@@ -199,11 +199,10 @@ class AccountListController extends Controller
                 $lineData_Del = array(
                     $var,
                     $row_active_accounts->Cuenta,
-                    $row_active_accounts->Mov,
-                    $row_active_accounts->Nombre_origen,
-                    $row_active_accounts->Gpo_unificado,
-                    $row_active_accounts->Matricula,
-                    $row_active_accounts->CURP,
+                    $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre,
+                    $grupo_final,
+                    $row_active_accounts->Matricula == '--' ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula,
+                    $row_active_accounts->CURP == '--' ? $row_active_accounts->CURP_origen : $row_active_accounts->CURP,
                     $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : ''
                 );
 

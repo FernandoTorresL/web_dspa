@@ -40,8 +40,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Cuenta</th>
-                            <th scope="col">Origen</th>
-                            <th scope="col"><p>Apellidos-Nombre</p>Nombre Inventario</th>
+                            <th scope="col">Apellidos-Nombre</th>
                             <th scope="col">Grupo</th>
                             <th scope="col">Matricula</th>
                             <th scope="col">CURP</th>
@@ -74,12 +73,12 @@
                             </a>
                         </td>
                         {{-- Origen --}}
-                        <td class="small">
+                        {{-- <td class="small">
                             <a target="_blank" alt="Ver detalle cta en inventario"
                                 href="/ctas/inventario?search_word={{ $row_active_accounts->Cuenta }}">
                                 {{ $row_active_accounts->Mov }}
                             </a>
-                        </td>
+                        </td> --}}
                     @else
                         {{-- Resultado en solicitud --}}
                         {{-- Cuenta --}}
@@ -90,12 +89,12 @@
                             </a>
                         </td>
                         {{-- Origen --}}
-                        <td class="small">
+                        {{-- <td class="small">
                             <a target="_blank" alt="Ver detalle solicitud"
                                 href="/ctas/solicitudes/{{ $row_active_accounts->Id_origen }}">
                                 {{ $row_active_accounts->Mov }}
                             </a>
-                        </td>
+                        </td> --}}
                     @endif
                 @else
                     @if( ($row_active_accounts->Mov == 'Inventario') && ($row_active_accounts->Id == ""))
@@ -108,14 +107,14 @@
                             </a>
                         </td>
                         {{-- Origen --}}
-                        <td class="small">
+                        {{-- <td class="small">
                             <a target="_blank" alt="Ver detalle solicitud"
                             href="/ctas/inventario?search_word={{ $row_active_accounts->Cuenta }}">
                                 <p>
                                     Múltiples registros en
                                 </p>{{ $row_active_accounts->Mov }}
                             </a>
-                        </td>
+                        </td> --}}
                     @else
                         {{-- Resultado en solicitud e inventario --}}
                         {{-- Cuenta --}}
@@ -126,7 +125,7 @@
                             </a>
                         </td>
                         {{-- Origen --}}
-                        <td class="small">
+                        {{-- <td class="small">
                             <p>
                                 <a target="_blank" alt="Ver detalle solicitud"
                                 href="/ctas/solicitudes/{{ $row_active_accounts->Id == "--" ? $row_active_accounts->Id_origen : $row_active_accounts->Id }}">
@@ -138,18 +137,13 @@
                             href="/ctas/inventario?search_word={{ $row_active_accounts->Cuenta }}">
                                 {{ $row_active_accounts->Mov }}
                             </a>
-                        </td>
+                        </td> --}}
                     @endif
                 @endif
 
                 {{-- Nombre --}}
                 <td class="small">
-                    @if( $row_active_accounts->Nombre == "--" )
-                        <p>{{ $row_active_accounts->Nombre_origen }}</p>
-                    @else
-                        <p>{{ $row_active_accounts->Nombre }}</p>
-                        {{ $row_active_accounts->Nombre_origen }}
-                    @endif
+                    {{ $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre }}
                 </td>
 
                 {{-- Grupo --}}
