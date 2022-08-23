@@ -103,6 +103,12 @@ class ActiveAccountsDelController extends Controller
                                 }
                             }
                         }
+                        else if ($registro_actual->Mov == "Inventario") {
+                            $registro_actual->Id = $registro_anterior->Id_origen;
+                            $registro_actual->Nombre = $registro_anterior->Nombre_origen;
+                            $registro_actual->Matricula = $registro_anterior->Matricula_origen;
+                            $registro_actual->CURP = $registro_anterior->CURP_origen;
+                        }
                         // If there's a connect, it has to be added too
                         else if ($registro_anterior->Mov == "CONNECT") {
                             $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;

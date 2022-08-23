@@ -29,8 +29,8 @@
             @can('export_lista_ctas_vigentes_gral')
                 @if(count($active_accounts_list))
                     <div>
-                        <a href="export/{{ $delegacion_a_consultar->id }}" target="_blank" class="btn btn-danger">Exportar lista de 
-                            {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : $delegacion_a_consultar->name  }}</a>
+                        <a href="export/{{ $delegacion_a_consultar->id }}" target="_blank" class="btn btn-danger">Exportar lista 
+                            {{ $delegacion_a_consultar->id == 0 ? 'Nacional' : 'de ' .$delegacion_a_consultar->name  }}</a>
                     </div>
                 @endif
             @endcan
