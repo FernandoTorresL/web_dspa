@@ -189,6 +189,13 @@
                         </button>
                     </li>
 
+                    {{-- Cuentas INFONAVIT --}}
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
+                            INFONAVIT <span class="badge badge-light"> {{ $total_ctas_Infonavit }}</span>
+                        </button>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -246,6 +253,13 @@
                         </button>
                     </li>
 
+                    {{-- Cuentas SSJURI --}}
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
+                            SSJURI <span class="badge badge-light"> {{ $total_ctas_SSJURI }}</span>
+                        </button>
+                    </li>
+
                     @if($total_ctas_SVC == ( count($delegaciones) - 1 ) )
                         @php
                             $color = 'success';
@@ -269,6 +283,13 @@
                             SVC <span class="badge badge-light"> {{ $total_ctas_SVC }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
+                    </li>
+
+                    {{-- Cuentas TTD --}}
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
+                            TTD <span class="badge badge-light"> {{ $total_ctas_TTD }}</span>
+                        </button>
                     </li>
 
                 </ul>

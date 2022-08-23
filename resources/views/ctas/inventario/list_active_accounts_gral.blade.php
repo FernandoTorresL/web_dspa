@@ -23,7 +23,7 @@
         </p>
     </div>
 
-    @if( $delegacion_a_consultar->id <> 0 )
+    {{-- @if( $delegacion_a_consultar->id <> 0 ) --}}
         @if(count($active_accounts_list))
             <div>
                 <table class="table table-sm table-striped">
@@ -183,5 +183,5 @@
                 </table>
             </div>
         @endif
-    @endif
+    {{-- @endif --}}
 </div>

@@ -204,6 +204,13 @@
                         </button>
                     </li>
 
+                    {{-- Cuentas SSJURI --}}
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
+                            SSJURI <span class="badge badge-light"> {{ $total_ctas_SSJURI }}</span>
+                        </button>
+                    </li>
+
                     @if($total_ctas_SVC == 1 )
                         @php
                             $color = 'success';
