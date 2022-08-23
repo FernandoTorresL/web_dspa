@@ -52,6 +52,7 @@ class ActiveAccountsDelController extends Controller
 
             $total_ctas_Genericas = 0;
             $total_ctas_SVC       = 0;
+            $total_ctas_TTD       = 0;
 
             // Check each record on this ordenated list (this is important, ORDER BY), and create new array with only active accounts
             if ( is_null($accounts_list_items) )
@@ -97,6 +98,9 @@ class ActiveAccountsDelController extends Controller
 
                                         case 'TSEM':   $total_ctas_SVC    += 1; break;
                                     }
+
+                                    if ( ($registro_anterior->Matricula == 'TTD') || ($registro_anterior->Matricula_origen == 'TTD') )
+                                        $total_ctas_TTD += 1;
 
                                     if ($registro_anterior->Work_area_id == '2')
                                         $total_ctas_Genericas += 1;
@@ -155,7 +159,8 @@ class ActiveAccountsDelController extends Controller
                     'total_ctas_SSCAMP',
 
                     'total_ctas_Genericas',
-                    'total_ctas_SVC'
+                    'total_ctas_SVC',
+                    'total_ctas_TTD'
             )
         );
     }

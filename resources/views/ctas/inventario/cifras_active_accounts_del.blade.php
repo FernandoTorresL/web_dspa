@@ -3,7 +3,12 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Subdelegaciones</h5>
+                <h5 class="card-title text-center">
+                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                        <p>
+                            Subdelegaciones
+                        </p>
+                </h5>
             </div>
 
             <div class="card-body">
@@ -25,7 +30,12 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Conteo de cuentas</h5>
+                <h5 class="card-title text-center">
+                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                    <p>
+                        Conteo
+                    </p>
+                </h5>
             </div>
 
             <div class="card-body">
@@ -147,7 +157,12 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">Conteo de cuentas</h5>
+                <h5 class="card-title text-center">
+                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                    <p>
+                        Conteo
+                    </p>
+                </h5>
             </div>
 
             <div class="card-body">
@@ -211,6 +226,13 @@
                             SVC <span class="badge badge-light"> {{ $total_ctas_SVC }}</span>
                         </button>
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
+                    </li>
+
+                    {{-- Cuentas TTD --}}
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
+                            TTD <span class="badge badge-light"> {{ $total_ctas_TTD }}</span>
+                        </button>
                     </li>
 
                 </ul>
