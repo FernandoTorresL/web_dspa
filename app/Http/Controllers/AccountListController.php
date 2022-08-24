@@ -173,7 +173,8 @@ class AccountListController extends Controller
                     if ( ($row_active_accounts->Mov == "Inventario") && ($row_active_accounts->Id == "") ) {
                         // Múltiples registros en inventario
                         $origen_final = 'Múltiples registros en ' . $row_active_accounts->Mov;
-                        $grupo_final = $grupo_final . '+(Múltiples grupos)';
+                        $grupo_final = $grupo_final;
+                        /* $grupo_final = $grupo_final . '+(Múltiples grupos)'; */
                     }
                     else {
                         // Resultado en solicitud e inventario
