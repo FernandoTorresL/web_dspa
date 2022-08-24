@@ -205,11 +205,11 @@
                     </li>
 
                     {{-- Cuentas SSJURI --}}
-                    <li class="list-group-item">
+                    {{-- <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
                             SSJURI <span class="badge badge-light"> {{ $total_ctas_SSJURI }}</span>
                         </button>
-                    </li>
+                    </li> --}}
 
                     @if($total_ctas_SVC == 1 )
                         @php
@@ -236,11 +236,11 @@
                     </li>
 
                     {{-- Cuentas TTD --}}
-                    <li class="list-group-item">
+                    {{-- <li class="list-group-item">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top">
                             TTD <span class="badge badge-light"> {{ $total_ctas_TTD }}</span>
                         </button>
-                    </li>
+                    </li> --}}
 
                 </ul>
             </div>
