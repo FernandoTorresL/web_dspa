@@ -27,6 +27,7 @@
                     <th scope="col">Tipo Mov</th>
                     <th scope="col">PDF</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Fecha captura</th>
                     <th scope="col">#</th>
                 </tr>
             </thead>
@@ -95,6 +96,10 @@
                     {{ isset($row_tabla_mov->status_sol_id) ? $row_tabla_mov->status_sol->name : 'Algo salió mal. Favor de reportarlo al Administrador' }}
                 </button>
                 </a>
+            </td>
+            <td class="small text-left">
+                <span>{{ $row_tabla_mov->created_at->format('dMy') }}</span>
+                <span>{{ $row_tabla_mov->created_at->format('H:i') }}</span>
             </td>
             <th scope="row">{{ $var }}</th>
         </tr>

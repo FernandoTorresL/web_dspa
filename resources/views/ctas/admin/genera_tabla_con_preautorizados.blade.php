@@ -22,6 +22,7 @@
                     <th scope="col">PDF</th>
                     <th scope="col">Status</th>
                     <th scope="col">Fecha captura</th>
+                    <th scope="col">Fecha modificación</th>
                     <th scope="col">#</th>
                 </tr>
             </thead>
@@ -95,6 +96,10 @@
                 <td class="small text-left">
                     <span>{{ $row_tabla_mov->created_at->format('dMy') }}</span>
                     <span>{{ $row_tabla_mov->created_at->format('H:i') }}</span>
+                </td>
+                <td class="small text-left">
+                    <span>{{ $row_tabla_mov->updated_at->format('dMy') }}</span>
+                    <span>{{ $row_tabla_mov->updated_at->format('H:i') }}</span>
                 </td>
                 <th scope="row">{{ $var }}</th>
             </tr>
