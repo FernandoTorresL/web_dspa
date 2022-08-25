@@ -10,7 +10,7 @@
     @if(Auth::check())
         <div class="card text-white bg-primary">
             <div class="card-header">
-                <p class="h4">Delegación {{ Auth::user()->delegacion->id }} - {{ Auth::user()->delegacion->name }} | Listado Solicitudes</p>
+                <p class="h4">OOAD {{ Auth::user()->delegacion->id }} - {{ Auth::user()->delegacion->name }} | Listado Solicitudes</p>
             </div>
         </div>
         <br>

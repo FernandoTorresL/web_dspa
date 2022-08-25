@@ -5,6 +5,7 @@
 ### FTL dev files
 /tmpftl
 cert.pem*
+*.csv
 
 ### Laravel ###
 /vendor/
