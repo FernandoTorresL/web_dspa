@@ -61,8 +61,8 @@
         @if( isset( $info_lote ) )
                 @include('ctas.admin.genera_tabla_sin_resp_mainframe')
                 @include('ctas.admin.genera_tabla_rechazados_con_lote')
-                @include('ctas.admin.genera_tabla_resp_mainframe_ok')
                 @include('ctas.admin.genera_tabla_resp_mainframe_error')
+                @include('ctas.admin.genera_tabla_resp_mainframe_ok')
         @else
             @include('ctas.admin.genera_tabla_con_preautorizados')
             @include('ctas.admin.genera_tabla_sin_preautorizados')
