@@ -65,7 +65,7 @@
         <div class="row">
             @can('ver_modulo_ctas')
                 <div class="col-6">
-                    <h1 class="h3">Módulo Gestión de Cuentas SINDO</h1>
+                    <h1 class="h3">Módulo Gestión de Cuentas SINDO v.{{ env('APP_VER', 'null') }}</h1>
                     <a href="ctas">
                         <img class="img-thumbnail" src="{{ url('storage/img/03.jpg') }}">
                     </a>
