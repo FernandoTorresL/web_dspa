@@ -125,10 +125,10 @@ class SolicitudesDelController extends Controller
 
         if ( Gate::allows('ver_timeline_solicitudes') || $del == 9 ) {
 
-            $datos_timeline = Solicitud::find($id);
+            $solicitud_t = Solicitud::find($id);
 
             //If there's not a solicitud with this id...
-            if (!isset($datos_timeline)) {
+            if (!isset($solicitud_t)) {
                 Log::warning('No existe el ID-Consultar timeline solicitudes. User:' . Auth::user()->name . '|Del:' . $del);
 
                 abort(403, 'No existe el recurso solicitado');
@@ -136,45 +136,45 @@ class SolicitudesDelController extends Controller
 
             $sin_dato = '--';
 
-            $fecha_sol      = $this->formatdate($datos_timeline->fecha_solicitud_del);
-            $mov_id_sol     = $datos_timeline->movimiento_id;
-            $nombre_mov_sol = $datos_timeline->movimiento->name;
-            $cuenta_sol     = $datos_timeline->cuenta;
-            $matricula_sol  = $datos_timeline->matricula;
-            $curp_sol       = $datos_timeline->curp;
-            $nombre_sol     = $datos_timeline->primer_apellido . '-' . $datos_timeline->segundo_apellido . '-' . $datos_timeline->nombre;
+            $fecha_sol      = $this->formatdate($solicitud_t->fecha_solicitud_del);
+            $mov_id_sol     = $solicitud_t->movimiento_id;
+            $nombre_mov_sol = $solicitud_t->movimiento->name;
+            $cuenta_sol     = $solicitud_t->cuenta;
+            $matricula_sol  = $solicitud_t->matricula;
+            $curp_sol       = $solicitud_t->curp;
+            $nombre_sol     = $solicitud_t->primer_apellido . '-' . $solicitud_t->segundo_apellido . '-' . $solicitud_t->nombre;
 
-            $fecha_sol_cap      = $this->formatdatetime($datos_timeline->created_at);
-            $user_sol_cap       = $datos_timeline->user->name;
-            $comment_sol_cap    = $datos_timeline->comment;
+            $fecha_sol_cap      = $this->formatdatetime($solicitud_t->created_at);
+            $user_sol_cap       = $solicitud_t->user->name;
+            $comment_sol_cap    = $solicitud_t->comment;
 
             $detalle_sol = '';
             if( $mov_id_sol == 1 || $mov_id_sol == 4 ) //--If tipo_movimiento is ALTA or CONNECT--}}
-                $detalle_sol = $datos_timeline->gpo_nuevo->name;
+                $detalle_sol = $solicitud_t->gpo_nuevo->name;
             elseif( $mov_id_sol == 2 ) //--If tipo_movimiento is BAJA--}}
-                $detalle_sol = $datos_timeline->gpo_actual->name;
+                $detalle_sol = $solicitud_t->gpo_actual->name;
             elseif( $mov_id_sol == 3 ) //--If tipo_movimiento is CAMBIO--}}
-                $detalle_sol = $datos_timeline->gpo_actual->name . ' -> ' . $datos_timeline->gpo_nuevo->name;
+                $detalle_sol = $solicitud_t->gpo_actual->name . ' -> ' . $solicitud_t->gpo_nuevo->name;
 
             $titulo_sol = $nombre_mov_sol . ' - ' . $cuenta_sol . ' (' . $detalle_sol . ')';
 
-            if( isset( $datos_timeline->valija ) ) {
-                $num_of_ca_val  = $datos_timeline->valija->num_oficio_ca;
+            if( isset( $solicitud_t->valija ) ) {
+                $num_of_ca_val  = $solicitud_t->valija->num_oficio_ca;
                 $subt_val       = '';
-                $fecha_val      = $this->formatdate($datos_timeline->valija->fecha_valija_del);
-                $of_val         = $datos_timeline->valija->num_oficio_del;
-                $del_val        = $datos_timeline->delegacion->name;
+                $fecha_val      = $this->formatdate($solicitud_t->valija->fecha_valija_del);
+                $of_val         = $solicitud_t->valija->num_oficio_del;
+                $del_val        = $solicitud_t->delegacion->name;
 
-                $fecha_gestion      = $this->formatdate($datos_timeline->valija->fecha_recepcion_ca);
-                $num_gestion        = $datos_timeline->valija->num_oficio_ca;
-                $comment_gestion    = $datos_timeline->valija->comment;
+                $fecha_gestion      = $this->formatdate($solicitud_t->valija->fecha_recepcion_ca);
+                $num_gestion        = $solicitud_t->valija->num_oficio_ca;
+                $comment_gestion    = $solicitud_t->valija->comment;
 
                 $date_diff_sol_val =
-                    $this->fdif_dias( date_create($datos_timeline->fecha_solicitud_del), date_create($datos_timeline->valija->fecha_valija_del) );
+                    $this->fdif_dias( date_create($solicitud_t->fecha_solicitud_del), date_create($solicitud_t->valija->fecha_valija_del) );
                 $date_diff_val_gestion =
-                    $this->fdif_dias( date_create($datos_timeline->valija->fecha_valija_del), date_create($datos_timeline->valija->fecha_recepcion_ca) );
+                    $this->fdif_dias( date_create($solicitud_t->valija->fecha_valija_del), date_create($solicitud_t->valija->fecha_recepcion_ca) );
                 $date_diff_gestion_cap =
-                    $this->fdif_dias( date_create($datos_timeline->valija->fecha_recepcion_ca), $datos_timeline->created_at );
+                    $this->fdif_dias( date_create($solicitud_t->valija->fecha_recepcion_ca), $solicitud_t->created_at );
             }
             else
             {
@@ -185,37 +185,37 @@ class SolicitudesDelController extends Controller
             }
 
             //-- Setting the solicitud status --}}
-            if( isset($datos_timeline->rechazo) ) {
+            if( isset($solicitud_t->rechazo) ) {
                 $color_sol_cap = 'text-danger';
-                $rechazo_sol_cap = 'No procede. ' . $datos_timeline->rechazo->full_name;
+                $rechazo_sol_cap = 'No procede. ' . $solicitud_t->rechazo->full_name;
             }
             else {
                 $color_sol_cap = '';
                 $rechazo_sol_cap = $sin_dato;
             }
 
-            if( isset($datos_timeline->lote) ) {
-                $fecha_lote     = $this->formatdate($datos_timeline->lote->fecha_oficio_lote);
-                $num_lote       = $datos_timeline->lote->num_lote;
-                $comment_lote   = $datos_timeline->lote->comment;
+            if( isset($solicitud_t->lote) ) {
+                $fecha_lote     = $this->formatdate($solicitud_t->lote->fecha_oficio_lote);
+                $num_lote       = $solicitud_t->lote->num_lote;
+                $comment_lote   = $solicitud_t->lote->comment;
                 $date_diff_cap_lote =
-                    $this->fdif_dias( $datos_timeline->created_at, date_create($datos_timeline->lote->fecha_oficio_lote) );
+                    $this->fdif_dias( $solicitud_t->created_at, date_create($solicitud_t->lote->fecha_oficio_lote) );
             }
             else {
                 $fecha_lote = $num_lote = $comment_lote = $date_diff_cap_lote = $sin_dato;
             }
 
             //--If solicitud has a response ... --}}
-            if( isset($datos_timeline->resultado_solicitud) ) {
-                $nombre_resp    = $datos_timeline->resultado_solicitud->name;
-                $fecha_resp     = $this->formatdatetime($datos_timeline->resultado_solicitud->resultado_lote->attended_at);
-                $comment_resp   = $datos_timeline->resultado_solicitud->comment;
+            if( isset($solicitud_t->resultado_solicitud) ) {
+                $nombre_resp    = $solicitud_t->resultado_solicitud->name;
+                $fecha_resp     = $this->formatdatetime($solicitud_t->resultado_solicitud->resultado_lote->attended_at);
+                $comment_resp   = $solicitud_t->resultado_solicitud->comment;
                 $date_diff_lote_resp =
-                    $this->fdif_dias( date_create($datos_timeline->lote->fecha_oficio_lote), date_create($datos_timeline->resultado_solicitud->resultado_lote->attended_at) );
+                    $this->fdif_dias( date_create($solicitud_t->lote->fecha_oficio_lote), date_create($solicitud_t->resultado_solicitud->resultado_lote->attended_at) );
 
-                if( isset($datos_timeline->resultado_solicitud->rechazo_mainframe) ) {
+                if( isset($solicitud_t->resultado_solicitud->rechazo_mainframe) ) {
 
-                    if( ($datos_timeline->resultado_solicitud->status == 1) ) {
+                    if( ($solicitud_t->resultado_solicitud->status == 1) ) {
                         $color_resp = 'text-warning';
                         $rechazo_resp = 'Pendiente. ';
                     }
@@ -225,10 +225,10 @@ class SolicitudesDelController extends Controller
                     }
 
                     $cta_resp = $nombre_resp = $sin_dato;
-                    $rechazo_resp = $rechazo_resp . $datos_timeline->resultado_solicitud->rechazo_mainframe->name;
+                    $rechazo_resp = $rechazo_resp . $solicitud_t->resultado_solicitud->rechazo_mainframe->name;
                 }
                 else {
-                    $cta_resp       = $datos_timeline->resultado_solicitud->cuenta;
+                    $cta_resp       = $solicitud_t->resultado_solicitud->cuenta;
                     $color_resp     = 'text-success';
                     $rechazo_resp   = 'Atendida.';
                 }
@@ -240,7 +240,7 @@ class SolicitudesDelController extends Controller
 
             return view('ctas.solicitudes.timeline',
                 compact(
-                    'datos_timeline',
+                    'solicitud_t',
                     'titulo_sol', 'fecha_sol', 'mov_id_sol', 'nombre_mov_sol', 'cuenta_sol',
                     'matricula_sol', 'curp_sol', 'nombre_sol', 'detalle_sol',
                     'num_of_ca_val', 'subt_val', 'fecha_val', 'of_val', 'del_val',
