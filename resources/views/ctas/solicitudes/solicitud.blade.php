@@ -1,31 +1,18 @@
 @php
-    use Carbon\Carbon;
-    setlocale(LC_TIME, 'es-ES');
-    \Carbon\Carbon::setUtf8(false);
+    use App\Http\Helpers\Helpers;
 
-    $estatus_solicitud = $solicitud->status_sol_id;
-    $bolMostrarBotonEditar = false;
-
-    switch($estatus_solicitud) {
-        case 1:     $color = 'light';       $color_text = 'dark';       $possible_status = [ 2, 3, 4, 5 ]; break;
-        case 2:     $color = 'warning';     $color_text = 'warning';    $possible_status = [ 1 ]; break;
-        case 3:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 1, 2 ]; break;
-        case 4:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 5 ]; break;
-        case 5:     $color = 'primary';     $color_text = 'primary';    $possible_status = [ ]; break;
-        case 6:     $color = 'info';        $color_text= 'dark';        $possible_status = [ 7, 8, 9 ]; break;
-        case 7:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 0 ]; break;
-        case 8:     $color = 'success';     $color_text = 'success';    $possible_status = [ 0 ]; break;
-        case 9:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 7, 8 ]; break;
-        default:    $color = 'secondary';
-    }
-
-    // If solicitud has a response...
+    // If solicitud has a response... show the captured value
+    $cuenta = $solicitud->cuenta;
     if ( isset($solicitud->resultado_solicitud) )
         $cuenta = $solicitud->resultado_solicitud->cuenta;
-    else {
-        //...show the captured value
-        $cuenta = $solicitud->cuenta;
-    }
+
+    $bolMostrarBotonEditar = false;
+
+    $tmp_array = Helpers::set_status_sol_flow($solicitud->status_sol_id);
+
+    $color_solicitud        = $tmp_array['color_solicitud'];
+    $color_text_solicitud   = $tmp_array['color_text_solicitud'];
+    $possible_status_sol    = $tmp_array['possibles_status_sol'];
 @endphp
 
 <div class="card border-info">
@@ -33,25 +20,25 @@
         <h5 class="card-title">
             <strong>
                 Solicitud {{ $solicitud->movimiento->name }}
-                <span class="text-{{$color_text}}">{{ $cuenta }}</span>
+                <span class="text-{{ $color_text_solicitud }}">{{ $cuenta }}</span>
             </strong>
                 ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
                 {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
                 {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
 
-                @if( Auth::user()->hasRole('admin_dspa') && in_array( $estatus_solicitud, [1, 2, 3, 4, 5] ) )
+                @if( Auth::user()->hasRole('admin_dspa') && in_array( $solicitud->status_sol_id, [1, 2, 3, 4, 5] ) )
                     @php
                         $bolMostrarBotonEditar = true;
                     @endphp
                 @endif
 
-                @if( Auth::user()->hasRole('capturista_delegacional') && in_array( $estatus_solicitud, [1, 2] ) )
+                @if( Auth::user()->hasRole('capturista_delegacional') && in_array( $solicitud->status_sol_id, [1, 2] ) )
                     @php
                         $bolMostrarBotonEditar = true;
                     @endphp
                 @endif
 
-                @if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $estatus_solicitud, [1, 4] ) )
+                @if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $solicitud->status_sol_id, [1, 4] ) )
                     @php
                         $bolMostrarBotonEditar = true;
                     @endphp
@@ -165,13 +152,13 @@
     </div>
 
     <div class="card-footer">
-        <div class="table-{{$color}}">
+        <div class="table-{{ $color_solicitud }}">
             <div>
                 <strong>Estado Actual:</strong>
-                <span class="badge badge-pill badge-{{$color_text}}">
+                <span class="badge badge-pill badge-{{ $color_text_solicitud }}">
                     {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
                 </span>
-                <span class="text-{{$color_text}}">
+                <span class="text-{{ $color_text_solicitud }}">
                     {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
                     {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
                 </span>
@@ -193,11 +180,11 @@
 
 <br>
 
-@if (   ( Auth::user()->hasRole('autorizador_cceyvd')   && in_array($estatus_solicitud, [4, 5]) )
+@if (   ( Auth::user()->hasRole('autorizador_cceyvd')   && in_array($solicitud->status_sol_id, [4, 5]) )
         ||
-        ( Auth::user()->hasRole('admin_dspa')           && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
+        ( Auth::user()->hasRole('admin_dspa')           && in_array($solicitud->status_sol_id, [1, 2, 3, 4, 5]) )
         ||
-        ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+        ( Auth::user()->hasRole('capturista_delegacional')    && in_array($solicitud->status_sol_id, [2]) )
     )
 
     <form action="change_status/{{ $solicitud->id }}" method="POST">
@@ -251,7 +238,7 @@
         <div class="row">
             <div class="col-sm-6">
 
-                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($solicitud->status_sol_id, [2]) )
                     <div class="alert alert-danger">
                         Favor de realizar las correcciones solicitadas en <em class="alert-success">("Editar Solicitud") </em>y al finalizar dar click al botón siguiente:
                     </div>
@@ -259,7 +246,7 @@
 
                 <div class="form-group">
                     {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
-                    @if ($estatus_solicitud<>1)
+                    @if ($solicitud->status_sol_id<>1)
                         @if (Auth::user()->hasRole('capturista_delegacional'))
                             <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
                                 data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Correcciones realizadas, enviar de nuevo a Revisión DSPA
@@ -271,12 +258,12 @@
                         @endif
                     @endif
 
-                    @if ($estatus_solicitud <> 2)
+                    @if ($solicitud->status_sol_id <> 2)
                         @if (Auth::user()->hasRole('admin_dspa') || Auth::user()->hasRole('capturista_dspa') )
                             <button type="submit" name="action" value="enviar_a_correccion" class="btn btn-outline-warning" data-toggle="tooltip"
                                 data-placement="top" title="Solicitar corrección a la delegación">Requiere corrección
                             </button>
-                            @if ($estatus_solicitud == 5)
+                            @if ($solicitud->status_sol_id == 5)
                                 <button type="submit" name="action" value="enviar_a_mainframe" class="btn btn-info" data-toggle="tooltip"
                                     data-placement="top" title="Dar VoBo a la solicitud">Asignar Lote - Enviar a Mainframe
                                 </button>
@@ -286,13 +273,13 @@
 
                     {{--Si no es capturista delegacional puede pre-autorizar o rechazar...--}}
                     @if (!Auth::user()->hasRole('capturista_delegacional'))
-                        @if ($estatus_solicitud<>3)
+                        @if ($solicitud->status_sol_id<>3)
                             <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
                                 data-placement="top" title="Rechazar solicitud">No autorizar
                             </button>
                         @endif
 
-                        @if ($estatus_solicitud<>5)
+                        @if ($solicitud->status_sol_id<>5)
                             <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
                                 data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
                             </button>
@@ -313,7 +300,7 @@
                                     $esGroupCCEVyD = true;
                         @endphp
 
-                        @if ( ($estatus_solicitud == 1) && $esGroupCCEVyD )
+                        @if ( ($solicitud->status_sol_id == 1) && $esGroupCCEVyD )
                             <button type="submit" name="action" value="pedir_vobo" class="btn btn-secondary" data-toggle="tooltip"
                                 data-placement="top" title="Dar VoBo a la solicitud">Solicitar VoBo a CCEyVD
                             </button>
