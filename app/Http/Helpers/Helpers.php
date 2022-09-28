@@ -16,7 +16,9 @@ class Helpers extends Controller
 
     public static function formatdatetime2($pdatetime)
     {
-        return Carbon:: parse($pdatetime)->formatLocalized('%d de %B, %Y %H:%M');
+        return Carbon:: parse($pdatetime)->formatLocalized('%d de %B, %Y %H:%Mh');
+        //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
+
     }
 
     public static function formatdif_dias2($pdatetime1, $pdatetime2)
