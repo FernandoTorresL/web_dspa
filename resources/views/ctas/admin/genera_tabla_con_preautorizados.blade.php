@@ -22,7 +22,10 @@
                     <th scope="col">PDF</th>
                     <th scope="col">Status</th>
                     <th scope="col">Fecha captura</th>
+<<<<<<< HEAD
+=======
                     <th scope="col">Fecha modificación</th>
+>>>>>>> release-1.5.0
                     <th scope="col">#</th>
                 </tr>
             </thead>
