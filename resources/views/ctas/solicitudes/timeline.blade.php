@@ -18,6 +18,17 @@
         </a>
     </h4>
     <br>
+    Hay {{ count($solicitud_t->hist_solicitudes) }} cambios para esta solicitud
+    <a class="btn btn-info" target="_blank" href="{{ url('/ctas/solicitudes_hist_list/'.$solicitud_t->id) }}">Ver historial de cambios</a>
+    <br>
+    <br>
+    {{-- @forelse($solicitud_t->hist_solicitudes as $sol_historica)
+        *
+        {{ $sol_historica->id }}
+        <a target="_blank" alt="Ver solicitud" href="/ctas/solicitud_hist/{{ $sol_historica->id }}">Solicitud histórica </a>
+    @empty
+        <p>No hay solicitudes históricas</p>
+    @endforelse --}}
 
     {{-- SOLICITUD --}}
     <div class="card border-primary w-50">
@@ -47,8 +58,13 @@
                 </a>
             </p>
             <p class="card-text">Nombre: {{ $solicitud_t->primer_apellido . '-' . $solicitud_t->segundo_apellido . '-' . $solicitud_t->nombre }}</p>
-            <p>Capturada por: </p>
-            <p>Fecha captura: {{ Helpers::formatdatetime2($solicitud_t->created_at) }} </p>
+            <p>Capturada por: 
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? $solicitud_t->hist_solicitudes[0]->user->name : $solicitud_t->user->name }},
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? '(' . $solicitud_t->hist_solicitudes[0]->user->delegacion_id . ') ' . $solicitud_t->hist_solicitudes[0]->user->delegacion->name : '--' }}
+            </p>
+            <p>Fecha captura: {{ Helpers::formatdatetime2($solicitud_t->created_at) }},
+                {{ $solicitud_t->created_at->diffForHumans() }}
+            </p>
         </div>
     </div>
     {{-- FIN SOLICITUD --}}
@@ -77,12 +93,15 @@
                 {{ isset($solicitud_t->valija) ? '' : '(Solicitud sin valija)' }}
             </h6>
             <p class="card-text">Núm. de oficio origen: 
-                {{ isset($solicitud_t->valija) ? $solicitud_t->valija->num_oficio_del : '--' }}
+                @if (isset($solicitud_t->valija))
+                    <a target="_blank" href="/ctas/valijas/{{ $solicitud_t->valija_id }}">
+                        {{ $solicitud_t->valija->num_oficio_del }}
+                    </a>
+                @endif
             </p>
             <p class="card-text">OOAD Remitente: 
                 {{ isset($solicitud_t->valija) ? '(' . $solicitud_t->delegacion->id . ') ' . $solicitud_t->delegacion->name : '--' }}
             </p>
-            <p>Capturada por: </p>
             <p>Fecha captura: 
                 {{ isset($solicitud_t->valija) ? Helpers::formatdatetime2($solicitud_t->valija->created_at) : '--' }}
             </p>
@@ -147,8 +166,15 @@
             <h5>Captura de Solicitud<span class="float-right">{{ Helpers::formatdatetime2($solicitud_t->created_at) }}</span></h5>
         </div>
         <div class="card-body">
-            <p>Capturado por: </p>
-            <p>Modificada por: {{ $solicitud_t->user->name }}</p>
+            <p>Capturada por: 
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? $solicitud_t->hist_solicitudes[0]->user->name : $solicitud_t->user->name }},
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? '(' . $solicitud_t->hist_solicitudes[0]->user->delegacion_id . ') ' . $solicitud_t->hist_solicitudes[0]->user->delegacion->name : '--' }}
+            </p>
+            <p>Fecha captura: {{ Helpers::formatdatetime2($solicitud_t->created_at) }} </p>
+            <p>Última modificación por: 
+                {{ $solicitud_t->user->name }}
+            </p>
+            <p>Fecha modificación: {{ Helpers::formatdatetime2($solicitud_t->updated_at) }} </p>
             <p>Comentario: {{ $solicitud_t->comment }}</p>
             <p>Causa del rechazo: <span class="{{ $color_sol_cap }}">{{ $rechazo_sol_cap }}</span></p>
             <p>Observaciones Nivel Central: {{ $solicitud_t->final_remark }}</p>

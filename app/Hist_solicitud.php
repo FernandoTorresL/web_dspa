@@ -53,4 +53,10 @@ class Hist_solicitud extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function status_sol()
+    {
+        return $this->belongsTo(Status_sol::class);
+    }
+
 }

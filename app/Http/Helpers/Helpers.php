@@ -21,6 +21,17 @@ class Helpers extends Controller
 
     }
 
+    public static function format_datetime_short($pdatetime)
+    {
+        return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%M:%S');
+        //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
+    }
+
+    public static function format_datetime_short2($pdatetime)
+    {
+        return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y,%H:%Mh');
+    }
+
     public static function formatdif_dias2($pdatetime1, $pdatetime2)
     {
         return date_diff( $pdatetime1, $pdatetime2 )->format('%d día(s)');
@@ -38,7 +49,7 @@ class Helpers extends Controller
             case 7:     $color = 'danger';      $color_text = 'danger';     $possibles_status = [ 0 ]; break;
             case 8:     $color = 'success';     $color_text = 'success';    $possibles_status = [ 0 ]; break;
             case 9:     $color = 'secondary';   $color_text = 'secondary';  $possibles_status = [ 3, 7, 8 ]; break;
-            default:    $color = 'secondary';
+            default:    $color = 'active';      $color_text = 'dark';       $possibles_status = [ ];
         }
 
         return [

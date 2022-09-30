@@ -26,22 +26,27 @@
             {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
             {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
 
-            <strong class="float-right">Fecha en solicitud: {{ Helpers::formatdate2($solicitud->fecha_solicitud_del) }}
-            </strong>
+            <span class="card-text float-right">
+                <strong>Fecha en solicitud:</strong>
+                {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d-%b-%Y') }}
+                @if (isset($solicitud->archivo))
+                    <a class="btn btn-sm btn-info" href="{{ Storage::disk('public')->url($solicitud->archivo) }}" target="_blank">PDF</a>
+                @endif
+            </span>
         </h5>
 
         <div class="small">
             <span class="card-text">
-                <strong>Capturada por: </strong>
+                <strong>Capturó: </strong>
                 {{ $solicitud->hist_solicitudes->isNotEmpty() ? $solicitud->hist_solicitudes->first()->user->name : $solicitud->user->name }}
-                ({{ Helpers::formatdatetime2($solicitud->created_at) }},
+                ({{ Helpers::format_datetime_short2($solicitud->created_at) }},
                 {{ $solicitud->created_at->diffForHumans() }})
             </span>
             <span class="card-text float-right">
-                <strong>Modificada por: </strong>
+                <strong>Modificó: </strong>
                 {{ $solicitud->hist_solicitudes->isNotEmpty() ?
                     $solicitud->user->name .
-                        '(' . Helpers::formatdatetime2($solicitud->updated_at) . ', ' . $solicitud->updated_at->diffForHumans() . ')' :
+                        '(' . Helpers::format_datetime_short2($solicitud->updated_at) . ', ' . $solicitud->updated_at->diffForHumans() . ')' :
                     '--' }}
             </span>
         </div>
@@ -149,10 +154,6 @@
 <br>
 {{-- BOTONES --}}
 <div class="container">
-    @if (isset($solicitud->archivo))
-        <a class="btn btn-info" href="{{ Storage::disk('public')->url($solicitud->archivo) }}" target="_blank">PDF</a>
-    @endif
-
     @if ($bolMostrarBotonEditar)
         @can('editar_solicitudes_user_nc')
             <a class="btn btn-success" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}" role="button">
@@ -166,7 +167,10 @@
     @endif
 
     @can('ver_timeline_solicitudes')
-        <a class="btn btn-warning" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
+        <a class="btn btn-warning" target="_blank" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
+        <a class="btn btn-info" target="_blank" href="{{ url('/ctas/solicitudes_hist_list/'.$solicitud->id) }}">
+            Ver historial de cambios ({{ count($solicitud->hist_solicitudes) }})
+        </a>
     @endcan
 </div>
 <hr>
@@ -239,8 +243,8 @@
                     {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
                     @if ($solicitud->status_sol_id<>1)
                         @if (Auth::user()->hasRole('capturista_delegacional'))
-                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
-                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Correcciones realizadas, enviar de nuevo a Revisión DSPA
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Enviar de nuevo a Revisión DSPA
                             </button>
                         @else
                             <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
