@@ -18,4 +18,9 @@ class Lote extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function resultado_lote()
+    {
+        return $this->hasOne(Resultado_Lote::class);
+    }
+
 }
