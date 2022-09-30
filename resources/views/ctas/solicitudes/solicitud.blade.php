@@ -1,31 +1,18 @@
 @php
-    use Carbon\Carbon;
-    setlocale(LC_TIME, 'es-ES');
-    \Carbon\Carbon::setUtf8(false);
+    use App\Http\Helpers\Helpers;
 
-    $estatus_solicitud = $solicitud->status_sol_id;
-    $bolMostrarBotonEditar = false;
-
-    switch($estatus_solicitud) {
-        case 1:     $color = 'light';       $color_text = 'dark';       $possible_status = [ 2, 3, 4, 5 ]; break;
-        case 2:     $color = 'warning';     $color_text = 'warning';    $possible_status = [ 1 ]; break;
-        case 3:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 1, 2 ]; break;
-        case 4:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 5 ]; break;
-        case 5:     $color = 'primary';     $color_text = 'primary';    $possible_status = [ ]; break;
-        case 6:     $color = 'info';        $color_text= 'dark';        $possible_status = [ 7, 8, 9 ]; break;
-        case 7:     $color = 'danger';      $color_text = 'danger';     $possible_status = [ 0 ]; break;
-        case 8:     $color = 'success';     $color_text = 'success';    $possible_status = [ 0 ]; break;
-        case 9:     $color = 'secondary';   $color_text = 'secondary';  $possible_status = [ 3, 7, 8 ]; break;
-        default:    $color = 'secondary';
-    }
-
-    // If solicitud has a response...
+    // If solicitud has a response... show the captured value
+    $cuenta = $solicitud->cuenta;
     if ( isset($solicitud->resultado_solicitud) )
         $cuenta = $solicitud->resultado_solicitud->cuenta;
-    else {
-        //...show the captured value
-        $cuenta = $solicitud->cuenta;
-    }
+
+    $bolMostrarBotonEditar = false;
+
+    $tmp_array = Helpers::set_status_sol_flow($solicitud->status_sol_id);
+
+    $color_solicitud        = $tmp_array['color_solicitud'];
+    $color_text_solicitud   = $tmp_array['color_text_solicitud'];
+    $possible_status_sol    = $tmp_array['possibles_status_sol'];
 @endphp
 
 <div class="card border-info">
@@ -33,171 +20,166 @@
         <h5 class="card-title">
             <strong>
                 Solicitud {{ $solicitud->movimiento->name }}
-                <span class="text-{{$color_text}}">{{ $cuenta }}</span>
+                <span class="text-{{ $color_text_solicitud }}">{{ $cuenta }}</span>
             </strong>
-                ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
-                {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
-                {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
-
-                @if( Auth::user()->hasRole('admin_dspa') && in_array( $estatus_solicitud, [1, 2, 3, 4, 5] ) )
-                    @php
-                        $bolMostrarBotonEditar = true;
-                    @endphp
-                @endif
-
-                @if( Auth::user()->hasRole('capturista_delegacional') && in_array( $estatus_solicitud, [1, 2] ) )
-                    @php
-                        $bolMostrarBotonEditar = true;
-                    @endphp
-                @endif
-
-                @if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $estatus_solicitud, [1, 4] ) )
-                    @php
-                        $bolMostrarBotonEditar = true;
-                    @endphp
-                @endif
-
-                @if ($bolMostrarBotonEditar)
-                    @can('editar_solicitudes_user_nc')
-                        <a class="btn btn-success" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}" role="button">
-                            Editar solicitud
-                        </a>
-                    @elsecan('editar_solicitudes_del')
-                        <a class="btn btn-success" href="{{ url('/ctas/solicitudes/edit/'.$solicitud->id) }}" role="button">
-                            Editar solicitud
-                        </a>
-                    @endcan
-                @endif
+            ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
+            {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
+            {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
 
             <span class="card-text float-right">
-                @can('ver_timeline_solicitudes')
-                    <a class="btn btn-warning btn-sm" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Timeline</a>
-                @endcan
                 <strong>Fecha en solicitud:</strong>
                 {{ \Carbon\Carbon::parse($solicitud->fecha_solicitud_del)->formatLocalized('%d-%b-%Y') }}
                 @if (isset($solicitud->archivo))
-                    <a class="btn btn-info" href="{{ Storage::disk('public')->url($solicitud->archivo) }}" target="_blank">PDF</a>
+                    <a class="btn btn-sm btn-info" href="{{ Storage::disk('public')->url($solicitud->archivo) }}" target="_blank">PDF</a>
                 @endif
             </span>
         </h5>
 
         <div class="small">
             <span class="card-text">
-                <strong>Capturada por: </strong>
-                {{ $solicitud_hasBeenModified ? $solicitud->hist_solicitudes->first()->user->name : $solicitud->user->name }}
-                ({{ \Carbon\Carbon::parse($solicitud->created_at)->formatLocalized('%d-%b-%Y %H:%Mh') }},
+                <strong>Capturó: </strong>
+                {{ $solicitud->hist_solicitudes->isNotEmpty() ? $solicitud->hist_solicitudes->first()->user->name : $solicitud->user->name }}
+                ({{ Helpers::format_datetime_short2($solicitud->created_at) }},
                 {{ $solicitud->created_at->diffForHumans() }})
             </span>
             <span class="card-text float-right">
-                <strong>Modificada por: </strong>
-                {{ $solicitud_hasBeenModified ? $solicitud->user->name : ''}}
-                ({{ \Carbon\Carbon::parse($solicitud->updated_at)->formatLocalized('%d-%b-%Y %H:%Mh') }},
-                {{ $solicitud_hasBeenModified ? $solicitud->updated_at->diffForHumans() : '--' }})
+                <strong>Modificó: </strong>
+                {{ $solicitud->hist_solicitudes->isNotEmpty() ?
+                    $solicitud->user->name .
+                        '(' . Helpers::format_datetime_short2($solicitud->updated_at) . ', ' . $solicitud->updated_at->diffForHumans() . ')' :
+                    '--' }}
             </span>
         </div>
     </div>
 
     <div class="card-group">
-
         <div class="card">
             <div class="card-body border-light">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Nombre:</strong>
-                            <span class="card-text float-right">
-                                {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
-                            </span>
-                        </div>
-                        <div>
-                            <strong>CURP (Matrícula):</strong>
-                            <span class="card-text float-right">
-                                {{ $solicitud->curp }} ({{ $solicitud->matricula }})
-                            </span>
-                        </div>
-                        <div>
-                            <strong>Subdel (Del):</strong>
-                            <span class="card-text float-right">
-                                {{ str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $solicitud->subdelegacion->name }}
-                                , {{ $solicitud->delegacion->name }}
-                            </span>
-                        </div>
-                    </li>
-                </ul>
+                <div>
+                    <strong>Nombre:</strong>
+                    <div class="card-text float-right">
+                        {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
+                    </div>
+                </div>
+                <div>
+                    <strong>CURP (Matrícula):</strong>
+                    <div class="card-text float-right">
+                        {{ $solicitud->curp }} ({{ $solicitud->matricula }})
+                    </div>
+                </div>
+                <div>
+                    <strong>Subdel (Del):</strong>
+                    <div class="card-text float-right">
+                        {{ str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $solicitud->subdelegacion->name . ', ' }}
+                        {{ $solicitud->delegacion->name }}
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="card">
             <div class="card-body border-light">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Lote:</strong>
-                            <span class="card-text float-right">
-                                {{ isset($solicitud->lote) ? $solicitud->lote->num_lote : 'Sin lote asignado' }}
-                                {{ isset($solicitud->lote) ? '(' . \Carbon\Carbon::parse($solicitud->lote->fecha_oficio_lote)->formatLocalized('%d-%b-%Y') . ')' : '' }}
-                            </span>
-                        </div>
-
-                        <div>
-                            <strong>Valija:</strong>
-                            <span class="card-text float-right">
-                                @if( isset($solicitud->valija_oficio) )
-                                    <a target="_blank" title="{{ $solicitud->valija_oficio->num_oficio_ca }}" href="/ctas/valijas/{{ $solicitud->valija_id }}" data-placement="center">
-                                        {{ $solicitud->valija->num_oficio_del . ' ('. $solicitud->valija->delegacion->name .') | ' . $solicitud->valija->num_oficio_ca }}
-                                    </a>
-                                @else
-                                    (Sin valija)
-                                @endif
-                            </span>
-                        </div>
-
-                        <div class="card-text">
-                            <strong>Comentario:</strong>
-                            {{ isset($solicitud->comment) ? $solicitud->comment : '--' }}
-                        </div>
-
-                    </li>
-                </ul>
+                <div>
+                    <strong>Lote:</strong>
+                    <div class="card-text float-right">
+                        {{ isset($solicitud->lote) ? $solicitud->lote->num_lote . ', ' : '(Sin lote asignado)' }}
+                        {{ isset($solicitud->lote->resultado_lote) ? "atendido el " . Helpers::formatdatetime2($solicitud->lote->resultado_lote->attended_at) : '' }}
+                    </div>
+                </div>
+                <div>
+                    <strong>Valija:</strong>
+                    <div class="card-text float-right">
+                        @if( isset($solicitud->valija_oficio) )
+                            <a target="_blank" title="{{ $solicitud->valija_oficio->num_oficio_ca }}" href="/ctas/valijas/{{ $solicitud->valija_id }}" data-placement="center">
+                                {{ $solicitud->valija->num_oficio_del . ' ('. $solicitud->valija->delegacion->name .') | ' . $solicitud->valija->num_oficio_ca }}
+                            </a>
+                        @else
+                            (Sin valija)
+                        @endif
+                    </div>
+                </div>
+                <div class="card-text">
+                    <strong>Comentario:</strong>
+                    {{ isset($solicitud->comment) ? $solicitud->comment : '' }}
+                </div>
             </div>
         </div>
-
     </div>
 
     <div class="card-footer">
-        <div class="table-{{$color}}">
+        <div class="table-{{ $color_solicitud }}">
             <div>
                 <strong>Estado Actual:</strong>
-                <span class="badge badge-pill badge-{{$color_text}}">
+                <span class="badge badge-pill badge-{{ $color_text_solicitud }}">
                     {{ isset($solicitud->status_sol) ? $solicitud->status_sol->name : 'Indefinido' }}
                 </span>
-                <span class="text-{{$color_text}}">
-                    {{--{{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : '' }}--}}
-                    {{ isset($solicitud->rechazo) ? $solicitud->rechazo->full_name : (isset($solicitud->resultado_solicitud) ? '/ '.(isset($solicitud->resultado_solicitud->rechazo_mainframe) ? $solicitud->resultado_solicitud->rechazo_mainframe->name : '' ) : '') }}
+                <span class="text-{{ $color_text_solicitud }}">
+                    {{ isset($solicitud->rechazo) ?
+                        $solicitud->rechazo->full_name :
+                        (isset($solicitud->resultado_solicitud->rechazo_mainframe) ?
+                            '/ ' . $solicitud->resultado_solicitud->rechazo_mainframe->name :
+                            '' ) }}
                 </span>
             </div>
-
             <div>
                 <strong>Observaciones Nivel Central:</strong>
-                {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '--' }}
+                {{ isset($solicitud->final_remark) ? $solicitud->final_remark : '' }}
             </div>
-
             <div>
                 <strong>Observaciones Mainframe:</strong>
-                @if( isset($solicitud->resultado_solicitud) && isset($solicitud->resultado_solicitud->comment) ) {{ $solicitud->resultado_solicitud->comment }} @else -- @endif
+                {{ isset($solicitud->resultado_solicitud) ? $solicitud->resultado_solicitud->comment : '' }}
             </div>
         </div>
     </div>
-
 </div>
 
-<br>
+@if( Auth::user()->hasRole('admin_dspa') && in_array( $solicitud->status_sol_id, [1, 2, 3, 4, 5] ) )
+    @php
+        $bolMostrarBotonEditar = true;
+    @endphp
+@endif
 
-@if (   ( Auth::user()->hasRole('autorizador_cceyvd')   && in_array($estatus_solicitud, [4, 5]) )
+@if( Auth::user()->hasRole('capturista_delegacional') && in_array( $solicitud->status_sol_id, [1, 2] ) )
+    @php
+        $bolMostrarBotonEditar = true;
+    @endphp
+@endif
+
+@if( (Auth::user()->hasRole('capturista_cceyvd') || Auth::user()->hasRole('autorizador_cceyvd') ) && in_array( $solicitud->status_sol_id, [1, 4] ) )
+    @php
+        $bolMostrarBotonEditar = true;
+    @endphp
+@endif
+
+<br>
+{{-- BOTONES --}}
+<div class="container">
+    @if ($bolMostrarBotonEditar)
+        @can('editar_solicitudes_user_nc')
+            <a class="btn btn-success" href="{{ url('/ctas/solicitudes/editNC/'.$solicitud->id) }}" role="button">
+                Editar solicitud
+            </a>
+        @elsecan('editar_solicitudes_del')
+            <a class="btn btn-success" href="{{ url('/ctas/solicitudes/edit/'.$solicitud->id) }}" role="button">
+                Editar solicitud
+            </a>
+        @endcan
+    @endif
+
+    @can('ver_timeline_solicitudes')
+        <a class="btn btn-warning" target="_blank" href="{{ url('/ctas/solicitudes/timeline/'.$solicitud->id) }}">Ver Timeline</a>
+        <a class="btn btn-info" target="_blank" href="{{ url('/ctas/solicitudes_hist_list/'.$solicitud->id) }}">
+            Ver historial de cambios ({{ count($solicitud->hist_solicitudes) }})
+        </a>
+    @endcan
+</div>
+<hr>
+
+@if (   ( Auth::user()->hasRole('autorizador_cceyvd')       && in_array($solicitud->status_sol_id, [4, 5]) )
         ||
-        ( Auth::user()->hasRole('admin_dspa')           && in_array($estatus_solicitud, [1, 2, 3, 4, 5]) )
+        ( Auth::user()->hasRole('admin_dspa')               && in_array($solicitud->status_sol_id, [1, 2, 3, 4, 5]) )
         ||
-        ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+        ( Auth::user()->hasRole('capturista_delegacional')  && in_array($solicitud->status_sol_id, [2]) )
     )
 
     <form action="change_status/{{ $solicitud->id }}" method="POST">
@@ -251,7 +233,7 @@
         <div class="row">
             <div class="col-sm-6">
 
-                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($estatus_solicitud, [2]) )
+                @if ( Auth::user()->hasRole('capturista_delegacional')    && in_array($solicitud->status_sol_id, [2]) )
                     <div class="alert alert-danger">
                         Favor de realizar las correcciones solicitadas en <em class="alert-success">("Editar Solicitud") </em>y al finalizar dar click al botón siguiente:
                     </div>
@@ -259,10 +241,10 @@
 
                 <div class="form-group">
                     {{-- Si el estatus no es Enviar a Revisión DSPA(1): --}}
-                    @if ($estatus_solicitud<>1)
+                    @if ($solicitud->status_sol_id<>1)
                         @if (Auth::user()->hasRole('capturista_delegacional'))
-                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
-                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Correcciones realizadas, enviar de nuevo a Revisión DSPA
+                            <button type="submit" name="action" value="en_revision_dspa" class="btn btn-dark" data-toggle="tooltip"
+                                data-placement="top" title="Enviar solicitud a DSPA para nueva revisión">Enviar de nuevo a Revisión DSPA
                             </button>
                         @else
                             <button type="submit" name="action" value="en_revision_dspa" class="btn btn-outline-dark" data-toggle="tooltip"
@@ -271,12 +253,12 @@
                         @endif
                     @endif
 
-                    @if ($estatus_solicitud <> 2)
+                    @if ($solicitud->status_sol_id <> 2)
                         @if (Auth::user()->hasRole('admin_dspa') || Auth::user()->hasRole('capturista_dspa') )
                             <button type="submit" name="action" value="enviar_a_correccion" class="btn btn-outline-warning" data-toggle="tooltip"
                                 data-placement="top" title="Solicitar corrección a la delegación">Requiere corrección
                             </button>
-                            @if ($estatus_solicitud == 5)
+                            @if ($solicitud->status_sol_id == 5)
                                 <button type="submit" name="action" value="enviar_a_mainframe" class="btn btn-info" data-toggle="tooltip"
                                     data-placement="top" title="Dar VoBo a la solicitud">Asignar Lote - Enviar a Mainframe
                                 </button>
@@ -286,13 +268,13 @@
 
                     {{--Si no es capturista delegacional puede pre-autorizar o rechazar...--}}
                     @if (!Auth::user()->hasRole('capturista_delegacional'))
-                        @if ($estatus_solicitud<>3)
+                        @if ($solicitud->status_sol_id<>3)
                             <button type="submit" name="action" value="no_autorizar" class="btn btn-danger" data-toggle="tooltip"
                                 data-placement="top" title="Rechazar solicitud">No autorizar
                             </button>
                         @endif
 
-                        @if ($estatus_solicitud<>5)
+                        @if ($solicitud->status_sol_id<>5)
                             <button type="submit" name="action" value="autorizar" class="btn btn-primary" data-toggle="tooltip"
                                 data-placement="top" title="Dar VoBo a la solicitud">Pre-autorizar
                             </button>
@@ -313,7 +295,7 @@
                                     $esGroupCCEVyD = true;
                         @endphp
 
-                        @if ( ($estatus_solicitud == 1) && $esGroupCCEVyD )
+                        @if ( ($solicitud->status_sol_id == 1) && $esGroupCCEVyD )
                             <button type="submit" name="action" value="pedir_vobo" class="btn btn-secondary" data-toggle="tooltip"
                                 data-placement="top" title="Dar VoBo a la solicitud">Solicitar VoBo a CCEyVD
                             </button>

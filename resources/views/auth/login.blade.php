@@ -79,9 +79,9 @@
                                     {{ __('Entrar') }}
                                 </button>
 
-                                {{--<a class="btn btn-link" href="{{ route('password.request') }}">--}}
-                                    {{--{{ __('¿Olvidaste tu contraseña?') }}--}}
-                                {{--</a>--}}
+                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                    {{ __('¿Olvidaste tu contraseña?') }}
+                                </a>
                                 <a class="btn btn-link" href="{{ route('register') }}">
                                 {{ __('¿Aún no tienes cuenta? Registrate aquí.') }}
                                 </a>

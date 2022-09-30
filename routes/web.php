@@ -42,6 +42,12 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //Route to view one solicitud
     Route::get('/ctas/solicitudes/{solicitud}', 'SolicitudesController@show');
 
+    //Route to view one old solicitud (hist_solicitudes)
+    //Route::get('/ctas/solicitud_hist/{solicitud}', 'SolicitudHistController@show_sol_hist');
+
+    //Route to view list of hist_solicitudes
+    Route::get('/ctas/solicitudes_hist_list/{solicitud_id}', 'SolicitudesHistController@show_sol_hist_list');
+
     //Route to edit solicitud
     Route::get('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@show_for_edit');
     Route::post('/ctas/solicitudes/edit/{solicitud}', 'SolicitudesController@edit');

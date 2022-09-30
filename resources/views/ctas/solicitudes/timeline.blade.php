@@ -3,108 +3,232 @@
 @section('title', 'Timeline Solicitud')
 
 @section('content')
+@php
+    use App\Http\Helpers\Helpers;
+@endphp
+
     <p>
         <a class="btn btn-default" href="{{ url('/') }}">Inicio</a>
         <a class="btn btn-default" href="{{ url()->previous() }}">Regresar</a>
     </p>
 
-    <h4>Timeline detallado, solicitud {{ $cuenta_sol }}</h4>
-    <p></p>
+    <h4>Timeline detallado
+        <a target="_blank" alt="Ver solicitud" href="/ctas/solicitudes/{{ $solicitud_t->id }}">
+            {{ isset($solicitud_t->resultado_solicitud) ? $cta_resp : $solicitud_t->cuenta }}
+        </a>
+    </h4>
+    <br>
+    Hay {{ count($solicitud_t->hist_solicitudes) }} cambios para esta solicitud
+    <a class="btn btn-info" target="_blank" href="{{ url('/ctas/solicitudes_hist_list/'.$solicitud_t->id) }}">Ver historial de cambios</a>
+    <br>
+    <br>
+    {{-- @forelse($solicitud_t->hist_solicitudes as $sol_historica)
+        *
+        {{ $sol_historica->id }}
+        <a target="_blank" alt="Ver solicitud" href="/ctas/solicitud_hist/{{ $sol_historica->id }}">Solicitud histórica </a>
+    @empty
+        <p>No hay solicitudes históricas</p>
+    @endforelse --}}
 
+    {{-- SOLICITUD --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Solicitud<span class="float-right">{{ $fecha_sol }}</span></h5>
+            <h5>
+                <a target="_blank" alt="Ver solicitud" href="/ctas/solicitudes/{{ $solicitud_t->id }}">Solicitud</a>
+                <span class="float-right">
+                    Fecha formato: {{ Helpers::formatdate2($solicitud_t->fecha_solicitud_del) }}
+                </span>
+            </h5>
         </div>
         <div class="card-body">
-            <h6 class="card-subtitle mb-2 small text-muted">{{ $subt_val }}</h6>
-            <p class="card-text">Trámite: {{ $titulo_sol }}</p>
-            <p class="card-text">CURP: {{ $curp_sol }} Matrícula: {{ $matricula_sol }}</p>
-            <p class="card-text">Nombre: {{ $nombre_sol }}</p>
+            <h6 class="card-subtitle mb-2 small text-muted">
+                {{ isset($solicitud_t->valija) ? '' : '(Solicitud sin valija)' }}
+            </h6>
+            <p class="card-text">Solicitud de {{ $solicitud_t->movimiento->name }} para {{ $solicitud_t->cuenta . $sol_gpo_detail }}</p>
+            <p class="card-text">CURP: 
+                <a target="_blank" alt="Ver solicitudes de esta CURP"
+                    href="/ctas/solicitudes/search/cta?search_word={{ $solicitud_t->curp }}">
+                        {{ $solicitud_t->curp }}
+                </a>
+            </p>
+            <p class="card-text">Matrícula: 
+                <a target="_blank" alt="Ver solicitudes de ésta matrícula"
+                    href="/ctas/solicitudes/search/cta?search_word={{ $solicitud_t->matricula }}">
+                        {{ $solicitud_t->matricula }}
+                </a>
+            </p>
+            <p class="card-text">Nombre: {{ $solicitud_t->primer_apellido . '-' . $solicitud_t->segundo_apellido . '-' . $solicitud_t->nombre }}</p>
+            <p>Capturada por: 
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? $solicitud_t->hist_solicitudes[0]->user->name : $solicitud_t->user->name }},
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? '(' . $solicitud_t->hist_solicitudes[0]->user->delegacion_id . ') ' . $solicitud_t->hist_solicitudes[0]->user->delegacion->name : '--' }}
+            </p>
+            <p>Fecha captura: {{ Helpers::formatdatetime2($solicitud_t->created_at) }},
+                {{ $solicitud_t->created_at->diffForHumans() }}
+            </p>
         </div>
     </div>
+    {{-- FIN SOLICITUD --}}
 
-    <p></p>
+    <br>
     <p class="small text-muted">
-        Días entre fecha solicitud y fecha de la valija: {{ $date_diff_sol_val }}
+        Días entre fecha solicitud y fecha de la valija:
+        {{ isset($solicitud_t->valija) ? Helpers::formatdif_dias2(
+            date_create($solicitud_t->fecha_solicitud_del),
+            date_create($solicitud_t->valija->fecha_valija_del) ) : '--'
+        }}
     </p>
 
+    {{-- VALIJA --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Valija<span class="float-right">{{ $fecha_val }}</span></h5>
+            <h5>Valija
+                <span class="float-right">
+                    Fecha oficio: 
+                    {{ isset($solicitud_t->valija) ? Helpers::formatdate2($solicitud_t->valija->fecha_valija_del) : '--' }}
+                </span>
+            </h5>
         </div>
         <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted"></h6>
-            <p class="card-text">Núm. de oficio origen: {{ $of_val }}</p>
-            <p class="card-text">Remitente: {{ $del_val }}</p>
+            <h6 class="card-subtitle mb-2 small text-muted">
+                {{ isset($solicitud_t->valija) ? '' : '(Solicitud sin valija)' }}
+            </h6>
+            <p class="card-text">Núm. de oficio origen: 
+                @if (isset($solicitud_t->valija))
+                    <a target="_blank" href="/ctas/valijas/{{ $solicitud_t->valija_id }}">
+                        {{ $solicitud_t->valija->num_oficio_del }}
+                    </a>
+                @endif
+            </p>
+            <p class="card-text">OOAD Remitente: 
+                {{ isset($solicitud_t->valija) ? '(' . $solicitud_t->delegacion->id . ') ' . $solicitud_t->delegacion->name : '--' }}
+            </p>
+            <p>Fecha captura: 
+                {{ isset($solicitud_t->valija) ? Helpers::formatdatetime2($solicitud_t->valija->created_at) : '--' }}
+            </p>
         </div>
     </div>
+    {{-- FIN VALIJA --}}
 
-    <p></p>
+    <br>
     <p class="small text-muted">
-        Días entre fecha de la valija y fecha recepción en la Gestión CA: {{ $date_diff_val_gestion }}
+        Días entre fecha de la valija y fecha recepción en la Gestión CA:
+        {{ isset($solicitud_t->valija) ? Helpers::formatdif_dias2(
+            date_create($solicitud_t->valija->fecha_valija_del),
+            date_create($solicitud_t->valija->fecha_recepcion_ca) ) : '--'
+        }}
     </p>
 
+    {{-- GESTION --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Recepción Gestión CA<span class="float-right">{{ $fecha_gestion }}</span></h5>
+            <h5>Recepción Gestión CA
+                <span class="float-right">
+                    {{ isset($solicitud_t->valija) ? Helpers::formatdate2($solicitud_t->valija->fecha_recepcion_ca) : '--' }}
+                </span>
+            </h5>
         </div>
         <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted"></h6>
-            <p class="card-text">Núm. del área de gestión: {{ $num_gestion }}</p>
-            <p class="card-text">Comentario del área de gestión: {{ $comment_gestion }}</p>
+            <h6 class="card-subtitle mb-2 small text-muted">
+                {{ isset($solicitud_t->valija) ? '' : '(Solicitud sin valija)' }}
+            </h6>
+            <p class="card-text">Núm. del área de gestión: 
+                {{ isset($solicitud_t->valija) ? $solicitud_t->valija->num_oficio_ca : '--' }}
+            </p>
+            <p class="card-text">Comentario del área de gestión: 
+                {{ isset($solicitud_t->valija) ? $solicitud_t->valija->comment : '--' }}
+            </p>
         </div>
     </div>
+    {{-- FIN GESTION --}}
 
-    <p></p>
+    <br>
+    <p class="small text-muted">Gestión tarda al menos un día (ya contabilizado) en entregar las valijas al personal que captura</p>
     <p class="small text-muted">
-        Gestión tarda al menos un día (ya contabilizado) en entregar las valijas al personal que captura.
+        Días entre recepción Gestión CA y la captura de la solicitud: 
+        {{ isset($solicitud_t->valija) ? Helpers::formatdif_dias2(
+            date_create($solicitud_t->valija->fecha_recepcion_ca),
+            date_create($solicitud_t->valija->created_at) ) : '--'
+        }}
     </p>
-    <p class="small text-muted">
-        Días entre recepción Gestión CA y la captura de la solicitud: {{ $date_diff_gestion_cap }}
-    </p>
+@php
+    //-- Setting the solicitud status --}}
+    $color_sol_cap = '';
+    $rechazo_sol_cap = '--';
+    if( isset($solicitud_t->rechazo) ) {
+        $color_sol_cap = 'text-danger';
+        $rechazo_sol_cap = 'No procede. ' . $solicitud_t->rechazo->full_name;
+    }
+@endphp
 
+    {{-- CAPTURA DE SOLICITUD --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Capturar Solicitud<span class="float-right">{{ $fecha_sol_cap }}</span></h5>
+            <h5>Captura de Solicitud<span class="float-right">{{ Helpers::formatdatetime2($solicitud_t->created_at) }}</span></h5>
         </div>
         <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted"></h6>
-            <p class="card-text">Capturado por: {{ $user_sol_cap }}</p>
-            <p class="card-text">Causa del rechazo: <span class="{{ $color_sol_cap }}">{{ $rechazo_sol_cap }}</span></p>
-            <p class="card-text">Comentario: {{ $comment_sol_cap }}</p>
+            <p>Capturada por: 
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? $solicitud_t->hist_solicitudes[0]->user->name : $solicitud_t->user->name }},
+                {{ isset($solicitud_t->hist_solicitudes[0]) ? '(' . $solicitud_t->hist_solicitudes[0]->user->delegacion_id . ') ' . $solicitud_t->hist_solicitudes[0]->user->delegacion->name : '--' }}
+            </p>
+            <p>Fecha captura: {{ Helpers::formatdatetime2($solicitud_t->created_at) }} </p>
+            <p>Última modificación por: 
+                {{ $solicitud_t->user->name }}
+            </p>
+            <p>Fecha modificación: {{ Helpers::formatdatetime2($solicitud_t->updated_at) }} </p>
+            <p>Comentario: {{ $solicitud_t->comment }}</p>
+            <p>Causa del rechazo: <span class="{{ $color_sol_cap }}">{{ $rechazo_sol_cap }}</span></p>
+            <p>Observaciones Nivel Central: {{ $solicitud_t->final_remark }}</p>
         </div>
     </div>
+    {{-- FIN CAPTURA DE SOLICITUD --}}
 
-    <p></p>
+    <br>
     <p class="small text-muted">
-        Días entre captura de la solicitud y el envío del lote: {{ $date_diff_cap_lote }}
+        Días entre captura de la solicitud y el envío del lote: 
+        {{ isset($solicitud_t->lote) ? Helpers::formatdif_dias2(
+            date_create($solicitud_t->created_at),
+            date_create($solicitud_t->lote->fecha_oficio_lote) ) : '--'
+        }}
     </p>
 
+    {{-- ENVIO A MAINFRAME --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Envío a Mainframe<span class="float-right">{{ $fecha_lote }}</span></h5>
+            <h5>Envío a Mainframe
+                <span class="float-right">
+                    {{ isset($solicitud_t->lote) ? Helpers::formatdate2($solicitud_t->lote->fecha_oficio_lote) : '--' }}
+                </span>
+            </h5>
         </div>
         <div class="card-body">
-            <p class="card-text">Lote: {{ $num_lote }}</p>
-            <p class="card-text">Comentario: {{ $comment_lote }}</p>
+            <p class="card-text">Lote: {{ isset($solicitud_t->lote) ? $solicitud_t->lote->num_lote : '--' }}</p>
+            <p class="card-text">Creado por: {{ isset($solicitud_t->lote) ? $solicitud_t->lote->user->name : '--' }}</p>
+            <p class="card-text">Ticket: {{ isset($solicitud_t->lote) ? $solicitud_t->lote->ticket_msi : '--' }}</p>
+            <p class="card-text">Comentario: {{ isset($solicitud_t->lote) ? $solicitud_t->lote->comment : '--' }}</p>
         </div>
     </div>
+    {{-- FIN ENVIO A MAINFRAME --}}
 
-    <p></p>
+    <br>
     <p class="small text-muted">
         Días entre envío del lote y respuesta Mainframe: {{ $date_diff_lote_resp }}
     </p>
-
+    {{-- RESPUESTA MAINFRAME --}}
     <div class="card border-primary w-50">
         <div class="card-header text-primary">
-            <h5>Respuesta Mainframe<span class="float-right">{{ $fecha_resp }}</span></h5>
+            <h5>Respuesta Mainframe
+                <span class="float-right">{{ $fecha_resp }}</span>
+            </h5>
         </div>
         <div class="card-body">
             <p class="card-text">Resultado: <span class="{{ $color_resp }}">{{ $rechazo_resp }}</span></p>
             <p class="card-text">Cuenta final: {{ $cta_resp }}</p>
             <p class="card-text">Nombre en Mainframe: {{ $nombre_resp }}</p>
+            <p class="card-text">Resultado capturado por: {{ $user_resp }}</p>
+            <p class="card-text">Reflejado en sistema el: {{ $fcaptura_resp }}</p>
             <p class="card-text">Comentario: {{ $comment_resp }}</p>
         </div>
     </div>
-    
+    {{-- FIN RESPUESTA MAINFRAME --}}
+
 @endsection
