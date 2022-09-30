@@ -49,7 +49,7 @@ class Helpers extends Controller
             case 7:     $color = 'danger';      $color_text = 'danger';     $possibles_status = [ 0 ]; break;
             case 8:     $color = 'success';     $color_text = 'success';    $possibles_status = [ 0 ]; break;
             case 9:     $color = 'secondary';   $color_text = 'secondary';  $possibles_status = [ 3, 7, 8 ]; break;
-            default:    $color = 'active';      $color_text = 'dark';       $possibles_status = [ ];
+            default:    $color = 'light';       $color_text = 'dark';       $possibles_status = [ ];
         }
 
         return [

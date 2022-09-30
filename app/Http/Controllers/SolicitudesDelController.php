@@ -105,9 +105,14 @@ class SolicitudesDelController extends Controller
         setlocale(LC_TIME, 'es-ES');
         Carbon::setUtf8(false);
 
-        $del = Auth::user()->delegacion_id;
+        $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
+        $user_job_id = Auth::user()->job_id;
+        $user_del_id = Auth::user()->delegacion_id;
+        $user_del_name = Auth::user()->delegacion->name;
 
-        Log::info('Ver timeline solicitudes. User: ' . Auth::user()->name . '|Del:' . $del);
+        $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
+        Log::info('Ver Timeline solicitud|' . $texto_log);
 
         if ( Gate::allows('ver_timeline_solicitudes') || $del == 9 ) {
 
