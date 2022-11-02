@@ -40,6 +40,7 @@ class AccountListController extends Controller
             ->join('groups AS G',         'IC.gpo_owner_id',  '=', 'G.id')
             ->join('inventories AS I',    'IC.inventory_id',  '=', 'I.id')
             ->leftjoin('work_areas AS W', 'IC.work_area_id',  '=', 'W.id')
+            ->leftjoin('siap AS SI',      'IC.install_data',  '=', 'SI.matricula')
             ->select(DB::Raw(
                 'IC.cuenta      AS Cuenta,
                 ""              AS Id_origen,
@@ -58,7 +59,9 @@ class AccountListController extends Controller
                 "--"            AS CURP,
                 IC.work_area_id AS Work_area_id,
                 W.name          AS Work_area_name,
-                I.cut_off_date  AS Fecha_mov'
+                I.cut_off_date  AS Fecha_mov,
+                SI.adscripcion  AS Datos_siap1,
+                ""              AS Datos_siap2'
             ))
             ->where('IC.inventory_id', $inventory_id);
 
@@ -71,6 +74,7 @@ class AccountListController extends Controller
             ->leftjoin('groups AS GA',            'S.gpo_actual_id',      '=', 'GA.id')
             ->leftjoin('groups AS GB',            'S.gpo_nuevo_id',       '=', 'GB.id')
             ->join('movimientos AS M',            'S.movimiento_id',      '=', 'M.id')
+            ->leftjoin('siap AS SI',              'S.matricula',          '=', 'SI.matricula')
             ->select(DB::Raw(
                 'RS.cuenta      AS Cuenta,
                 RS.solicitud_id AS Id_origen,
@@ -90,7 +94,9 @@ class AccountListController extends Controller
                 "--"            AS CURP,
                 0               AS Work_area_id,
                 ""              AS Work_area_name,
-                RL.attended_at  AS Fecha_mov'
+                RL.attended_at  AS Fecha_mov,
+                ""              AS Datos_siap1,
+                SI.adscripcion  AS Datos_siap2'
             ))
             ->whereNull('RS.rechazo_mainframe_id');
 
@@ -110,6 +116,8 @@ class AccountListController extends Controller
                     ->orderby('Cuenta')
                     ->orderby('Fecha_mov')
                 ->get();
+
+            //dd($active_accounts_list[1012]);
 
             return [
                 'active_accounts_list'   => $active_accounts_list,

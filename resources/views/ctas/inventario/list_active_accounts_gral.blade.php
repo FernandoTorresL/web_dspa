@@ -30,8 +30,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">id</th>
-                            <th scope="col">Del</th>
+                            <th scope="col"></th>
                             <th scope="col">Cuenta</th>
                             <th scope="col">Origen</th>
                             <th scope="col"><p>Apellidos-Nombre</p>Nombre Inventario</th>
@@ -39,6 +38,7 @@
                             <th scope="col">Matricula</th>
                             <th scope="col">CURP</th>
                             <th scope="col">Tipo_Cta</th>
+                            <th scope="col">Puesto</th>
                             <th scope="col">Fecha_mov</th>
                         </tr>
                     </thead>
@@ -47,6 +47,7 @@
 
         @php
             $var = 0;
+            //dd($active_accounts_list);
         @endphp
 
         @forelse( $active_accounts_list as $row_active_accounts )
@@ -56,16 +57,14 @@
             <tr class="text-monospace">
                 <th scope="row">{{ $var }}</th>
 
-                {{-- Id Final --}}
+                {{-- Estatus --}}
                 <td class="small">
-                    <a target="_blank" alt="Ver detalle de la solicitud"
-                        href="/ctas/solicitudes/{{ $row_active_accounts->Id == "--" ? $row_active_accounts->Id_origen : $row_active_accounts->Id }}">
-                        {{ $row_active_accounts->Id == "--" ? $row_active_accounts->Id_origen : $row_active_accounts->Id }}
-                    </a>
+                    @if (str_contains($row_active_accounts->Datos_siap1, 'JUBILA') || str_contains($row_active_accounts->Datos_siap2, 'JUBILA'))
+                        <p class="text-danger">
+                            JUBILADO
+                        </p>
+                    @endif
                 </td>
-
-                {{-- Delegación Id--}}
-                <td class="small">{{ $row_active_accounts->Del_id }}</td>
 
                 {{-- Cuenta y Origen--}}
                 @if($row_active_accounts->Id == "--")
@@ -168,6 +167,76 @@
 
                 {{-- Tipo Cta --}}
                 <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica': '' }}</td>
+
+                <td class="small">
+                @if( isset($row_active_accounts->Datos_siap) )
+                    @php
+                        $array = (array) $row_active_accounts->Datos_siap;
+                    @endphp
+                    @forelse( $array as $row_datos_siap )
+                        @php
+                            $color = "success"
+                        @endphp
+
+                        @if( isset($row_datos_siap[0]) )
+                                # de Puestos:{{ count($row_datos_siap)}}
+                            @if (str_contains($row_datos_siap[0]['adscripcion'], 'JUB') )
+                                @php
+                                    $color = "danger"
+                                @endphp
+                            @endif
+                                <p class="text-{{$color}}">
+                                    Del:{{ $row_datos_siap[0]['delegacion_id'] }}|{{ $row_datos_siap[0]['primer_apellido'] }}-{{ $row_datos_siap[0]['segundo_apellido'] }}-{{ $row_datos_siap[0]['nombre'] }}|
+                                    {{ $row_datos_siap[0]['cve_adscripcion'] }}|{{ $row_datos_siap[0]['adscripcion'] }}|
+                                    {{ $row_datos_siap[0]['cve_puesto'] }}|{{ $row_datos_siap[0]['puesto'] }}|
+                                </p>
+                                @if( isset($row_datos_siap[1]) )
+                                    @if (str_contains($row_datos_siap[1]['adscripcion'], 'JUB') )
+                                        @php
+                                            $color = "danger"
+                                        @endphp
+                                    @endif
+                                    <p class="text-{{$color}}">
+                                        Del:{{ $row_datos_siap[1]['delegacion_id'] }}|{{ $row_datos_siap[1]['primer_apellido'] }}-{{ $row_datos_siap[1]['segundo_apellido'] }}-{{ $row_datos_siap[1]['nombre'] }}|
+                                        {{ $row_datos_siap[1]['cve_adscripcion'] }}|{{ $row_datos_siap[1]['adscripcion'] }}|
+                                        {{ $row_datos_siap[1]['cve_puesto'] }}|{{ $row_datos_siap[1]['puesto'] }}|
+                                    </p>
+                                @endif
+                                @if( isset($row_datos_siap[2]) )
+                                    @if (str_contains($row_datos_siap[2]['adscripcion'], 'JUB') )
+                                        @php
+                                            $color = "danger"
+                                        @endphp
+                                    @endif
+                                    <p class="text-{{$color}}">
+                                        Del:{{ $row_datos_siap[2]['delegacion_id'] }}|{{ $row_datos_siap[2]['primer_apellido'] }}-{{ $row_datos_siap[2]['segundo_apellido'] }}-{{ $row_datos_siap[2]['nombre'] }}|
+                                        {{ $row_datos_siap[2]['cve_adscripcion'] }}|{{ $row_datos_siap[2]['adscripcion'] }}|
+                                        {{ $row_datos_siap[2]['cve_puesto'] }}|{{ $row_datos_siap[2]['puesto'] }}|
+                                    </p>
+                                @endif
+                                @if( isset($row_datos_siap[3]) )
+                                    @if (str_contains($row_datos_siap[3]['adscripcion'], 'JUB') )
+                                        @php
+                                            $color = "danger"
+                                        @endphp
+                                    @endif
+                                    <p class="text-{{$color}}">
+                                        Del:{{ $row_datos_siap[3]['delegacion_id'] }}|{{ $row_datos_siap[3]['primer_apellido'] }}-{{ $row_datos_siap[3]['segundo_apellido'] }}-{{ $row_datos_siap[3]['nombre'] }}|
+                                        {{ $row_datos_siap[3]['cve_adscripcion'] }}|{{ $row_datos_siap[3]['adscripcion'] }}|
+                                        {{ $row_datos_siap[3]['cve_puesto'] }}|{{ $row_datos_siap[3]['puesto'] }}|
+                                    </p>
+                                @endif
+                        @else
+                        ---
+                        @endif
+
+                    @empty
+
+                    @endforelse
+                @else
+                    --
+                @endif
+                </td>
 
                 {{-- Fecha mov --}}
                 <td class="small">{{ $row_active_accounts->Fecha_mov }}</td>
