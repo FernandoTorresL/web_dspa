@@ -25,6 +25,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
+                            <th scope="col"></th>
                             <th scope="col">Cuenta</th>
                             <th scope="col">Apellidos-Nombre</th>
                             <th scope="col">Grupo</th>
@@ -46,6 +47,15 @@
             @endphp
             <tr class="text-monospace">
                 <th scope="row">{{ $var }}</th>
+
+                {{-- Estatus --}}
+                <td class="small">
+                    @if (str_contains($row_active_accounts->Datos_siap1, 'JUBILA') || str_contains($row_active_accounts->Datos_siap2, 'JUBILA'))
+                        <p class="text-danger">
+                            JUBILADO
+                        </p>
+                    @endif
+                </td>
 
                 {{-- Cuenta y Origen--}}
                 @if($row_active_accounts->Id == "--")
@@ -143,6 +153,7 @@
 
                 {{-- Tipo Cta --}}
                 <td class="small">{{ $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica': '' }}</td>
+
             </tr>
         @empty
             <p>¡No hay cuentas registradas!</p>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Subdelegacion;
 use App\Delegacion;
+use App\Siap;
 
 use App\Http\Controllers\AccountListController;
 
@@ -90,6 +91,26 @@ class ActiveAccountsGralController extends Controller
                             // It's not BAJA and it's an Afiliación Group, we keep this record on the new array
                             if  ( !( in_array($registro_anterior->Gpo_unificado, $grupos_a_eliminar) ) ) {
                                 // Finally, add the record data to the final list
+
+                                //$siap_record = $siap_list_items->
+
+                                // Get records from SIAP
+                                if ( ($registro_anterior->Matricula <> "--") || ($registro_anterior->Matricula_origen <> "") ) {
+                                    //dd(str_split($registro_anterior->Matricula));
+
+                                    $siap_records =
+                                        Siap::where('catalogo_id', 1)
+                                            ->where('matricula', $registro_anterior->Matricula)
+                                            ->Orwhere('matricula', $registro_anterior->Matricula_origen)
+                                            ->get();
+                                    // Add record array to registro_anterior
+                                    //dd($siap_records[0]['adscripcion']);
+                                    //dd($siap_records[0]);
+                                    // dd($active_accounts_list[114]->Datos_siap[0]['puesto']);
+
+                                    $registro_anterior->Datos_siap = $siap_records;
+                                    //dd($registro_anterior);
+                                }
                                 array_push($active_accounts_list, $registro_anterior);
                                 array_push($user_id_list, $registro_anterior->Cuenta);
 
@@ -134,6 +155,15 @@ class ActiveAccountsGralController extends Controller
                     // If there's a connect, it has to be added too
                     else if ($registro_anterior->Mov == "CONNECT") {
                         $registro_anterior->Gpo_unificado = $registro_anterior->Gpo_nuevo;
+
+                        $siap_records =
+                            Siap::where('catalogo_id', 1)
+                                ->where('matricula', $registro_anterior->Matricula)
+                                ->Orwhere('matricula', $registro_anterior->Matricula_origen)
+                                ->get();
+                        // Add record array to registro_anterior
+                        //dd($siap_records);
+                        $registro_anterior->Datos_siap = $siap_records;
                         array_push($active_accounts_list, $registro_anterior);
                         array_push($user_id_list, $registro_anterior->Cuenta);
                     }
@@ -141,6 +171,7 @@ class ActiveAccountsGralController extends Controller
                 $registro_anterior = $registro_actual;
             }
         }
+        //dd($active_accounts_list[114]->Datos_siap[0]['puesto']);
         $total_active_accounts = count($active_accounts_list);
         $total_user_id_list = count(array_unique($user_id_list));
 
