@@ -40,18 +40,33 @@ class SolicitudesHistController extends Controller
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
         // Se revisan los permisos...
-        if ( Auth::user()->hasRole('admin_dspa') ) {
+        if ( Auth::user()->hasRole('admin_dspa') || Auth::user()->hasRole('autorizador_cceyvd')) {
             // Si cuenta con los permisos...
             Log::info('Consultar Historial de cambios de estatus|' . $texto_log);
 
             $solicitud_actual       = Solicitud::where('id', $solicitud_id)->
                 with('valija', 'movimiento', 'user', 'rechazo', 'status_sol', 'lote', 'delegacion', 'subdelegacion', 'gpo_actual', 'gpo_nuevo', 'resultado_solicitud')->first();
+            $is_ccevyd_user = false;
+
+            if ( ( $this->fntCheckGroupCCEVyD($solicitud_actual) ) ||
+                ( $solicitud_actual->user->id == $user_id ) ||
+                ( $solicitud_actual->user->job->id == env('DSPA_USER_JOB_ID_CCEVyD') ) ) {
+
+                $allowToShowSolicitudes = true;
+                $is_ccevyd_user = true;
+            }
+            else {
+                $texto_log = $texto_log . '|CCEVyD user:' . $is_ccevyd_user;
+                Log::warning('Sin permiso-Ver detalle de solicitudes de otros grupos' . $texto_log);
+                return redirect('ctas')->with('message', 'No tiene permitido ver detalle de solicitudes de otros grupos.');
+            }
+
             $list_sol_historicas    = Hist_solicitud::where('solicitud_id', $solicitud_id)->
                 with('valija', 'movimiento', 'user', 'rechazo', 'status_sol', 'lote', 'delegacion', 'subdelegacion', 'gpo_actual', 'gpo_nuevo')->get();
-            //dd($list_sol_historicas);
+            //dd(count($list_sol_historicas));
             if ( !isset($solicitud_actual ) )
                 return redirect('ctas')->with('message', 'No existe información de esa solicitud');
-            elseif ( !isset($list_sol_historicas ) )
+            elseif ( count($list_sol_historicas) == 0 )
                 return redirect('ctas')->with('message', 'No existe información histórica de esa solicitud');
             else {
                 return view( 'ctas.solicitudes.list_sol_hist',
