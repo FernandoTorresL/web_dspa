@@ -26,17 +26,16 @@ class SolicitudesDelController extends Controller
 
         if ( Gate::allows('ver_status_solicitudes') ) {
             //Base query
-            $solicitudes = Solicitud::sortable()
-                ->with(['valija',
-                    'valija_oficio',
-                    'delegacion',
-                    'subdelegacion',
-                    'movimiento',
-                    'grupo1',
-                    'grupo2',
-                    'lote',
-                    'status_sol',
-                    'resultado_solicitud'])
+            $solicitudes =
+                Solicitud::select('id', 'created_at', 'subdelegacion_id',
+                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
+                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula')
+                ->with(['subdelegacion:id,name',
+                        'movimiento:id,name',
+                        'gpo_actual:id,name',
+                        'gpo_nuevo:id,name',
+                        'status_sol:id,name,description',
+                        'resultado_solicitud:id,solicitud_id,cuenta'])
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
