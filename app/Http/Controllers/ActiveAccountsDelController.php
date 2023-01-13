@@ -20,7 +20,6 @@ class ActiveAccountsDelController extends Controller
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;
         $user_del_id = Auth::user()->delegacion_id;
-        $user_del_name = Auth::user()->delegacion->name;
 
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
@@ -145,7 +144,6 @@ class ActiveAccountsDelController extends Controller
         return view('ctas/inventario/home_active_accounts_del',
             compact('active_accounts_list',
                     'total_active_accounts',
-                    'user_del_name',
                     'user_del_id',
                     'subdelegaciones',
                     'delegacion_a_consultar',

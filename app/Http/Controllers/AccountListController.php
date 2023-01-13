@@ -19,17 +19,17 @@ class AccountListController extends Controller
 
         // Get subdelegaciones
         $subdelegaciones_list =
-            Subdelegacion::where('delegacion_id', $p_delegacion_id)
+            Subdelegacion::select('id', 'name')->where('delegacion_id', $p_delegacion_id)
                 ->where('status', '<>', 0)
                 ->orderBy('delegacion_id', 'asc')
                 ->orderBy('num_sub', 'asc')
                 ->get();
 
         // Get Delegaciones (OOAD's)
-        $delegaciones_list =
-            Delegacion::where('status', '<>', 0)
+/*         $delegaciones_list =
+            Delegacion::select('id', 'name')->where('status', '<>', 0)
                 ->orderBy('id', 'asc')
-                ->get();
+                ->get(); */
 
         $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
@@ -122,7 +122,6 @@ class AccountListController extends Controller
             return [
                 'active_accounts_list'   => $active_accounts_list,
                 'delegacion_a_consultar' => $delegacion_a_consultar,
-                'delegaciones_list'      => $delegaciones_list,
                 'subdelegaciones_list'   => $subdelegaciones_list,
             ];
         }
