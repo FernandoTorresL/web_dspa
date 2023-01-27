@@ -34,7 +34,7 @@ class Helpers extends Controller
 
     public static function format_datetime_short3($pdatetime)
     {
-        return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y,%H:%Mh');
+        return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y %H:%Mh');
     }
 
     public static function formatdif_dias2($pdatetime1, $pdatetime2)

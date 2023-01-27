@@ -25,7 +25,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col"></th>
+                            <th scope="col">¿Jubilado?</th>
                             <th scope="col">Cuenta</th>
                             <th scope="col">Apellidos-Nombre</th>
                             <th scope="col">Grupo</th>

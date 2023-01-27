@@ -41,7 +41,7 @@ class CuentasController extends Controller
         {
             $del_id = Auth::user()->delegacion_id;
 
-            $primer_renglon = 'OOAD ' . Auth::user()->delegacion_id . '-' . Auth::user()->delegacion->name;
+            $primer_renglon = env('OOAD') . Auth::user()->delegacion_id . '-' . Auth::user()->delegacion->name;
             /* $subdelegaciones = Subdelegacion::where('delegacion_id', $del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
 
             $total_ctas =

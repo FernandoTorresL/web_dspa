@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-use Carbon\Carbon;
 use App\Http\Helpers\Helpers;
 
 class SolicitudesDelController extends Controller
@@ -35,8 +34,7 @@ class SolicitudesDelController extends Controller
                         'gpo_actual:id,name',
                         'gpo_nuevo:id,name',
                         'status_sol:id,name,description',
-                        'resultado_solicitud:id,solicitud_id,cuenta'])
-                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
+                        'resultado_solicitud:id,solicitud_id,cuenta']);
 
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
                 //if is a 'Delegational' user, add delegacion_id to the query
@@ -85,12 +83,13 @@ class SolicitudesDelController extends Controller
             }
 
             //Finally add these instructions to any query
+            $solicitudes = $solicitudes->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
             $solicitudes = $solicitudes->latest()->paginate( env('ROWS_ON_PAGINATE') );
 
             Log::info('Buscar solicitudes ' . $texto_log);
             return view('ctas.solicitudes.delegacion_list',
                     ['solicitudes' => $solicitudes,
-                    'search_word'      => $search_word]
+                    'search_word'  => $search_word]
                 );
         }
         else {
@@ -101,9 +100,6 @@ class SolicitudesDelController extends Controller
 
     public function view_timeline($id)
     {
-        setlocale(LC_TIME, 'es-ES');
-        Carbon::setUtf8(false);
-
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;

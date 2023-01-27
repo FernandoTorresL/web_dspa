@@ -6,17 +6,17 @@
 
 <div class="table table-hover table-sm">
     <table class="table">
-        <thead>
+        <thead class="small">
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Fecha captura</th>
                 <th scope="col">Subdelegación </th>
                 <th scope="col">Apellidos-Nombre</th>
                 <th scope="col">Matrícula</th>
-                <th class="text-center" scope="col">Usuario</th>
-                <th scope="col">Movimiento</th>
-                <th class="text-center">Gpo actual</th>
-                <th class="text-center">Gpo nuevo</th>
+                <th scope="col">Usuario</th>
+                <th>Tipo Mov</th>
+                <th>Gpo actual</th>
+                <th>Gpo nuevo</th>
                 <th class="text-center" scope="col">Estatus</th>
             </tr>
         </thead>
@@ -53,22 +53,22 @@
 
                 <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
 
-                <td class="small text-right">{{ $solicitud->matricula }}</td>
+                <td class="small text-left">{{ $solicitud->matricula }}</td>
 
-                <td class="small">
+                <td class="small text-left">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
-                        <button type="button" class="btn btn-primary btn-sm text-monospace" data-toggle="tooltip" data-placement="right"
+                        <button type="button" class="btn btn-primary btn-sm text-monospace" data-toggle="tooltip"
                             title="Click para ver detalle...">
-                            {{ isset($solicitud->resultado_solicitud) ? $solicitud->resultado_solicitud->cuenta : $solicitud->cuenta . ' ' }}
+                                {{ isset($solicitud->resultado_solicitud) ? $solicitud->resultado_solicitud->cuenta : $solicitud->cuenta . '    ' }}
                         </button>
                     </a>
                 </td>
 
-                <td class="small text-center">{{ $solicitud->movimiento->name }}</td>
+                <td class="small">{{ $solicitud->movimiento->name }}</td>
 
-                <td class="small text-center">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '--' }}</td>
+                <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}</td>
 
-                <td class="small text-center">{{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '--' }}</td>
+                <td class="small">{{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
 
                 <td class="small text-{{ $color_solicitud }} text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
@@ -87,8 +87,6 @@
     </table>
 </div>
 
-<div class="row small" align="center">
-    <div class="mt-2 mx-auto justify-content-center">
-        {!! $solicitudes->appends(\Request::except('page'))->render() !!}
-    </div>
+<div class="row mt-2 mx-auto justify-content-center">
+    {!! $solicitudes->appends(\Request::except('page'))->render() !!}
 </div>

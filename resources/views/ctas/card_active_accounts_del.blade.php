@@ -1,7 +1,7 @@
-<div class="col-4 ">
+<div class="col-3">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Cuentas vigentes Afiliación</h5>
+            <h7 class="card-title">Cuentas vigentes</h7>
         </div>
         <div class="card-body">
             <p class="card-text">

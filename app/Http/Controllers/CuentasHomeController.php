@@ -43,7 +43,7 @@ class CuentasHomeController extends Controller
         }
         elseif ( $user->hasRole('capturista_delegacional') )
             {
-            $primer_renglon = 'OOAD ' . $primer_renglon . ' (' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ')';
+            $primer_renglon = env('OOAD') . ' ' . $primer_renglon . ' (' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ')';
 
             return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }
@@ -65,7 +65,7 @@ class CuentasHomeController extends Controller
 
             if (Auth::user()->hasRole('capturista_dspa'))
             {
-                $primer_renglon = 'Nivel Central - DSPA';
+                $primer_renglon = 'Nivel Central - ' . env('DSPA_NAME');
             }
 
             $solicitudes_sin_lote = DB::table('solicitudes')
