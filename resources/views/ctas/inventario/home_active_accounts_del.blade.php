@@ -1,27 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Cuentas activas Afiliación - OOAD')
+@section('title', 'Ctas vigentes')
 
 @section('content')
 
-@php
-    use Carbon\Carbon;
-    setlocale(LC_TIME, 'es-ES');
-    \Carbon\Carbon::setUtf8(false);
-@endphp
-    <p>
-        <a class="btn btn-default" href="{{ url('/ctas') }}">Regresar</a>
-    </p>
-
     @if(Auth::check())
 
-        <div class="card-header card text-white bg-primary">
-            <p class="h4">
-                Cuentas activas Afiliación - OOAD {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
-            </p>
-            <p>TOTAL: {{ number_format( $total_active_accounts ) }} cuentas vigentes
+        <div class="btn text-white bg-primary">
+            <p class="h6">
+                Cuentas vigentes ({{ number_format( $total_active_accounts ) }}) -
+                @if(Auth::user()->delegacion->id <> 9)
+                    {{ env('OOAD') }}
+                @endif
+                {{ Auth::user()->delegacion->name }}
         </div>
 
+        <br>
         <br>
         <div>
             @include('ctas.inventario.cifras_active_accounts_del')

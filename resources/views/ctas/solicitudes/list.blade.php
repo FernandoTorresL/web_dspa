@@ -4,7 +4,7 @@
     $var = 0;
 @endphp
 
-<div class="table table-hover table-sm">
+<div>
     <table class="table">
         <thead class="small">
             <tr>
@@ -38,7 +38,7 @@
                 $estatus_solicitud = $solicitud->status_sol_id;
             @endphp
 
-            <tr class="table-{{ $color_solicitud }}">
+            <tr class="table-{{ $color_solicitud }} text-monospace">
                 <td class="small">
                     <strong>{{ ($solicitudes->currentPage() * $solicitudes->perPage()) + $var - $solicitudes->perPage() }}</strong>
                 </td>
@@ -48,7 +48,7 @@
                 </td>
 
                 <td class="small">
-                    {{ $solicitud->subdelegacion->name }}
+                    {{ $solicitud->subdelegacion->name == 'Sin Subdelegación Asignada' ? '' : $solicitud->subdelegacion->name }}
                 </td>
 
                 <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>

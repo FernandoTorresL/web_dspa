@@ -1,7 +1,7 @@
 <div class="col-3">
     <div class="card">
         <div class="card-header">
-            <h7 class="card-title">Cuentas vigentes</h7>
+            <h7 class="card-title">Ctas vigentes</h7>
         </div>
         <div class="card-body">
             <p class="card-text">

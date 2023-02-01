@@ -2,9 +2,9 @@
     <div>
         <h5 class="text-primary">
             @if ($delegacion_a_consultar->id == 0)
-                Listado de cuentas activas Afiliación ADMIN - Nacional
+                Listado de cuentas vigentes Afiliación ADMIN - Nacional
             @else
-                Cuentas activas Afiliación ADMIN - OOAD {{ $delegacion_a_consultar->name }}
+                Cuentas vigentes Afiliación ADMIN - OOAD {{ $delegacion_a_consultar->name }}
                 ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
             @endif
         </h5>

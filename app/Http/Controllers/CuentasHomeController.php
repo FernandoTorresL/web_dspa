@@ -43,7 +43,7 @@ class CuentasHomeController extends Controller
         }
         elseif ( $user->hasRole('capturista_delegacional') )
             {
-            $primer_renglon = env('OOAD') . ' ' . $primer_renglon . ' (' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ')';
+            $primer_renglon = env('OOAD') . ' ' . $primer_renglon;
 
             return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }

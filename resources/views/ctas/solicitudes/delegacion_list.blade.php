@@ -11,7 +11,6 @@
                     {{ env('OOAD') }}
                 @endif
                 {{ Auth::user()->delegacion->name }}
-                ({{ str_pad(Auth::user()->delegacion->id, 2, '0', STR_PAD_LEFT) }})
             </p>
         </div>
         <br>
