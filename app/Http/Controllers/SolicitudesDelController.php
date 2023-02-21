@@ -28,13 +28,14 @@ class SolicitudesDelController extends Controller
             $solicitudes =
                 Solicitud::select('id', 'created_at', 'subdelegacion_id',
                     'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
-                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula')
-                ->with(['subdelegacion:id,name',
+                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula', 'curp')
+                ->with(['subdelegacion:id,name,num_sub',
                         'movimiento:id,name',
                         'gpo_actual:id,name',
                         'gpo_nuevo:id,name',
                         'status_sol:id,name,description',
-                        'resultado_solicitud:id,solicitud_id,cuenta']);
+                        'resultado_solicitud:id,solicitud_id,cuenta'])
+                ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
             if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
                 //if is a 'Delegational' user, add delegacion_id to the query
@@ -83,7 +84,7 @@ class SolicitudesDelController extends Controller
             }
 
             //Finally add these instructions to any query
-            $solicitudes = $solicitudes->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
+            //$solicitudes = $solicitudes->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
             $solicitudes = $solicitudes->latest()->paginate( env('ROWS_ON_PAGINATE') );
 
             Log::info('Buscar solicitudes ' . $texto_log);

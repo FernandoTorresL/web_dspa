@@ -71,6 +71,11 @@
         <main class="py-6" style="margin-left: 40px; margin-right: 40px;">
             @yield('content')
         </main>
+
+        <footer>
+            <br>
+            @include('layouts.footer')
+        </footer>
     </div>
 
 <!-- Scripts -->
@@ -88,13 +93,5 @@
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous">
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"
-            charset="utf-8">
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js">
-    </script>
-
 </body>
 </html>

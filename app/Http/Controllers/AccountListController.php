@@ -49,6 +49,7 @@ class AccountListController extends Controller
                 "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
+                ""              AS Subdel_numsub,
                 ""              AS Subdel_id,
                 ""              AS Subdel_name,
                 "Inventario"    AS Mov,
@@ -87,10 +88,11 @@ class AccountListController extends Controller
                 "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
+                SUB.num_sub     AS Subdel_numsub,
                 SUB.id          AS Subdel_id,
                 SUB.name        AS Subdel_name,
                 M.name          AS Mov,
-                concat(S.primer_apellido, "-", S.segundo_apellido, "-", S.nombre)
+                concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
                                 AS Nombre_origen,
                 "--"            As Nombre,
                 GA.name         AS Gpo_actual,
@@ -224,9 +226,12 @@ class AccountListController extends Controller
                     $grupo_final,
                     $row_active_accounts->Matricula == '--' ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula,
                     $row_active_accounts->CURP == '--' ?
-                        ( $row_active_accounts->CURP_origen == '--' ? '' : $row_active_accounts->CURP_origen ) 
+                        ( $row_active_accounts->CURP_origen == '--' ? '' : $row_active_accounts->CURP_origen )
                             : $row_active_accounts->CURP,
-                    $row_active_accounts->Subdel_name,
+                    $row_active_accounts->Subdel_numsub != 0 ?
+                        ( $row_active_accounts->Subdel_name == '' ? '' :
+                            str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
+                            : '',
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)

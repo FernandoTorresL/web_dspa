@@ -1,6 +1,4 @@
 <div>
-    <div>
-
         @include('ctas.inventario.mensaje_list_active_accounts')
 
         <p>
@@ -16,22 +14,21 @@
                 @endif
             @endcan
         </p>
-    </div>
 
     @if( $delegacion_a_consultar->id <> 0 )
         @if(count($active_accounts_list))
             <div>
                 <table class="table table-sm table-striped">
-                    <thead>
+                    <thead class="small">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Cuenta</th>
-                            <th scope="col">¿Jubilado?</th>
-                            <th scope="col">Apellidos-Nombre</th>
-                            <th scope="col">Grupo</th>
-                            <th scope="col">Matrícula</th>
-                            <th scope="col">CURP</th>
-                            <th scope="col">Subdelegación</th>
+                            <th>#</th>
+                            <th>Cuenta</th>
+                            <th>¿Jubilado?</th>
+                            <th>Nombre</th>
+                            <th>Grupo</th>
+                            <th>Matrícula</th>
+                            <th>CURP</th>
+                            <th>Subdelegación</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,19 +36,23 @@
 
         @php
             $var = 0;
+            $color_solicitud = '';
         @endphp
 
         @forelse( $active_accounts_list as $row_active_accounts )
             @php
+                $color_solicitud = '';
+                if ( str_contains($row_active_accounts->Datos_siap1, 'JUBILA') ||
+                    str_contains($row_active_accounts->Datos_siap2, 'JUBILA') )
+                    $color_solicitud = 'text-danger';
                 $var += 1;
             @endphp
-            <tr class="text-monospace">
-                <td class="small">
-                    {{ $var }}
-                </td>
+
+            <tr class="small text-monospace {{ $color_solicitud }}">
+                <th>{{ $var }}</th>
 
                 {{-- Cuenta y Origen--}}
-                <td class="small">
+                <td>
                     @if($row_active_accounts->Id == "--")
                         @if($row_active_accounts->Mov == 'Inventario')
                             {{-- Resultado en inventario --}}
@@ -84,39 +85,40 @@
                 </td>
 
                 {{-- Jubilado --}}
-                <td class="small">
+                <td>
                     @if (str_contains($row_active_accounts->Datos_siap1, 'JUBILA') || str_contains($row_active_accounts->Datos_siap2, 'JUBILA'))
-                        <p class="text-danger">
-                            JUBILADO
-                        </p>
+                        JUBILADO
                     @endif
                 </td>
 
                 {{-- Nombre --}}
-                <td class="small">
+                <td>
                     {{ $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre }}
                 </td>
 
                 {{-- Grupo --}}
-                <td class="small">
+                <td>
                     {{ $row_active_accounts->Gpo_unificado }}
                 </td>
 
                 {{-- Matricula --}}
-                <td class="small">
+                <td>
                     {{ $row_active_accounts->Matricula == "--" ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula }}
                 </td>
 
                 {{-- CURP --}}
-                <td class="small">
+                <td>
                     {{ $row_active_accounts->CURP == '--' ?
                         ( $row_active_accounts->CURP_origen == '--' ? '' : $row_active_accounts->CURP_origen ) 
                             : $row_active_accounts->CURP}}
                 </td>
 
                 {{-- Subdel --}}
-                <td class="small">
-                    {{ $row_active_accounts->Subdel_name == '' ? '' : $row_active_accounts->Subdel_name }}
+                <td>
+                @if ($row_active_accounts->Subdel_numsub != 0)
+                    {{ $row_active_accounts->Subdel_name == '' ? '' :
+                    str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name }}
+                @endif
                 </td>
 
             </tr>

@@ -5,18 +5,22 @@
 @endphp
 
 <div>
+    <p class="text-primary">
+        Solicitudes localizadas: {{ $solicitudes->total() }}
+    </p>
     <table class="table">
         <thead class="small">
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Fecha captura</th>
-                <th scope="col">Subdelegación </th>
-                <th scope="col">Apellidos-Nombre</th>
-                <th scope="col">Matrícula</th>
-                <th scope="col">Usuario</th>
-                <th>Tipo Mov</th>
-                <th>Gpo actual</th>
-                <th>Gpo nuevo</th>
+                <th>#</th>
+                <th>Fecha captura</th>
+                <th>Subdelegación </th>
+                <th>Apellidos-Nombre</th>
+                <th>Matrícula</th>
+                <th class="text-center">CURP</th>
+                <th class="text-center">Usuario</th>
+                <th class="text-center">Tipo mov</th>
+                <th class="text-center">Gpo actual</th>
+                <th class="text-center">Gpo nuevo</th>
                 <th class="text-center" scope="col">Estatus</th>
             </tr>
         </thead>
@@ -30,7 +34,7 @@
                     $cuenta = $solicitud->resultado_solicitud->cuenta;
 
                 $tmp_array = Helpers::set_status_sol_flow($solicitud->status_sol_id);
-
+                //dd($solicitud);
                 $color_solicitud        = $tmp_array['color_solicitud'];
                 $color_text_solicitud   = $tmp_array['color_text_solicitud'];
                 $possible_status_sol    = $tmp_array['possibles_status_sol'];
@@ -48,12 +52,17 @@
                 </td>
 
                 <td class="small">
-                    {{ $solicitud->subdelegacion->name == 'Sin Subdelegación Asignada' ? '' : $solicitud->subdelegacion->name }}
+                    {{ $solicitud->subdelegacion->num_sub == 0 ?
+                    '' :
+                    str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) . '-' .
+                    $solicitud->subdelegacion->name }}
                 </td>
 
                 <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
 
                 <td class="small text-left">{{ $solicitud->matricula }}</td>
+
+                <td class="small text-left">{{ $solicitud->curp }}</td>
 
                 <td class="small text-left">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
@@ -64,11 +73,11 @@
                     </a>
                 </td>
 
-                <td class="small">{{ $solicitud->movimiento->name }}</td>
+                <td class="small text-center">{{ $solicitud->movimiento->name }}</td>
 
-                <td class="small">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}</td>
+                <td class="small text-center">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}</td>
 
-                <td class="small">{{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
+                <td class="small text-center">{{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
 
                 <td class="small text-{{ $color_solicitud }} text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
@@ -81,7 +90,7 @@
             </tr>
 
         @empty
-            <p>No hay solicitudes que coincidan con el criterio de búsqueda</p>
+            <p class="text-danger">No hay solicitudes que coincidan con el criterio de búsqueda</p>
         @endforelse
         </tbody>
     </table>

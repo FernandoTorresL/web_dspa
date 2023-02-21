@@ -52,6 +52,6 @@
         </div>
 
     <br>
-    @include('layouts.footer')
+
 @endsection
 
