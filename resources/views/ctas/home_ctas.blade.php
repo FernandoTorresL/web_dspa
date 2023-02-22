@@ -16,9 +16,7 @@
         </p>
     </div>
 
-    <div>
-        <br>
-    </div>
+    <br>
 
     <div class="row h7">
         @can('ver_modulo_admin')
@@ -33,7 +31,7 @@
             @include('ctas.card_active_accounts_gral')
         @endcanany
     </div>
-
+    <br>
     <div class="row h7">
 
         @include('ctas.card_solicitudes')
@@ -49,7 +47,7 @@
         {{--        @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
                 @include('ctas.card_inventario')
             @endcanany --}}
-        </div>
+    </div>
 
     <br>
 
