@@ -93,7 +93,7 @@ class CuentasHomeController extends Controller
 
             $listado_lotes = DB::table('lotes')
                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
-                ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
+                ->join('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
                 ->select('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
                 ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
                 ->orderBy('lotes.id', 'desc')->limit(40)->get();
