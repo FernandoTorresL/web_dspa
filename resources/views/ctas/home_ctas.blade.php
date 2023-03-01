@@ -36,13 +36,14 @@
 
         @include('ctas.card_solicitudes')
 
+        @canany( ['ver_lista_ctas_vigentes_del'] )
+            @include('ctas.card_active_accounts_del')
+        @endcanany
+
         @can('ver_status_solicitudes')
             @include('ctas.card_status_solicitudes')
         @endcan
 
-        @canany( ['ver_lista_ctas_vigentes_del'] )
-            @include('ctas.card_active_accounts_del')
-        @endcanany
 
         {{--        @canany( ['ver_inventario_del', 'ver_inventario_gral'] )
                 @include('ctas.card_inventario')

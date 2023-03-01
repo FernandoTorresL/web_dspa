@@ -68,6 +68,16 @@ class CuentasHomeController extends Controller
                 $primer_renglon = 'Nivel Central - ' . env('DSPA_NAME');
             }
 
+            $solicitudes_sin_lote_por_estatus =
+            Solicitud::groupby('status_sol_id')
+                ->select('status_sol_id', DB::raw('COUNT(*) as total_solicitudes'))
+                ->with([
+                    'status_sol:id,name'
+                ])
+                ->where('solicitudes.lote_id','=', NULL)
+                ->orderBy('status_sol_id')
+                ->get();
+
             $solicitudes_sin_lote_por_mov =
                 Solicitud::groupby('movimiento_id')
                     ->select('movimiento_id', DB::raw('COUNT(*) as total_solicitudes'))
@@ -93,7 +103,7 @@ class CuentasHomeController extends Controller
 
             $listado_lotes = DB::table('lotes')
                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
-                ->join('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
+                ->leftjoin('solicitudes', 'lotes.id', '=', 'solicitudes.lote_id')
                 ->select('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
                 ->groupBy('lotes.id', 'lotes.num_lote', 'lotes.num_oficio_ca', 'lotes.fecha_oficio_lote', 'lotes.ticket_msi', 'lotes.comment', 'resultado_lotes.attended_at')
                 ->orderBy('lotes.id', 'desc')->limit(40)->get();
@@ -107,9 +117,11 @@ class CuentasHomeController extends Controller
 
             return view(
                 'ctas.admin.show_resume', [
-                'solicitudes_sin_lote_por_del'  => $solicitudes_sin_lote_por_del,
-                'solicitudes_sin_lote2'         => $solicitudes_sin_lote2,
-                'listado_lotes'                 => $listado_lotes,
+                'solicitudes_sin_lote_por_estatus'  => $solicitudes_sin_lote_por_estatus,
+                'solicitudes_sin_lote_por_mov'      => $solicitudes_sin_lote_por_mov,
+                'solicitudes_sin_lote_por_del'      => $solicitudes_sin_lote_por_del,
+                'solicitudes_sin_lote2'             => $solicitudes_sin_lote2,
+                'listado_lotes'                     => $listado_lotes,
             ]);
         }
         else {
