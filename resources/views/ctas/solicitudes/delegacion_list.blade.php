@@ -8,9 +8,11 @@
         <div class="btn text-white bg-primary">
             <p class="h6">Solicitudes -
                 @if(Auth::user()->delegacion->id <> 9)
-                    {{ env('OOAD') }}
+                    {{ env('OOAD') }} - 
+                    {{ Auth::user()->delegacion->name }}
+                @else
+                    Todas las OOAD's
                 @endif
-                {{ Auth::user()->delegacion->name }}
             </p>
         </div>
         <br>

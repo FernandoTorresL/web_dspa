@@ -5,6 +5,10 @@
 @endphp
 
 <div>
+    <div class="row mt-2 mx-auto justify-content-center">
+        {!! $solicitudes->appends(\Request::except('page'))->render() !!}
+    </div>
+    
     <p class="text-primary">
         Solicitudes localizadas: {{ $solicitudes->total() }}
     </p>
