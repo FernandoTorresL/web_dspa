@@ -68,6 +68,19 @@ class CuentasHomeController extends Controller
                 $primer_renglon = 'Nivel Central - ' . env('DSPA_NAME');
             }
 
+            $solicitudes_sin_lote_por_fecha_mov_status =
+            Solicitud::groupby('Dia_creacion', 'movimiento_id', 'status_sol_id')
+                ->select(DB::raw('DATE(created_at) AS Dia_creacion'), 'movimiento_id', 'status_sol_id', DB::raw('COUNT(*) as total_solicitudes'))
+                ->with([
+                    'movimiento:id,name',
+                    'status_sol:id,name'
+                ])
+                ->where('solicitudes.lote_id','=', NULL)
+                ->orderBy('Dia_creacion')
+                ->orderBy('movimiento_id')
+                ->orderBy('status_sol_id')
+                ->get();
+
             $solicitudes_sin_lote_por_estatus =
             Solicitud::groupby('status_sol_id')
                 ->select('status_sol_id', DB::raw('COUNT(*) as total_solicitudes'))
@@ -117,6 +130,7 @@ class CuentasHomeController extends Controller
 
             return view(
                 'ctas.admin.show_resume', [
+                'solicitudes_sin_lote_por_fecha_mov_status'   => $solicitudes_sin_lote_por_fecha_mov_status,
                 'solicitudes_sin_lote_por_estatus'  => $solicitudes_sin_lote_por_estatus,
                 'solicitudes_sin_lote_por_mov'      => $solicitudes_sin_lote_por_mov,
                 'solicitudes_sin_lote_por_del'      => $solicitudes_sin_lote_por_del,
