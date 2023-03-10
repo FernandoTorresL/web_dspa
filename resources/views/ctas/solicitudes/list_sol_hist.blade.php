@@ -55,9 +55,9 @@
                 <td class="small">
                     <p>
                         @if ($var == 1)
-                            {{ Helpers::format_datetime_short($solicitud_actual->created_at) }}
+                            {{ Helpers::format_datetime_short4($solicitud_actual->created_at) }}
                         @else
-                            {{ Helpers::format_datetime_short($fecha_modificacion) }}
+                            {{ Helpers::format_datetime_short4($fecha_modificacion) }}
                         @endif
                         @php
                             $fecha_modificacion = $solicitud_historica->updated_at;
@@ -150,7 +150,7 @@
                 </td>
                 <td class="small">
                     <p>
-                        {{ Helpers::format_datetime_short($solicitud_actual->updated_at) }}
+                        {{ Helpers::format_datetime_short4($solicitud_actual->updated_at) }}
                     </p>
                     {{ $solicitud_actual->user->name }}
                 </td>

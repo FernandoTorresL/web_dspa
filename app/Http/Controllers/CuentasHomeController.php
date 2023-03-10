@@ -43,7 +43,7 @@ class CuentasHomeController extends Controller
         }
         elseif ( $user->hasRole('capturista_delegacional') )
             {
-            $primer_renglon = 'OOAD ' . $primer_renglon . ' (' . str_pad($user_del_id, 2, '0', STR_PAD_LEFT) . ')';
+            $primer_renglon = env('OOAD') . ' ' . $primer_renglon;
 
             return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }
@@ -65,18 +65,54 @@ class CuentasHomeController extends Controller
 
             if (Auth::user()->hasRole('capturista_dspa'))
             {
-                $primer_renglon = 'Nivel Central - DSPA';
+                $primer_renglon = 'Nivel Central - ' . env('DSPA_NAME');
             }
 
-            $solicitudes_sin_lote = DB::table('solicitudes')
-                ->leftjoin('valijas', 'solicitudes.valija_id', '=', 'valijas.id')
-                ->join('movimientos', 'solicitudes.movimiento_id', '=', 'movimientos.id')
-                ->select('valijas.origen_id', 'movimientos.name', DB::raw('COUNT(solicitudes.id) as total_solicitudes'))
+            $solicitudes_sin_lote_por_fecha_mov_status =
+            Solicitud::groupby('Dia_creacion', 'movimiento_id', 'status_sol_id')
+                ->select(DB::raw('DATE(created_at) AS Dia_creacion'), 'movimiento_id', 'status_sol_id', DB::raw('COUNT(*) as total_solicitudes'))
+                ->with([
+                    'movimiento:id,name',
+                    'status_sol:id,name'
+                ])
                 ->where('solicitudes.lote_id','=', NULL)
-                ->groupBy('valijas.origen_id', 'movimientos.name')
-                ->orderBy('origen_id')->orderBy('name')
+                ->orderBy('Dia_creacion')
+                ->orderBy('movimiento_id')
+                ->orderBy('status_sol_id')
                 ->get();
 
+            $solicitudes_sin_lote_por_estatus =
+            Solicitud::groupby('status_sol_id')
+                ->select('status_sol_id', DB::raw('COUNT(*) as total_solicitudes'))
+                ->with([
+                    'status_sol:id,name'
+                ])
+                ->where('solicitudes.lote_id','=', NULL)
+                ->orderBy('status_sol_id')
+                ->get();
+
+            $solicitudes_sin_lote_por_mov =
+                Solicitud::groupby('movimiento_id')
+                    ->select('movimiento_id', DB::raw('COUNT(*) as total_solicitudes'))
+                    ->with([
+                        'valija:id,origen_id',
+                        'movimiento:id,name'
+                    ])
+                    ->where('solicitudes.lote_id','=', NULL)
+                    ->orderBy('movimiento_id')
+                    ->get();
+
+            $solicitudes_sin_lote_por_del =
+                Solicitud::groupby('delegacion_id', 'movimiento_id')
+                    ->select('delegacion_id', 'movimiento_id', DB::raw('COUNT(*) as total_solicitudes'))
+                    ->with(['delegacion:id,name',
+                        'valija:id,origen_id',
+                        'movimiento:id,name'
+                    ])
+                    ->where('solicitudes.lote_id','=', NULL)
+                    ->orderBy('delegacion_id')
+                    ->orderBy('movimiento_id')
+                    ->get();
 
             $listado_lotes = DB::table('lotes')
                 ->leftjoin('resultado_lotes', 'lotes.id', '=', 'resultado_lotes.lote_id')
@@ -94,9 +130,12 @@ class CuentasHomeController extends Controller
 
             return view(
                 'ctas.admin.show_resume', [
-                'solicitudes_sin_lote' => $solicitudes_sin_lote,
-                'solicitudes_sin_lote2' => $solicitudes_sin_lote2,
-                'listado_lotes'      => $listado_lotes,
+                'solicitudes_sin_lote_por_fecha_mov_status'   => $solicitudes_sin_lote_por_fecha_mov_status,
+                'solicitudes_sin_lote_por_estatus'  => $solicitudes_sin_lote_por_estatus,
+                'solicitudes_sin_lote_por_mov'      => $solicitudes_sin_lote_por_mov,
+                'solicitudes_sin_lote_por_del'      => $solicitudes_sin_lote_por_del,
+                'solicitudes_sin_lote2'             => $solicitudes_sin_lote2,
+                'listado_lotes'                     => $listado_lotes,
             ]);
         }
         else {

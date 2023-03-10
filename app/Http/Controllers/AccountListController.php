@@ -22,14 +22,16 @@ class AccountListController extends Controller
             Subdelegacion::where('delegacion_id', $p_delegacion_id)
                 ->where('status', '<>', 0)
                 ->orderBy('delegacion_id', 'asc')
-                ->orderBy('num_sub', 'asc')
                 ->get();
 
-        // Get Delegaciones (OOAD's)
-        $delegaciones_list =
-            Delegacion::where('status', '<>', 0)
+        if ( Auth::user()->hasRole('admin_dspa') )
+            // Get Delegaciones (OOAD's)
+            $delegaciones_list = Delegacion::select('id', 'name')
+                ->where('status', '<>', 0)
                 ->orderBy('id', 'asc')
                 ->get();
+        else
+            $delegaciones_list = [];
 
         $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
@@ -47,6 +49,9 @@ class AccountListController extends Controller
                 "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
+                ""              AS Subdel_numsub,
+                ""              AS Subdel_id,
+                ""              AS Subdel_name,
                 "Inventario"    AS Mov,
                 IC.name         AS Nombre_origen,
                 "--"            As Nombre,
@@ -69,6 +74,8 @@ class AccountListController extends Controller
         $active_accounts_solicitudes =
             DB::table('solicitudes AS S')
             ->join('delegaciones AS D',           'S.delegacion_id',      '=', 'D.id')
+            ->join('subdelegaciones AS SUB',      'S.subdelegacion_id',   '=', 'SUB.id')
+            ->join('subdelegaciones AS SUB2',     'S.delegacion_id',   '=', 'SUB2.delegacion_id')
             ->join('resultado_solicitudes AS RS', 'RS.solicitud_id',      '=', 'S.id')
             ->join('resultado_lotes AS RL',       'RS.resultado_lote_id', '=', 'RL.id')
             ->leftjoin('groups AS GA',            'S.gpo_actual_id',      '=', 'GA.id')
@@ -81,8 +88,11 @@ class AccountListController extends Controller
                 "--"            AS Id,
                 D.id            AS Del_id,
                 D.name          AS Del_name,
+                SUB.num_sub     AS Subdel_numsub,
+                SUB.id          AS Subdel_id,
+                SUB.name        AS Subdel_name,
                 M.name          AS Mov,
-                concat(S.primer_apellido, "-", S.segundo_apellido, "-", S.nombre)
+                concat(S.primer_apellido, " ", S.segundo_apellido, " ", S.nombre)
                                 AS Nombre_origen,
                 "--"            As Nombre,
                 GA.name         AS Gpo_actual,
@@ -117,8 +127,6 @@ class AccountListController extends Controller
                     ->orderby('Fecha_mov')
                 ->get();
 
-            //dd($active_accounts_list[1012]);
-
             return [
                 'active_accounts_list'   => $active_accounts_list,
                 'delegacion_a_consultar' => $delegacion_a_consultar,
@@ -134,7 +142,6 @@ class AccountListController extends Controller
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;
         $user_del_id = Auth::user()->delegacion_id;
-        $user_del_name = Auth::user()->delegacion->name;
 
         $texto_log = 'User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
 
@@ -157,7 +164,7 @@ class AccountListController extends Controller
             }
             else {
                 $filename = 'Del_' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '-CtasVig ';
-                $fields = array('#', 'Cuenta', 'Nombre', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta');
+                $fields = array('Cuenta', 'Jubilado?', 'Nombre', 'Grupo', 'Matricula', 'CURP', 'Subdelegación');
             }
 
             $filename = $filename . date('dMY_H:i:s') . '.csv';
@@ -190,6 +197,12 @@ class AccountListController extends Controller
                     }
                 }
 
+                $bolJubilado = False;
+                if ( str_contains($row_active_accounts->Datos_siap1, 'JUBILA') ||
+                    str_contains($row_active_accounts->Datos_siap2, 'JUBILA') )
+                        //dd($row_active_accounts);
+                        $bolJubilado = True;
+
                 $lineData_Admin = array(
                     $var,
                     $row_active_accounts->Id == '--' ? $row_active_accounts->Id_origen : $row_active_accounts->Id,
@@ -205,14 +218,20 @@ class AccountListController extends Controller
                     $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : '',
                     $row_active_accounts->Fecha_mov
                 );
+
                 $lineData_Del = array(
-                    $var,
                     $row_active_accounts->Cuenta,
-                    $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre,
+                    $bolJubilado ? 'JUBILADO' : '',
+                    $row_active_accounts->Nombre == '--' ? trim($row_active_accounts->Nombre_origen) : trim($row_active_accounts->Nombre),
                     $grupo_final,
                     $row_active_accounts->Matricula == '--' ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula,
-                    $row_active_accounts->CURP == '--' ? $row_active_accounts->CURP_origen : $row_active_accounts->CURP,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : ''
+                    $row_active_accounts->CURP == '--' ?
+                        ( $row_active_accounts->CURP_origen == '--' ? '' : $row_active_accounts->CURP_origen )
+                            : $row_active_accounts->CURP,
+                    $row_active_accounts->Subdel_numsub != 0 ?
+                        ( $row_active_accounts->Subdel_name == '' ? '' :
+                            str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
+                            : '',
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)

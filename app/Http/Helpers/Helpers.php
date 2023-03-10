@@ -9,27 +9,71 @@ use Carbon\Carbon;
 class Helpers extends Controller
 
 {
+    public static function formatdate($pdate)
+    {
+        if (isset($pdate))
+            return Carbon::parse($pdate)->formatLocalized('%d%b%Y');
+        else
+            return null;
+    }
+
     public static function formatdate2($pdate)
     {
-        return Carbon::parse($pdate)->formatLocalized('%d de %B, %Y');
+        if (isset($pdate))
+            return Carbon::parse($pdate)->formatLocalized('%d de %B, %Y');
+        else
+            return null;
     }
 
     public static function formatdatetime2($pdatetime)
     {
-        return Carbon:: parse($pdatetime)->formatLocalized('%d de %B, %Y %H:%Mh');
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d de %B, %Y %H:%Mh');
         //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
-
+        else
+            return null;
     }
 
     public static function format_datetime_short($pdatetime)
     {
-        return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%M:%S');
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%Mh');
+        else
+            return null;
         //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
     }
 
     public static function format_datetime_short2($pdatetime)
     {
-        return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y,%H:%Mh');
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y,%H:%Mh');
+        else
+            return null;
+    }
+
+    public static function format_datetime_short3($pdatetime)
+    {
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y %H:%Mh');
+        else
+            return null;
+    }
+
+    public static function format_datetime_short4($pdatetime)
+    {
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%M:%S');
+        else
+            return null;
+        //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
+    }
+
+    public static function format_datetime_compact($pdatetime)
+    {
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%Y %H:%M');
+        else
+            return null;
     }
 
     public static function formatdif_dias2($pdatetime1, $pdatetime2)
