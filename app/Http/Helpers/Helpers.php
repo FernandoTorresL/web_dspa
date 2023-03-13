@@ -37,7 +37,7 @@ class Helpers extends Controller
     public static function format_datetime_short($pdatetime)
     {
         if (isset($pdatetime))
-            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%M:%S');
+            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%Mh');
         else
             return null;
         //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
@@ -57,6 +57,15 @@ class Helpers extends Controller
             return Carbon:: parse($pdatetime)->formatLocalized('%d-%b-%Y %H:%Mh');
         else
             return null;
+    }
+
+    public static function format_datetime_short4($pdatetime)
+    {
+        if (isset($pdatetime))
+            return Carbon:: parse($pdatetime)->formatLocalized('%d%b%y %H:%M:%S');
+        else
+            return null;
+        //Reemplaza a: \Carbon\Carbon::parse($solicitud->created_at)->'%d-%b-%Y %H:%Mh'
     }
 
     public static function format_datetime_compact($pdatetime)

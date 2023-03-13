@@ -5,6 +5,10 @@
 @endphp
 
 <div>
+    <div class="row mt-2 mx-auto justify-content-center">
+        {!! $solicitudes->appends(\Request::except('page'))->render() !!}
+    </div>
+    
     <p class="text-primary">
         Solicitudes localizadas: {{ $solicitudes->total() }}
     </p>
@@ -13,10 +17,10 @@
             <tr>
                 <th>#</th>
                 <th>Fecha captura</th>
-                <th>Subdelegación </th>
+                <th>Lote</th>
+                <th>Delegación/Subdelegación</th>
                 <th>Apellidos-Nombre</th>
-                <th>Matrícula</th>
-                <th class="text-center">CURP</th>
+                <th class="text-center">CURP (Matrícula)</th>
                 <th class="text-center">Usuario</th>
                 <th class="text-center">Tipo mov</th>
                 <th class="text-center">Gpo actual</th>
@@ -48,21 +52,32 @@
                 </td>
 
                 <td class="small text-left">
-                    {{ Helpers::format_datetime_short3($solicitud->created_at) }}
+                    {{ Helpers::format_datetime_short($solicitud->created_at) }}
+                </td>
+
+                <td class="small text-left">
+                    {{ isset($solicitud->lote_id) ? $solicitud->lote->num_lote : '' }}
                 </td>
 
                 <td class="small">
-                    {{ $solicitud->subdelegacion->num_sub == 0 ?
-                    '' :
-                    str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) . '-' .
-                    $solicitud->subdelegacion->name }}
+                    {{ str_pad($solicitud->delegacion_id, 2, '0', STR_PAD_LEFT) . '-' .
+                    $solicitud->delegacion->name }}
+                    <p>
+                        {{ $solicitud->subdelegacion->num_sub == 0 ?
+                        '' :
+                        str_pad($solicitud->subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) . '-' .
+                        $solicitud->subdelegacion->name }}
+                    </p>
                 </td>
 
                 <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
 
-                <td class="small text-left">{{ $solicitud->matricula }}</td>
-
-                <td class="small text-left">{{ $solicitud->curp }}</td>
+                <td class="small text-left">
+                    {{ $solicitud->curp }}
+                    <p>
+                        ({{ $solicitud->matricula }})
+                    </p>
+                </td>
 
                 <td class="small text-left">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">

@@ -18,8 +18,5 @@
         @include('ctas.admin.resume')
     @endif
 
-    <br>
-    @include('layouts.footer')
-
 @endsection
 

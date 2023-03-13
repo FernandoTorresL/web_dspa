@@ -13,6 +13,7 @@
                     {{ env('OOAD') }}
                 @endif
                 {{ Auth::user()->delegacion->name }}
+            </p>
         </div>
 
         <br>

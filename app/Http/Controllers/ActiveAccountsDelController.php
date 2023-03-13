@@ -39,7 +39,7 @@ class ActiveAccountsDelController extends Controller
 
         $AccountListController = new AccountListController;
         $accounts_list_items = $AccountListController->getAccountList($p_delegacion_id);
-
+        //dd($accounts_list_items.find(100));
         // Filtrar los registros:
         $registro_anterior = NULL;
         $active_accounts_list = [];
