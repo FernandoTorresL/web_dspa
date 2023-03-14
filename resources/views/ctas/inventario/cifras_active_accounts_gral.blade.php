@@ -1,10 +1,27 @@
-
-
 @php
     use App\Http\Helpers\Helpers;
 @endphp
 
 <div class="col-12">
+
+    <h6>
+        Ver listado de:
+    </h6>
+    <a href="/ctas/lista_ctas_vigentes_gral/0" class="btn btn-outline-primary btn-sm">
+        Lista Nacional
+    </a>
+    @forelse($delegaciones as $delegacion)
+        <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" class="btn btn-outline-danger btn-sm">
+            {{ str_pad($delegacion->id, 2, '0', STR_PAD_LEFT) }}-{{ $delegacion->name }}
+        </a>
+    @empty
+        <p>
+            ¡No hay OOAD's registradas!
+        </p>
+    @endforelse
+    <br>
+    <br>
+
     <div class="card-group">
 
         <div class="card">
