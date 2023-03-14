@@ -1,3 +1,5 @@
+
+
 @php
     use App\Http\Helpers\Helpers;
 @endphp
@@ -6,16 +8,18 @@
     <div class="card-group">
 
         <div class="card">
-        @if ($delegacion_a_consultar->id <> 0)
             <div class="card-header">
                 <h6 class="card-title text-center">
                     @if ($delegacion_a_consultar->id == 0)
                         Nacional
+                        <p>
+                            Todas las delegaciones
+                        </p>
                     @else
-                    {{ $delegacion_a_consultar->name }}
-                    <p>
-                        Subdelegaciones
-                    </p>
+                        {{ $delegacion_a_consultar->name }}
+                        <p>
+                            Subdelegaciones
+                        </p>
                     @endif
                 </h6>
             </div>
@@ -30,14 +34,11 @@
                             </li>
                         @endif
                     @empty
-                        <li class="list-group-item">
-                            No hay subdelegaciones registradas
-                        </li>
+
                     @endforelse
                 </ul>
             </div>
         </div>
-        @endif
 
         <div class="card">
             <div class="card-header">
