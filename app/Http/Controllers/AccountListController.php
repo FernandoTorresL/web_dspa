@@ -17,8 +17,14 @@ class AccountListController extends Controller
     {
         $inventory_id = env('INVENTORY_ID');
 
+        $delegaciones_lista_completa = Delegacion::select('id', 'name')
+                ->where('status', '<>', 0)
+                ->orderBy('id', 'asc')
+                ->get();
+
         // Get subdelegaciones
         if ( Auth::user()->hasRole('admin_dspa') && $p_delegacion_id ==0) {
+
             $delegaciones_list = Delegacion::select('id', 'name')
                 ->where('status', '<>', 0)
                 ->where('id', '<>', 9)
@@ -138,10 +144,11 @@ class AccountListController extends Controller
                 ->get();
 
             return [
-                'active_accounts_list'   => $active_accounts_list,
-                'delegacion_a_consultar' => $delegacion_a_consultar,
-                'delegaciones_list'      => $delegaciones_list,
-                'subdelegaciones_list'   => $subdelegaciones_list,
+                'active_accounts_list'          => $active_accounts_list,
+                'delegacion_a_consultar'        => $delegacion_a_consultar,
+                'delegaciones_lista_completa'   => $delegaciones_lista_completa,
+                'delegaciones_list'             => $delegaciones_list,
+                'subdelegaciones_list'          => $subdelegaciones_list,
             ];
         }
     }

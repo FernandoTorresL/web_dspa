@@ -10,7 +10,7 @@
     <a href="/ctas/lista_ctas_vigentes_gral/0" class="btn btn-outline-primary btn-sm">
         Lista Nacional
     </a>
-    @forelse($delegaciones as $delegacion)
+    @forelse($delegaciones_lista_completa as $delegacion)
         <a href="/ctas/lista_ctas_vigentes_gral/{{ $delegacion->id }}" class="btn btn-outline-danger btn-sm">
             {{ str_pad($delegacion->id, 2, '0', STR_PAD_LEFT) }}-{{ $delegacion->name }}
         </a>
@@ -43,16 +43,18 @@
 
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    @forelse($subdelegaciones as $subdelegacion)
-                        @if ($subdelegacion->num_sub <> 0)
-                            <li class="list-group-item text-truncate">
-                                {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }}
-                                - {{ $subdelegacion->name }}
-                            </li>
-                        @endif
-                    @empty
+                    @if ($delegacion_a_consultar->id <> 0)
+                        @forelse($subdelegaciones as $subdelegacion)
+                            @if ($subdelegacion->num_sub <> 0)
+                                <li class="list-group-item text-truncate">
+                                    {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }}
+                                    - {{ $subdelegacion->name }}
+                                </li>
+                            @endif
+                        @empty
 
-                    @endforelse
+                        @endforelse
+                    @endif
                 </ul>
             </div>
         </div>
@@ -102,7 +104,7 @@
                     @if ( $total_ctas_SSJSAV == $comparador )
                         @php
                             $color = 'success';
-                            $mensaje = 'Hay ' . count($delegaciones) . " OOAD's";
+                            $mensaje = '';
                         @endphp
                     @elseif($total_ctas_SSJSAV < $comparador )
                         @php
