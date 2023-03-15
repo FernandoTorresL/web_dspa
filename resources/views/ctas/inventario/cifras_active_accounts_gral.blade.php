@@ -70,7 +70,7 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush">
 
-                    @if($total_ctas_Genericas == 0 )
+                    @if ( $total_ctas_Genericas == 0 )
                         @php
                             $color = 'success';
                             $mensaje = '';
@@ -90,7 +90,7 @@
 
                     @if($delegacion_a_consultar->id == 0)
                         @php
-                            $comparador = count($delegaciones) - 1;
+                            $comparador = count($delegaciones);
                         @endphp
                     @else
                         @php
@@ -99,21 +99,23 @@
                     @endif
 
 
-                    @if($total_ctas_SSJSAV == $comparador )
+                    @if ( $total_ctas_SSJSAV == $comparador )
                         @php
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje = 'Hay ' . count($delegaciones) . " OOAD's";
                         @endphp
                     @elseif($total_ctas_SSJSAV < $comparador )
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = '¿Faltan cuentas?';
+                            $mensaje =
+                                '¿Faltan cuentas? Existen ' . count($delegaciones) . " OOAD's";
                         @endphp
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = '¡Como máximo deben existir ' . $comparador . ' cuentas!';
+                            $mensaje =
+                                '¿Demasiadas cuentas? Existen ' . count($delegaciones) . " OOAD's";
                         @endphp
                     @endif
                     <li class="list-group-item">
@@ -123,21 +125,23 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
+                    @if ( $total_ctas_SSJDAV == count($subdelegaciones) )
                         @php
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje = 'Hay ' . count($subdelegaciones) . " subdelegaciones";
                         @endphp
-                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) - 1 )
+                    @elseif ( $total_ctas_SSJDAV < count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = '¿Faltan cuentas?';
+                            $mensaje =
+                                '¿Faltan cuentas? Existen ' . count($subdelegaciones) . ' subdelegaciones';
                         @endphp
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = '¿Demasiadas cuentas?';
+                            $mensaje =
+                                '¿Demasiadas cuentas? Existen ' . count($subdelegaciones) . ' subdelegaciones';
                         @endphp
                     @endif
                     <li class="list-group-item">
@@ -147,23 +151,25 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
+                    @if ( $total_ctas_SSJOFA == count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje = 'Hay ' . count($subdelegaciones) . " subdelegaciones";
                         @endphp
-                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) - 1 )
+                    @elseif ( $total_ctas_SSJOFA <= count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = '¿Faltan cuentas?';
+                            $mensaje =
+                                '¿Faltan cuentas? Existen ' . count($subdelegaciones) . ' subdelegaciones';
                         @endphp
                     @else
                         @php
                             $guion = '-';
                             $color = 'danger';
-                            $mensaje = '¿Demasiadas cuentas?';
+                            $mensaje =
+                                '¿Demasiadas cuentas? Existen ' . count($subdelegaciones) . ' subdelegaciones';
                         @endphp
                     @endif
                     <li class="list-group-item">
@@ -258,22 +264,24 @@
                         </button>
                     </li>
 
-                    @if($total_ctas_SVC == ( count($delegaciones) - 1 ) )
+                    @if ( $total_ctas_SVC == $comparador )
                         @php
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje =
+                                '';
                         @endphp
-                    @elseif($total_ctas_SVC < ( count($delegaciones) - 1 ) )
+                    @elseif ( $total_ctas_SVC < $comparador )
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = 'No hay una cuenta por cada OOAD';
+                            $mensaje =
+                                '¿Faltan cuentas?';
                         @endphp
                     @else
                         @php
                             $color = 'danger';
-                            $mensaje = '¡Como máximo deben existir ' . count($delegaciones) . ' cuentas!';
-
+                            $mensaje =
+                                '¿Demasiadas cuentas?';
                         @endphp
                     @endif
                     <li class="list-group-item">
