@@ -104,7 +104,7 @@
                     @if ( $total_ctas_SSJSAV == $comparador )
                         @php
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje = 'Hay ' . count($delegaciones) . " OOAD's";
                         @endphp
                     @elseif($total_ctas_SSJSAV < $comparador )
                         @php
