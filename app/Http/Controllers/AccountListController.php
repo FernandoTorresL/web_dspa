@@ -44,6 +44,15 @@ class AccountListController extends Controller
                     ->get();
         }
 
+            $subdelegaciones_list =
+                Subdelegacion::select('id', 'name', 'num_sub')
+                    ->where('delegacion_id', $p_delegacion_id)
+                    ->where('status', '<>', 0)
+                    ->where('num_sub', '<>', 0)
+                    ->orderBy('delegacion_id', 'asc')
+                    ->get();
+        }
+
         $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
         // Get the account list from last inventory
@@ -139,10 +148,11 @@ class AccountListController extends Controller
                 ->get();
 
             return [
-                'active_accounts_list'   => $active_accounts_list,
-                'delegacion_a_consultar' => $delegacion_a_consultar,
-                'delegaciones_list'      => $delegaciones_list,
-                'subdelegaciones_list'   => $subdelegaciones_list,
+                'active_accounts_list'          => $active_accounts_list,
+                'delegacion_a_consultar'        => $delegacion_a_consultar,
+                'delegaciones_lista_completa'   => $delegaciones_lista_completa,
+                'delegaciones_list'             => $delegaciones_list,
+                'subdelegaciones_list'          => $subdelegaciones_list,
             ];
         }
     }
@@ -171,11 +181,11 @@ class AccountListController extends Controller
                 else
                     $filename = 'ADMIN_Del' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '_CtasVig_';
 
-                $fields = array('#', 'Solicitud_id', 'Del_id', 'Cuenta', 'Origen', 'Nombre_origen', 'Nombre', 'Nombre_final', 'Grupo', 'Matrícula', 'CURP', 'Tipo_Cta', 'Fecha_mov');
+                $fields = array('Cuenta', 'Jubilado?', 'Nombre_final', 'Nombre_origen', 'Grupo', 'Matricula', 'CURP', 'Delegación', 'Subdelegación', 'Origen');
             }
             else {
-                $filename = 'Del_' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '-CtasVig ';
                 $fields = array('Cuenta', 'Jubilado?', 'Nombre', 'Grupo', 'Matricula', 'CURP', 'Subdelegación');
+                $filename = 'Del_' . str_pad($p_delegacion_id, 2, '0', STR_PAD_LEFT) . '-CtasVig ';
             }
 
             $filename = $filename . date('dMY_H:i:s') . '.csv';
@@ -215,19 +225,21 @@ class AccountListController extends Controller
                         $bolJubilado = True;
 
                 $lineData_Admin = array(
-                    $var,
-                    $row_active_accounts->Id == '--' ? $row_active_accounts->Id_origen : $row_active_accounts->Id,
-                    $row_active_accounts->Del_id,
                     $row_active_accounts->Cuenta,
-                    $origen_final,
-                    $row_active_accounts->Nombre_origen,
-                    $row_active_accounts->Nombre,
+                    $bolJubilado ? 'JUBILADO' : '',
                     $row_active_accounts->Nombre == '--' ? $row_active_accounts->Nombre_origen : $row_active_accounts->Nombre,
+                    $row_active_accounts->Nombre_origen,
                     $grupo_final,
                     $row_active_accounts->Matricula == '--' ? $row_active_accounts->Matricula_origen : $row_active_accounts->Matricula,
-                    $row_active_accounts->CURP == '--' ? $row_active_accounts->CURP_origen : $row_active_accounts->CURP,
-                    $row_active_accounts->Work_area_id == 2 ? 'Cta. Genérica' : '',
-                    $row_active_accounts->Fecha_mov
+                    $row_active_accounts->CURP == '--' ?
+                        ( $row_active_accounts->CURP_origen == '--' ? '' : $row_active_accounts->CURP_origen )
+                            : $row_active_accounts->CURP,
+                    $row_active_accounts->Del_id,
+                    $row_active_accounts->Subdel_numsub != 0 ?
+                        ( $row_active_accounts->Subdel_name == '' ? '' :
+                            str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
+                            : '',
+                    $origen_final
                 );
 
                 $lineData_Del = array(
@@ -242,7 +254,7 @@ class AccountListController extends Controller
                     $row_active_accounts->Subdel_numsub != 0 ?
                         ( $row_active_accounts->Subdel_name == '' ? '' :
                             str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
-                            : '',
+                            : ''
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)
