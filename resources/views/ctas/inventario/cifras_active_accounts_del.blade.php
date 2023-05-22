@@ -90,12 +90,12 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
+                    @if($total_ctas_SSJDAV == count($subdelegaciones) )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -114,13 +114,13 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
+                    @if($total_ctas_SSJOFA == count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -227,7 +227,7 @@
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = 'Revisar';
+                            $mensaje = '¿Faltan cuentas?';
                         @endphp
                     @else
                         @php
