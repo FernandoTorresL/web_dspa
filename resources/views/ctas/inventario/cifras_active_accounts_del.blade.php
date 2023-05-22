@@ -1,14 +1,20 @@
-<div class="col-12 ">
+@php
+    use App\Http\Helpers\Helpers;
+
+    $var = 0;
+@endphp
+
+<div class="col-12">
     <div class="card-group">
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">
-                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
-                        <p>
-                            Subdelegaciones
-                        </p>
-                </h5>
+                <h6 class="card-title text-center">
+                    {{ $delegacion_a_consultar->name }}
+                    <p>
+                        Subdelegaciones
+                    </p>
+                </h6>
             </div>
 
             <div class="card-body">
@@ -16,7 +22,8 @@
                     @forelse($subdelegaciones as $subdelegacion)
                         @if ($subdelegacion->num_sub <> 0)
                             <li class="list-group-item text-truncate">
-                                {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }} - {{ $subdelegacion->name }}
+                                {{ str_pad($subdelegacion->num_sub, 2, '0', STR_PAD_LEFT) }}
+                                - {{ $subdelegacion->name }}
                             </li>
                         @endif
                     @empty
@@ -30,12 +37,12 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">
-                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                <h6 class="card-title text-center">
+                    Conteo de
                     <p>
-                        Conteo
+                        grupos
                     </p>
-                </h5>
+                </h6>
             </div>
 
             <div class="card-body">
@@ -83,12 +90,12 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJDAV == count($subdelegaciones) - 1 )
+                    @if ( $total_ctas_SSJDAV == count($subdelegaciones) )
                         @php
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJDAV < count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -107,13 +114,13 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJOFA == count($subdelegaciones) - 1 )
+                    @if($total_ctas_SSJOFA == count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'success';
                             $mensaje = '';
                         @endphp
-                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) - 1 )
+                    @elseif($total_ctas_SSJOFA <= count($subdelegaciones) )
                         @php
                             $guion = '-';
                             $color = 'warning';
@@ -157,12 +164,12 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title text-center">
-                    {{ $delegacion_a_consultar->name }} ({{ str_pad($delegacion_a_consultar->id , 2, '0', STR_PAD_LEFT) }})
+                <h6 class="card-title text-center">
+                    Conteo de
                     <p>
-                        Conteo
+                        grupos
                     </p>
-                </h5>
+                </h6>
             </div>
 
             <div class="card-body">
@@ -220,7 +227,7 @@
                         @php
                             $guion = '-';
                             $color = 'warning';
-                            $mensaje = 'Revisar';
+                            $mensaje = '¿Faltan cuentas?';
                         @endphp
                     @else
                         @php
