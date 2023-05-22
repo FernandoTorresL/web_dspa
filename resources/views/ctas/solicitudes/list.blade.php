@@ -18,7 +18,7 @@
                 <th>#</th>
                 <th>Fecha captura</th>
                 <th>Lote</th>
-                <th>Delegación/Subdelegación</th>
+                <th>Del/Subdel</th>
                 <th>Apellidos-Nombre</th>
                 <th class="text-center">CURP (Matrícula)</th>
                 <th class="text-center">Usuario</th>
@@ -56,10 +56,13 @@
                 </td>
 
                 <td class="small text-left">
-                    {{ isset($solicitud->lote_id) ? $solicitud->lote->num_lote : '' }}
+                    {{ isset($solicitud->lote_id) ? substr($solicitud->lote->num_lote, 0, 4) . '-': '' }}
+                    <p>
+                        {{ isset($solicitud->lote_id) ? substr($solicitud->lote->num_lote, 5, 4) : '' }}
+                    </p>
                 </td>
 
-                <td class="small">
+                <td class="small col-md-1 offset-md-2">
                     {{ str_pad($solicitud->delegacion_id, 2, '0', STR_PAD_LEFT) . '-' .
                     $solicitud->delegacion->name }}
                     <p>
