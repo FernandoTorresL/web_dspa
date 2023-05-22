@@ -22,6 +22,7 @@
     <br>
     <br>
 
+<div class="col-12">
     <div class="card-group">
 
         <div class="card">
@@ -104,7 +105,7 @@
                     @if ( $total_ctas_SSJSAV == $comparador )
                         @php
                             $color = 'success';
-                            $mensaje = '';
+                            $mensaje = 'Hay ' . count($delegaciones) . " OOAD's";
                         @endphp
                     @elseif($total_ctas_SSJSAV < $comparador )
                         @php

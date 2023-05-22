@@ -250,7 +250,7 @@ class AccountListController extends Controller
                     $row_active_accounts->Subdel_numsub != 0 ?
                         ( $row_active_accounts->Subdel_name == '' ? '' :
                             str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
-                            : ''
+                            : '',
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)
