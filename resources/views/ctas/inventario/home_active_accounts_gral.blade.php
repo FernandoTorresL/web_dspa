@@ -14,11 +14,11 @@
             <p class="h6">
                 Cuentas vigentes ({{ number_format( $total_active_accounts ) }}) -
                 @if ($delegacion_a_consultar->id == 0)
-                    Nacional
+                    Nacional - Todas las delegaciones
                 @else
                     {{ env('OOAD') }}
-                @endif
                     {{ $delegacion_a_consultar->name }}
+                @endif
             </p>
             <p class="small text-left">
                 Cuentas vigentes: {{ number_format( $total_active_accounts ) }} |
