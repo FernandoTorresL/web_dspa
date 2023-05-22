@@ -7,7 +7,7 @@
     @if(Auth::check())
         <div class="btn text-white bg-primary">
             <p class="h6">Solicitudes -
-                @if(Auth::user()->delegacion->id <> 9)
+                @if ( Auth::user()->delegacion_id <> 9 )
                     {{ env('OOAD') }} - 
                     {{ Auth::user()->delegacion->name }}
                 @else
