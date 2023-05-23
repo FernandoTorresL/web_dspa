@@ -90,7 +90,7 @@
                         <small class="text-muted text-color-dark">{{ $mensaje }}</small>
                     </li>
 
-                    @if($total_ctas_SSJDAV == count($subdelegaciones) )
+                    @if ( $total_ctas_SSJDAV == count($subdelegaciones) )
                         @php
                             $color = 'success';
                             $mensaje = '';

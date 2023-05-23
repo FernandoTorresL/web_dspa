@@ -175,9 +175,10 @@ class ActiveAccountsGralController extends Controller
         $total_active_accounts = count($active_accounts_list);
         $total_user_id_list = count(array_unique($user_id_list));
 
-        $subdelegaciones = $accounts_list_items['subdelegaciones_list'];
-        $delegaciones = $accounts_list_items['delegaciones_list'];
-        $delegacion_a_consultar = $accounts_list_items['delegacion_a_consultar'];
+        $subdelegaciones                = $accounts_list_items['subdelegaciones_list'];
+        $delegaciones                   = $accounts_list_items['delegaciones_list'];
+        $delegaciones_lista_completa    = $accounts_list_items['delegaciones_lista_completa'];
+        $delegacion_a_consultar         = $accounts_list_items['delegacion_a_consultar'];
 
         return view('ctas/inventario/home_active_accounts_gral',
             compact('active_accounts_list',
@@ -185,6 +186,7 @@ class ActiveAccountsGralController extends Controller
                     'total_user_id_list',
                     'user_del_name',
                     'user_del_id',
+                    'delegaciones_lista_completa',
                     'delegaciones',
                     'subdelegaciones',
                     'delegacion_a_consultar',

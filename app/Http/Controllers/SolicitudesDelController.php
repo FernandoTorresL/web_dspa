@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-use Carbon\Carbon;
 use App\Http\Helpers\Helpers;
 
 class SolicitudesDelController extends Controller
@@ -16,66 +15,54 @@ class SolicitudesDelController extends Controller
     //New function to show a sortable and simple table with pagination
     public function search(Request $request)
     {
-        $user_id = Auth::user()->id;
-        $user_name = Auth::user()->name;
-        $user_job_id = Auth::user()->job_id;
-        $user_del_id = Auth::user()->delegacion_id;
-
         $search_word = $request->input('search_word');
-        $texto_log = ' User_id:' . $user_id . '|User:' . $user_name . '|Del:' . $user_del_id . '|Job:' . $user_job_id;
+        $texto_log =
+            'User_id:' . Auth::user()->id .
+            '|User:' . Auth::user()->name .
+            '|Del:' . Auth::user()->delegacion_id .
+            '|Job:' . Auth::user()->job_id;
 
         if ( Gate::allows('ver_status_solicitudes') ) {
             //Base query
-            $solicitudes = Solicitud::sortable()
-                ->with(['valija',
-                    'valija_oficio',
-                    'delegacion',
-                    'subdelegacion',
-                    'movimiento',
-                    'grupo1',
-                    'grupo2',
-                    'lote',
-                    'status_sol',
-                    'resultado_solicitud'])
+            $solicitudes =
+                Solicitud::select('id', 'lote_id', 'created_at', 'delegacion_id', 'subdelegacion_id',
+                    'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
+                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula', 'curp')
+                ->with(['delegacion:id,name',
+                        'subdelegacion:id,name,num_sub',
+                        'movimiento:id,name',
+                        'lote:id,num_lote',
+                        'gpo_actual:id,name',
+                        'gpo_nuevo:id,name',
+                        'status_sol:id,name,description',
+                        'resultado_solicitud:id,solicitud_id,cuenta'])
                 ->where( 'solicitudes.id', '>=', env('INITIAL_SOLICITUD_ID') );
 
-            if ( $user_del_id <> env('DSPA_USER_DEL_1') ) {
-                //if is a 'Delegational' user, add delegacion_id to the query
-                $solicitudes = $solicitudes->where('solicitudes.delegacion_id', $user_del_id);
+            //if is a 'Delegational' user, add delegacion_id to the query
+            if ( Auth::user()->hasRole('capturista_delegacional') ) {
+                $solicitudes = $solicitudes->where('solicitudes.delegacion_id', Auth::user()->delegacion_id);
             }
 
-            if ( $user_job_id == env('DSPA_USER_JOB_ID_CCEVyD') ) {
-                //if is a 'CCEVyD' user, add only some groups to the query
-                $groups_ccevyd = array(env('CCEVYD_GROUP_01'), env('CCEVYD_GROUP_02'), env('CCEVYD_GROUP_03'),
-                    env('CCEVYD_GROUP_04'), env('CCEVYD_GROUP_05'), env('CCEVYD_GROUP_06'),
-                    env('CCEVYD_GROUP_07'));
+            //if is a 'CCEVyD' user, add only some groups to the query
+            if ( Auth::user()->hasRole('capturista_cceyvd') ) {
+                $user_id = Auth::user()->id;
                 $solicitudes = $solicitudes->where(function ($list_where) use ($user_id) {
                     $list_where
-                        ->where('solicitudes.gpo_actual_id', 4 )
-                        ->orWhere('solicitudes.gpo_actual_id', 5 )
-                        ->orWhere('solicitudes.gpo_actual_id', 8 )
-                        ->orWhere('solicitudes.gpo_actual_id', 9 )
-                        ->orWhere('solicitudes.gpo_actual_id', 10 )
-                        ->orWhere('solicitudes.gpo_actual_id', 11 )
-                        ->orWhere('solicitudes.gpo_actual_id', 24 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 4 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 5 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 8 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 9 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 10 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 11 )
-                        ->orWhere('solicitudes.gpo_nuevo_id', 24 )
-                        ->orWhere('solicitudes.user_id', $user_id )
-                        ;
+                        ->whereIn('solicitudes.gpo_actual_id', [4, 5, 8, 9, 10, 11, 24] )
+                        ->orwhereIn('solicitudes.gpo_nuevo_id', [4, 5, 8, 9, 10, 11, 24] )
+                        ->orWhere('solicitudes.user_id', $user_id );
                 });
             }
 
             if ( isset( $search_word ) && Gate::allows('ver_buscar_cta') ) {
                 //And if there's a 'search word', add that word to the query and to the log
                 $query = '%' . $search_word . '%';
-                $solicitudes = $solicitudes->where(function ($list_where) use ($query) {
+                $query2 = '%' . substr($search_word, 0, 6) . '%';
+
+                $solicitudes = $solicitudes->where(function ($list_where) use ($query, $query2) {
                     $list_where
                         ->where('solicitudes.cuenta', 'like', $query)
+                        ->orwhere('solicitudes.cuenta', 'like', $query2)
                         ->orWhere('solicitudes.primer_apellido', 'like', $query)
                         ->orWhere('solicitudes.segundo_apellido', 'like', $query)
                         ->orWhere('solicitudes.nombre', 'like', $query)
@@ -88,23 +75,21 @@ class SolicitudesDelController extends Controller
             //Finally add these instructions to any query
             $solicitudes = $solicitudes->latest()->paginate( env('ROWS_ON_PAGINATE') );
 
-            Log::info('Buscar solicitudes ' . $texto_log);
+            Log::info('Buscar solicitudes|' . $texto_log);
+
             return view('ctas.solicitudes.delegacion_list',
-                    ['solicitudes' => $solicitudes,
-                    'search_word'      => $search_word]
+                    ['solicitudes'          => $solicitudes,
+                    'search_word'           => $search_word]
                 );
         }
         else {
-            Log::warning('Sin permisos-Consultar status solicitudes' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido consultar status de solicitudes.');
+            Log::warning('Sin permisos-Consultar status solicitudes|' . $texto_log);
+            return redirect('ctas')->with('message', 'No tiene permitido consultar status de solicitudes');
         }
     }
 
     public function view_timeline($id)
     {
-        setlocale(LC_TIME, 'es-ES');
-        Carbon::setUtf8(false);
-
         $user_id = Auth::user()->id;
         $user_name = Auth::user()->name;
         $user_job_id = Auth::user()->job_id;
