@@ -49,6 +49,15 @@ class AccountListController extends Controller
                     ->get();
         }
 
+            $subdelegaciones_list =
+                Subdelegacion::select('id', 'name', 'num_sub')
+                    ->where('delegacion_id', $p_delegacion_id)
+                    ->where('status', '<>', 0)
+                    ->where('num_sub', '<>', 0)
+                    ->orderBy('delegacion_id', 'asc')
+                    ->get();
+        }
+
         $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
         // Get the account list from last inventory
@@ -250,7 +259,7 @@ class AccountListController extends Controller
                     $row_active_accounts->Subdel_numsub != 0 ?
                         ( $row_active_accounts->Subdel_name == '' ? '' :
                             str_pad($row_active_accounts->Subdel_numsub, 2, '0', STR_PAD_LEFT) . '-' . $row_active_accounts->Subdel_name )
-                            : '',
+                            : ''
                 );
 
                 if ( Auth::user()->hasRole('admin_dspa') && !$p_bol_Del_user)
