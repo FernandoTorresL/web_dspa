@@ -45,6 +45,14 @@ class ValidateXMLController extends Controller
 
         Log::info('Analizando XML. ' . $texto_log);
 
+        $path1 = 'python ' . app_path() . '\validate_xml_sie\tmp_script.py';
+        $output1 = shell_exec($path1);
+
+        echo $output1;
+
+        Log::info('Respuesta python: ' . $output1);
+
+
         return view('validate_xml.home_val_xml', compact('user_del_id') );
     }
 
