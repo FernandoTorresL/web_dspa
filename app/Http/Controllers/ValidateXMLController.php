@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\AnalyzeXMLRequest;
 
 class ValidateXMLController extends Controller
 {
@@ -34,6 +35,17 @@ class ValidateXMLController extends Controller
             Log::warning('Sin permiso-Ver Validador XML Home|' . $texto_log);
             abort(403,'No tiene permitido ver este Módulo');
         }
-
     }
+
+    public function run_python(AnalyzeXMLRequest $request)
+    {
+        $user = $request->user();
+        $archivo = $request->file('archivo');
+        $texto_log = 'Usuario:' . $user->name . '|Del:' . $user->delegacion_id;
+
+        Log::info('Analizando XML. ' . $texto_log);
+
+        return view('validate_xml.home_val_xml', compact('user_del_id') );
+    }
+
 }

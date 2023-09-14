@@ -18,7 +18,7 @@
 
     <div class="card-header card text-white bg-warning">
         <p class="h5">
-            Validador archivos XML-SIE - {{ $primer_renglon }}
+            Validador archivos XML-SIE
         </p>
     </div>
 
