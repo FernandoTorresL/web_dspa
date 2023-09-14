@@ -25,8 +25,16 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <a class="h1 navbar-brand" href="{{ url('/') }}">
-                {{ ENV('APP_NAME') }} 
-                <strong>({{ ENV('DSPA_NAME') }})</strong>
+                <h1 class="h1">
+                    <strong>
+                        {{ ENV('APP_NAME') }}
+                    </strong>
+                </h1>
+                <h1 class="h3">
+                    <p>
+                        ({{ ENV('DSPA_NAME') }})
+                    </p>
+                </h1>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                 <span class="navbar-toggler-icon"></span>

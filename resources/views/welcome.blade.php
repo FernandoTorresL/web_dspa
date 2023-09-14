@@ -65,19 +65,22 @@
         <div class="row">
 
             @can('ver_modulo_ctas')
-                <div class="col-9">
-                    <h1 class="h3">Módulo Gestión de Cuentas SINDO v.{{ env('APP_VER', 'null') }}</h1>
+                <div class="col-6">
+                    <h1 class="h4">Módulo: Gestión de Cuentas SINDO Afiliación v.{{ env('APP_VER', 'null') }}</h1>
 
                     <a href="ctas">
                         <img class="img-thumbnail" src="{{ url('storage/img/03.jpg') }}">
                     </a>
 
                     <p class="h5">
-                        <span class="card-text">
-                            <a href="ctas">
-                                Revisa inventario, solicitudes, estatus, etc. Entrar
-                            </a>
-                        </span>
+                        <p>
+
+                            <span class="card-text">
+                                <a href="ctas">
+                                    Revisa inventario, solicitudes, estatus, etc. Entrar
+                                </a>
+                            </span>
+                        </p>
                     </p>
                 </div>
             @endcan
@@ -96,6 +99,27 @@
                     </p>
                 </div>
             @endcan --}}
+
+            @can('ver_modulo_validador_xml')
+                <div class="col-6">
+                    <h1 class="h4">Módulo: Validador XML-SIE v.1.0 Desarrollo</h1>
+
+                    <a href="validador_xml_sie">
+                        <img class="img-thumbnail" src="{{ url('storage/img/02.jpg') }}">
+                    </a>
+
+                    <p class="h5">
+                        <p>
+                            <span class="card-text">
+                                <a href="validador_xml_sie">
+                                    Valida archivos XML de estudiantes para SIE
+                                </a>
+                            </span>
+                        </p>
+                    </p>
+                </div>
+            @endcan
+
         </div>
     @endguest
 
