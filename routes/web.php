@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
 
     //Route to Validador XML Home
     Route::get('/validate_xml', 'ValidateXMLController@home');
+    Route::post('/validate_xml/analyze_xml', 'ValidateXMLController@run_python');
 
     //Route to show Inventario
     Route::get('/ctas/inventario', 'InventarioController@search_inventario');
