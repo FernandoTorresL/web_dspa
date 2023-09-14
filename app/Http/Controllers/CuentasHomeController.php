@@ -47,7 +47,12 @@ class CuentasHomeController extends Controller
 
             return view('ctas.home_ctas', compact('primer_renglon', 'user_del_id') );
         }
-        else return "No estas autorizado a ver esta página";
+        else {
+            Log::info('Sin permiso-Ver Ctas-Home|' . $texto_log);
+
+            abort(403,'No tiene permitido ver este Módulo');
+        }
+
     }
 
     public function show_resume() {

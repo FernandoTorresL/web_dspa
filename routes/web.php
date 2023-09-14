@@ -73,6 +73,9 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //Route to Cuentas Home
     Route::get('/ctas', 'CuentasHomeController@home');
 
+    //Route to Validador XML Home
+    Route::get('/validate_xml', 'ValidateXMLController@home');
+
     //Route to show Inventario
     Route::get('/ctas/inventario', 'InventarioController@search_inventario');
 

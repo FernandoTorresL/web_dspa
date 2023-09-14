@@ -104,14 +104,14 @@
                 <div class="col-6">
                     <h1 class="h4">Módulo: Validador XML-SIE v.1.0 Desarrollo</h1>
 
-                    <a href="validador_xml_sie">
+                    <a href="validate_xml">
                         <img class="img-thumbnail" src="{{ url('storage/img/02.jpg') }}">
                     </a>
 
                     <p class="h5">
                         <p>
                             <span class="card-text">
-                                <a href="validador_xml_sie">
+                                <a href="validate_xml">
                                     Valida archivos XML de estudiantes para SIE
                                 </a>
                             </span>
