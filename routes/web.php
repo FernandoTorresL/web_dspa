@@ -74,8 +74,8 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::get('/ctas', 'CuentasHomeController@home');
 
     //Route to Validador XML Home
-    Route::get('/validate_xml', 'ValidateXMLController@home');
-    Route::post('/validate_xml/analyze_xml', 'ValidateXMLController@run_python');
+    Route::get('/validate_xml/upload', 'XMLUploadController@showXMLUploadForm')->name('upload_xml');
+    Route::post('/validate_xml/convert', 'XMLUploadController@convertXmlToCsv')->name('convert_xml');
 
     //Route to show Inventario
     Route::get('/ctas/inventario', 'InventarioController@search_inventario');
