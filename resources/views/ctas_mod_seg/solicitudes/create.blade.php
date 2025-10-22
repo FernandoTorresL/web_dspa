@@ -17,14 +17,15 @@
     @endcan
         {{ csrf_field() }}
         <div class="container">
+
             <br>
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="archivo">Archivo PDF actual:</label>
-                        <input type="file" name="archivo" class="form-control-file @if($errors->has('archivo')) is-invalid @else is-valid @endif">
-                        @if ($errors->has('archivo'))
-                            @foreach($errors->get('archivo') as $error)
+                        <label for="archivo_INE">INE:</label>
+                        <input type="file" name="archivo_INE" class="form-control-file @if($errors->has('archivo_INE')) is-invalid @else is-valid @endif">
+                        @if ($errors->has('archivo_INE'))
+                            @foreach($errors->get('archivo_INE') as $error)
                                 <div class="invalid-feedback">{{ $error }}</div>
                             @endforeach
                         @endif
@@ -32,6 +33,36 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="archivo_comp_dom">Comprobante domicilio:</label>
+                        <input type="file" name="archivo_comp_dom" class="form-control-file @if($errors->has('archivo_comp_dom')) is-invalid @else is-valid @endif">
+                        @if ($errors->has('archivo_comp_dom'))
+                            @foreach($errors->get('archivo_comp_dom') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="archivo_responsiva">Responsiva:</label>
+                        <input type="file" name="archivo_responsiva" class="form-control-file @if($errors->has('archivo_responsiva')) is-invalid @else is-valid @endif">
+                        @if ($errors->has('archivo_responsiva'))
+                            @foreach($errors->get('archivo_responsiva') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <br>
             <div class="row">
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -48,38 +79,32 @@
                 <div class="col-sm-1">
                 </div>
 
-                <div class="col-sm-8">
-
+                <div class="col-sm-6">
                     <div class="form-group">
-
-                        <div class="custom-control custom-radio">
-                            <label for="tipo_movimiento">Tipo de Movimiento</label>
-                            <input class="custom-control-input @if($errors->has('tipo_movimiento')) is-invalid @endif" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_Nulo" hidden checked>
-                            @if ($errors->has('tipo_movimiento'))
-                                @foreach($errors->get('tipo_movimiento') as $error)
-                                    <div class="invalid-feedback">{{ $error }}</div>
-                                @endforeach
-                            @endif
-                        </div>
-                        @forelse($movimientos as $movimiento)
-                            @if ($movimiento->id == old('tipo_movimiento'))
-                                @php
-                                    $str_check = 'checked';
-                                @endphp
-                            @else
-                                @php
-                                    $str_check = '';
-                                @endphp
-                            @endif
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input class="custom-control-input" type="radio" name="tipo_movimiento" id="radiotipo_movimiento_{{ $movimiento->name }}" value="{{ $movimiento->id }}" {{ $str_check }}>
-                                <label class="custom-control-label" for="radiotipo_movimiento_{{ $movimiento->name }}">{{ $movimiento->name }}</label>
-                            </div>
-                        @empty
-                        @endforelse
+                        <label for="rol">Rol</label>
+                        <select class="form-control @if($errors->has('rol')) is-invalid @endif" id="rol" name="rol">
+                            <option value="" selected>Selecciona...</option>
+                            @forelse($roles as $rol)
+                                @if ($rol->id == old('rol'))
+                                    @php
+                                        $str_check = 'selected';
+                                    @endphp
+                                @else
+                                    @php
+                                        $str_check = '';
+                                    @endphp
+                                @endif
+                                <option value="{{ $rol->id }}" {{ $str_check }}>{{ $rol->num_oficio_ca }}: {{ $rol->delegacion->id }} - {{ $rol->delegacion->name }}</option>
+                            @empty
+                            @endforelse
+                        </select>
+                        @if ($errors->has('rol'))
+                            @foreach($errors->get('rol') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
-
             </div>
 
             <div class="row">
@@ -196,14 +221,44 @@
                 <div class="col-sm-2">
                     <label for="cuenta">USUARIO</label>
                     <div class="input-group mb-4">
-                        <input type="text" name="cuenta" class="form-control @if($errors->has('cuenta')) is-invalid @endif" value="{{ strtoupper(old('cuenta')) }}">
-                        @if ($errors->has('cuenta'))
-                            @foreach($errors->get('cuenta') as $error)
+                        <input type="text" name="usuario_mod_seg" class="form-control @if($errors->has('usuario_mod_seg')) is-invalid @endif" value="{{ strtoupper(old('usuario_mod_seg')) }}">
+                        @if ($errors->has('usuario_mod_seg'))
+                            @foreach($errors->get('usuario_mod_seg') as $error)
                                 <div class="invalid-feedback">{{ $error }}</div>
                             @endforeach
                         @endif
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label for="correo">Correo electrónico IMSS</label>
+                    <div class="input-group mb-4">
+                        <input type="email" name="correo" class="form-control @if($errors->has('correo')) is-invalid @endif" value="{{ strtoupper(old('correo')) }}">
+                        @if ($errors->has('correo'))
+                            @foreach($errors->get('correo') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-sm-1">
+
+                </div>
+
+<!--                 <div class="col-sm-2">
+                    <label for="usuario_mod_seg">USUARIO</label>
+                    <div class="input-group mb-4">
+                        <input type="text" name="usuario_mod_seg" class="form-control @if($errors->has('usuario_mod_seg')) is-invalid @endif" value="{{ strtoupper(old('usuario_mod_seg')) }}">
+                        @if ($errors->has('usuario_mod_seg'))
+                            @foreach($errors->get('usuario_mod_seg') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div> -->
             </div>
 
             <div class="row">
