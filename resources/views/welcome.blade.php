@@ -63,40 +63,66 @@
         @endif
 
         <div class="row">
+        @can('ver_modulo_ctas')
+            <div class="col-9">
+                <h1 class="h3">Módulo Gestión de Cuentas SINDO v.{{ env('APP_VER', 'null') }}</h1>
 
-            @can('ver_modulo_ctas')
-                <div class="col-9">
-                    <h1 class="h3">Módulo Gestión de Cuentas SINDO v.{{ env('APP_VER', 'null') }}</h1>
+                <a href="ctas">
+                    <img class="img-thumbnail" src="{{ url('storage/img/03.jpg') }}">
+                </a>
 
-                    <a href="ctas">
-                        <img class="img-thumbnail" src="{{ url('storage/img/03.jpg') }}">
-                    </a>
-
-                    <p class="h5">
-                        <span class="card-text">
-                            <a href="ctas">
-                                Revisa inventario, solicitudes, estatus, etc. Entrar
-                            </a>
-                        </span>
-                    </p>
-                </div>
-            @endcan
-
-{{--             @can('ver_modulo_reto_dspa')
-                <div class="col-6">
-                    <h1 class="h3">Módulo Reto DSPA</h1>
-                    <a href="reto_dspa">
-                        <img class="img-thumbnail" src="{{ url('storage/img/05.jpg') }}">
-                    </a>
-                    <p class="text-muted">
-                        Revisa la tabla de registros de DSPA
-                        <a href="reto_dspa">
-                            <span class="card-text">Entrar</span>
+                <p class="h5">
+                    <span class="card-text">
+                        <a href="ctas">
+                            Revisa inventario, solicitudes, estatus, etc. Entrar
                         </a>
-                    </p>
-                </div>
-            @endcan --}}
+                    </span>
+                </p>
+            </div>
+        @endcan
         </div>
+
+        <div class="row">
+        @can('ver_modulo_reto_dspa')
+            <div class="col-6">
+                <h1 class="h3">Módulo Reto DSPA</h1>
+
+                <a href="reto_dspa">
+                    <img class="img-thumbnail" src="{{ url('storage/img/05.jpg') }}">
+                </a>
+
+                <p class="text-muted">
+                    Revisa la tabla de registros de DSPA
+                    <a href="reto_dspa">
+                        <span class="card-text">Entrar</span>
+                    </a>
+                </p>
+
+            </div>
+        @endcan
+        </div>
+
+        <div class="row">
+        @can('ver_modulo_seguimiento')
+            <div class="col-12">
+                <h1 class="h3">Solicitudes Módulo de Seguimiento v.{{ env('MODULO_1_VER', 'null') }}</h1>
+
+                <a href="ctas_modulo_seguimiento">
+                    <img class="img-thumbnail" src="{{ url('storage/img/portada_modulo_seguimiento.png') }}"  width="35%" height="35%">
+                </a>
+
+                <p class="h6">
+                    <span class="card-text">
+                        <a href="ctas_modulo_seguimiento">
+                            Ingresa solicitudes de usuario para el Módulo de Seguimiento de Solicitudes Patronales Vía Internet
+                        </a>
+                    </span>
+                </p>
+
+            </div>
+        </div>
+        @endcan
+
     @endguest
 
 @endsection
