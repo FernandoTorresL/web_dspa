@@ -94,4 +94,41 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     Route::post('/ctas/admin/create_file_valijas', 'CuentasAdminController@create_file_valijas');
     Route::get('/ctas/admin/preview_valijas/{file}', 'CuentasAdminController@preview_valijas');*/
 
+    //Route to Cuentas Modulo Seguimiento Home
+    Route::get('/ctas_mod_seg', 'CtasModSegHomeController@home');
+
+        //Solicitudes
+
+    //Create 'solicitudes'
+    Route::get('/ctas_mod_seg/solicitudes', 'SolCtasModSegController@home');
+    Route::post('/ctas_mod_seg/solicitudes/create', 'SolCtasModSegController@create');
+    Route::post('/ctas_mod_seg/solicitudes/createNC', 'SolCtasModSegController@createNC');
+
+    //Route to view one solicitud
+    Route::get('/ctas_mod_seg/solicitudes/{solicitud}', 'SolCtasModSegController@show');
+
+    //Route to view one old solicitud (hist_solicitudes)
+    //Route::get('/ctas_mod_seg/solicitud_hist/{solicitud}', 'SolicitudHistController@show_sol_hist');
+
+    //Route to view list of hist_solicitudes
+    Route::get('/ctas_mod_seg/solicitudes_hist_list/{solicitud_id}', 'SolicitudesHistController@show_sol_hist_list');
+
+    //Route to edit solicitud
+    Route::get('/ctas_mod_seg/solicitudes/edit/{solicitud}', 'SolCtasModSegController@show_for_edit');
+    Route::post('/ctas_mod_seg/solicitudes/edit/{solicitud}', 'SolCtasModSegController@edit');
+
+    //Route to edit solicitudes at 'Nivel Central'
+    Route::get('/ctas_mod_seg/solicitudes/editNC/{solicitud}', 'SolCtasModSegController@show_for_edit');
+    Route::post('/ctas_mod_seg/solicitudes/editNC/{solicitud}', 'SolCtasModSegController@editNC');
+
+    //Route to authorize solicitudes at 'CCEyVD'
+    Route::post('/ctas_mod_seg/solicitudes/change_status/{solicitud}', 'SolChangeStatusController@change_estatus');
+
+    //Route to view table for solicitudes using pagination
+    //Search 'solicitudes' by 'cuenta' (User-ID)
+    Route::get('/ctas_mod_seg/solicitudes/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');
+
+    //Route to view timeline details for solicitudes
+    Route::get('/ctas_mod_seg/solicitudes/timeline/{solicitud_id}', 'SolicitudesDelController@view_timeline');
+
 });

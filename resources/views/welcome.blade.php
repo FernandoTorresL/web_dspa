@@ -105,15 +105,15 @@
         <div class="row">
         @can('ver_modulo_seguimiento')
             <div class="col-12">
-                <h1 class="h3">Solicitudes Módulo de Seguimiento v.{{ env('MODULO_1_VER', 'null') }}</h1>
+                <h1 class="h3">Usuarios Módulo de Seguimiento v.{{ env('MODULO_1_VER', 'null') }}</h1>
 
-                <a href="ctas_modulo_seguimiento">
+                <a href="ctas_mod_seg">
                     <img class="img-thumbnail" src="{{ url('storage/img/portada_modulo_seguimiento.png') }}"  width="35%" height="35%">
                 </a>
 
                 <p class="h6">
                     <span class="card-text">
-                        <a href="ctas_modulo_seguimiento">
+                        <a href="ctas_mod_seg">
                             Ingresa solicitudes de usuario para el Módulo de Seguimiento de Solicitudes Patronales Vía Internet
                         </a>
                     </span>
