@@ -97,38 +97,38 @@ Route::group(['middleware' => 'auth', 'checkstatus'], function () {
     //Route to Cuentas Modulo Seguimiento Home
     Route::get('/ctas_mod_seg', 'CtasModSegHomeController@home');
 
-        //Solicitudes
+        //Solicitudes Mod Seg
 
     //Create 'solicitudes'
-    Route::get('/ctas_mod_seg/solicitudes', 'SolCtasModSegController@home');
-    Route::post('/ctas_mod_seg/solicitudes/create', 'SolCtasModSegController@create');
-    Route::post('/ctas_mod_seg/solicitudes/createNC', 'SolCtasModSegController@createNC');
+    Route::get('/ctas_mod_seg/sol_mod_seg', 'SolCtasModSegController@home');
+    Route::post('/ctas_mod_seg/sol_mod_seg/create_cta_mod_seg', 'SolCtasModSegController@create_cta_mod_seg');
+    Route::post('/ctas_mod_seg/sol_mod_seg/create_cta_mod_segNC', 'SolCtasModSegController@create_cta_mod_segNC');
 
     //Route to view one solicitud
-    Route::get('/ctas_mod_seg/solicitudes/{solicitud}', 'SolCtasModSegController@show');
+    Route::get('/ctas_mod_seg/sol_mod_seg/{solicitud}', 'SolCtasModSegController@show');
 
     //Route to view one old solicitud (hist_solicitudes)
     //Route::get('/ctas_mod_seg/solicitud_hist/{solicitud}', 'SolicitudHistController@show_sol_hist');
 
     //Route to view list of hist_solicitudes
-    Route::get('/ctas_mod_seg/solicitudes_hist_list/{solicitud_id}', 'SolicitudesHistController@show_sol_hist_list');
+    Route::get('/ctas_mod_seg/sol_mod_seg_hist_list/{solicitud_id}', 'SolicitudesHistController@show_sol_hist_list');
 
     //Route to edit solicitud
-    Route::get('/ctas_mod_seg/solicitudes/edit/{solicitud}', 'SolCtasModSegController@show_for_edit');
-    Route::post('/ctas_mod_seg/solicitudes/edit/{solicitud}', 'SolCtasModSegController@edit');
+    Route::get('/ctas_mod_seg/sol_mod_seg/edit/{solicitud}', 'SolCtasModSegController@show_for_edit');
+    Route::post('/ctas_mod_seg/sol_mod_seg/edit/{solicitud}', 'SolCtasModSegController@edit');
 
     //Route to edit solicitudes at 'Nivel Central'
-    Route::get('/ctas_mod_seg/solicitudes/editNC/{solicitud}', 'SolCtasModSegController@show_for_edit');
-    Route::post('/ctas_mod_seg/solicitudes/editNC/{solicitud}', 'SolCtasModSegController@editNC');
+    Route::get('/ctas_mod_seg/sol_mod_seg/editNC/{solicitud}', 'SolCtasModSegController@show_for_edit');
+    Route::post('/ctas_mod_seg/sol_mod_seg/editNC/{solicitud}', 'SolCtasModSegController@editNC');
 
     //Route to authorize solicitudes at 'CCEyVD'
-    Route::post('/ctas_mod_seg/solicitudes/change_status/{solicitud}', 'SolChangeStatusController@change_estatus');
+    Route::post('/ctas_mod_seg/sol_mod_seg/change_status/{solicitud}', 'SolChangeStatusController@change_estatus');
 
     //Route to view table for solicitudes using pagination
     //Search 'solicitudes' by 'cuenta' (User-ID)
-    Route::get('/ctas_mod_seg/solicitudes/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');
+    Route::get('/ctas_mod_seg/sol_mod_seg/search/cta', 'SolicitudesDelController@search')->name('solicitudes-status.search');
 
     //Route to view timeline details for solicitudes
-    Route::get('/ctas_mod_seg/solicitudes/timeline/{solicitud_id}', 'SolicitudesDelController@view_timeline');
+    Route::get('/ctas_mod_seg/sol_mod_seg/timeline/{solicitud_id}', 'SolicitudesDelController@view_timeline');
 
 });

@@ -25,7 +25,7 @@ class SolCtasModSegController extends Controller
         $texto_log = '|Usuario:' . $user_name . '|Del:' . $user_del_id;
 
         if (Gate::allows('capture_sol_mod_seg_nc') || Gate::allows('capture_sol_mod_seg_del') ) {
-            Log::info('Capturar Solicitud de usuario para el Módulo de Seguimiento' . $texto_log);
+            Log::info('Capturar Solicitud de Usuario para el Módulo de Seguimiento' . $texto_log);
 
             //Get the common information
             //$movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
@@ -47,11 +47,11 @@ class SolCtasModSegController extends Controller
         }
         else {
             Log::warning('Sin permiso-Capturar Solicitudes para el Módulo de Seguimiento' . $texto_log);
-            return redirect('ctas')->with('message', 'No tiene permitido capturar solicitudes de usuario para el Módulo de Seguimiento.');
+            return redirect('ctas_mod_seg')->with('message', 'No tiene permitido capturar solicitudes de usuario para el Módulo de Seguimiento.');
         }
 
         return view(
-            'ctas_mod_seg.solicitudes.create', [
+            'ctas_mod_seg.sol_mod_seg.create_cta_mod_seg', [
             'del_id' => $user_del_id,
             'del_name' => $user_del_name,
             //'valijas' => $valijas,
@@ -64,7 +64,7 @@ class SolCtasModSegController extends Controller
         ]);
     }
 
-    public function create(CreateSolModSegRequest $request)
+    public function create_cta_mod_seg(CreateSolModSegRequest $request)
     {
         $user = $request->user();
         $archivo_ine = $request->file('archivo_ine');
@@ -89,13 +89,13 @@ class SolCtasModSegController extends Controller
             'comment' => $request->input('comment'),
             'status_sol_id' => 1, //En revisión DSPA
             'rechazo_id' => $request->input('rechazo'),
-            'archivo_ine' => $archivo_ine->store('solicitudes_mod_seg/' . $user->delegacion_id, 'public'),
-            'archivo_comp_dom' => $archivo_comp_dom->store('solicitudes_mod_seg/' . $user->delegacion_id, 'public'),
-            'archivo_responsiva' => $archivo_responsiva->store('solicitudes_mod_seg/' . $user->delegacion_id, 'public'),
+            'archivo_ine' => $archivo_ine->store('sol_mod_seg/' . $user->delegacion_id, 'public'),
+            'archivo_comp_dom' => $archivo_comp_dom->store('sol_mod_seg/' . $user->delegacion_id, 'public'),
+            'archivo_responsiva' => $archivo_responsiva->store('sol_mod_seg/' . $user->delegacion_id, 'public'),
             'user_id' => $user->id,
         ]);
 
-        return redirect('ctas_mod_seg/solicitudes/' . $solicitud->id)->with('message', '¡Solicitud para ' . $solicitud->usuario_mod_seg . ' creada exitosamente!');
+        return redirect('ctas_mod_seg/sol_mod_seg/' . $solicitud->id)->with('message', '¡Solicitud para ' . $solicitud->usuario_mod_seg . ' creada exitosamente!');
     }
 
         public function show_for_edit(Solicitud $solicitud)
@@ -129,7 +129,7 @@ class SolCtasModSegController extends Controller
             $rechazos = Rechazo::all();
 
             //Get the particular information
-            if (Gate::allows('editar_solicitudes_user_nc')) {
+            if (Gate::allows('editar_sol_mod_seg_user_nc')) {
                 Log::info('Editando Solicitud NC' . $texto_log);
                 $valijas = Valija::with('delegacion')
                     ->where('status', '<>', 0)
@@ -137,7 +137,7 @@ class SolCtasModSegController extends Controller
                 $subdelegaciones = Subdelegacion::with('delegacion')
                     ->where('status', '<>', 0)
                     ->orderBy('id', 'asc')->get();
-            } elseif (Gate::allows('editar_solicitudes_del')) {
+            } elseif (Gate::allows('editar_sol_mod_seg_del')) {
                 Log::info('Editando Solicitud Del' . $texto_log);
                 $valijas = '';
                 $subdelegaciones = Subdelegacion::where('delegacion_id', Auth::user()->delegacion_id)
@@ -148,11 +148,11 @@ class SolCtasModSegController extends Controller
         else
         {
         Log::warning('Sin condiciones para editar Solicitud' . $texto_log);
-        return redirect('ctas')->with('message', 'La solicitud ya no se puede editar.');
+        return redirect('ctas_mod_seg')->with('message', 'La solicitud ya no se puede editar.');
         }
 
         return view(
-            'ctas.solicitudes.edit', [
+            'ctas_mod_seg.sol_mod_seg.edit', [
             'sol_original' => $solicitud,
             'valijas' => $valijas,
             'movimientos' => $movimientos,
@@ -203,7 +203,7 @@ class SolCtasModSegController extends Controller
         $archivo = $request->file('archivo');
 
         if ($request->hasfile('archivo')) {
-            $nuevo_archivo = $request->file('archivo')->store('solicitudes/' . $delegacion, 'public');
+            $nuevo_archivo = $request->file('archivo')->store('sol_mod_seg/' . $delegacion, 'public');
         }
         else
         {
@@ -231,6 +231,6 @@ class SolCtasModSegController extends Controller
 
         Log::info('Solicitud editada Del|ID:' . $solicitud->id . $texto_log);
 
-        return redirect('ctas/solicitudes/' . $id)->with('message', '¡Solicitud editada!');
+        return redirect('ctas_mod_seg/sol_mod_seg/' . $id)->with('message', '¡Solicitud editada!');
     }
 }
