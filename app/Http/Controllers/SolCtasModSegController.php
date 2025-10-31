@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-//use App\Movimiento;
-use App\Rechazo;
-use App\Solicitud;
+use App\SolModSeg;
+use App\RoleModSeg;
 use App\Subdelegacion;
-use App\Http\Requests\CreateSolModSegRequest;
+use App\Rechazo;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateSolModSegRequest;
+//use App\Http\Requests\EditSolicitudRequest;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Storage;
 
 class SolCtasModSegController extends Controller
 {
-        public function home()
+
+    public function home()
     {
         $user_name = Auth::user()->name;
         $user_del_id = Auth::user()->delegacion_id;
@@ -27,20 +29,13 @@ class SolCtasModSegController extends Controller
         if (Gate::allows('capture_sol_mod_seg_nc') || Gate::allows('capture_sol_mod_seg_del') ) {
             Log::info('Capturar Solicitud de Usuario para el Módulo de Seguimiento' . $texto_log);
 
-            //Get the common information
-            //$movimientos = Movimiento::where('status', '<>', 0)->orderBy('name', 'asc')->get();
-            //$gruposNuevo =  Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
-            //$gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
-            $roles = [];
+            $roles_mod_seg = RoleModSeg::where('status', 1)->orderBy('id', 'asc')->get();
 
-            //Get the particular information
             if (Gate::allows('capture_sol_mod_seg_del')) {
-                //$valijas = '';
                 $subdelegaciones = Subdelegacion::where('delegacion_id', $user_del_id)->where('status', '<>', 0)->orderBy('num_sub', 'asc')->get();
                 $rechazos = '';
             }
             elseif (Gate::allows('capture_sol_mod_seg_nc')) {
-                //$valijas = Valija::with('delegacion')->where('status', '<>', 0)->orderBy('num_oficio_ca', 'desc')->get();
                 $subdelegaciones = Subdelegacion::with('delegacion')->where('status', '<>', 0)->orderBy('id', 'asc')->get();
                 $rechazos = Rechazo::all();
             }
@@ -54,12 +49,8 @@ class SolCtasModSegController extends Controller
             'ctas_mod_seg.sol_mod_seg.create_cta_mod_seg', [
             'del_id' => $user_del_id,
             'del_name' => $user_del_name,
-            //'valijas' => $valijas,
-            //'movimientos' => $movimientos,
-            'roles' => $roles,
+            'roles_mod_seg' => $roles_mod_seg,
             'subdelegaciones' => $subdelegaciones,
-            //'gruposNuevo' => $gruposNuevo,
-            //'gruposActual' => $gruposActual,
             'rechazos' => $rechazos,
         ]);
     }
@@ -74,7 +65,7 @@ class SolCtasModSegController extends Controller
 
         Log::info('Creando Solicitud. ' . $texto_log);
 
-        $solicitud = SolicitudModSeg::create([
+        $solicitud_mod_seg = SolModSeg::create([
             'fecha_solicitud_del' => $request->input('fecha_solicitud'),
             'delegacion_id' => $user->delegacion_id,
             'subdelegacion_id' => $request->input('subdelegacion'),
@@ -95,7 +86,7 @@ class SolCtasModSegController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return redirect('ctas_mod_seg/sol_mod_seg/' . $solicitud->id)->with('message', '¡Solicitud para ' . $solicitud->usuario_mod_seg . ' creada exitosamente!');
+        return redirect('ctas_mod_seg/sol_mod_seg/' . $solicitud_mod_seg->id)->with('message', '¡Solicitud para ' . $solicitud_mod_seg->usuario_mod_seg . ' creada exitosamente!');
     }
 
         public function show_for_edit(Solicitud $solicitud)
@@ -123,7 +114,7 @@ class SolCtasModSegController extends Controller
         if ( $bolEditar )
         {
             //Get the common information
-            $roles = Rol::where('status', '<>', 0)->orderBy('name', 'asc')->get();
+            $roles_mod_seg = RoleModSeg::where('status', '<>', 0)->orderBy('name', 'asc')->get();
             //$gruposNuevo = Group::whereBetween('status', [1, 2])->orderBy('name', 'asc')->get();
             //$gruposActual = Group::whereBetween('status', [1, 3])->orderBy('name', 'asc')->get();
             $rechazos = Rechazo::all();

@@ -25,12 +25,12 @@ class CreateSolModSegRequest extends FormRequest
     public function rules()
     {
         return [
-            'archivo_ine' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
-            'archivo_comp_dom' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
-            'archivo_responsiva' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
+            'archivo_ine' => ['required', 'file', 'mimes:pdf', 'between:5,8000'],
+            'archivo_comp_dom' => ['required', 'file', 'mimes:pdf', 'between:5,8000'],
+            'archivo_responsiva' => ['required', 'file', 'mimes:pdf', 'between:5,8000'],
 
             'fecha_sol_mod_seg' => ['required', 'before_or_equal:today'],
-            'rol' => ['required', Rule::in(['1', '2', '3'])],
+            'rol' => ['required', Rule::in(['3', '4', '5'])],
 
             'subdelegacion' => ['required'],
 
@@ -43,18 +43,19 @@ class CreateSolModSegRequest extends FormRequest
             'curp' => ['required', 'regex:/^(SIN DATO|[A-Z]{1}(A|E|I|O|U|X)[A-Z]{2}\d{6}[HM](AS|BC|BS|CC|CH|CL|CM|CS|DF|DG|GR|GT|HG|JC|MC|MN|MS|NE|NL|NT|OC|PL|QR|QT|SL|SP|SR|TC|TL|TS|VZ|YN|ZS)[A-Z]{3}\w{1}\d{1})$/'],
             'usuario_mod_seg' => ['required', 'min:6', 'max:10'],
 
-            'telefono' => ['required', 'max:10', 'regex:/^(\d{8,10})$/'],
-            'tel_ext' => ['required', 'max:5', 'regex:/^(\d{5,7}|SIN DATO)$/'],
+            'telefono' => ['required', 'max:10'],
+            'tel_ext' => ['required', 'max:5'],
 
-            'correo' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
-            'nombre_pc' => ['required'],
-            
             'email' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
-            'nombre' => ['required', 'max:50'],
+            'nombre_pc' => ['required'],
 
-            //'dir_ip' => ['required', 'ip', 'regex:/^((?:(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?))$/'],
-            'dir_ip' => ['required'],
-            //'dir_ip' => ['required', 'ip', 'regex:/^((?:(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?))$/'],
+            'email' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
+            'nombre_pc' => ['required', 'max:50'],
+
+            //'dir_ip' => ['required', 'regex:/^((?:(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|?[0-9][0-9]?))$/'],
+            'dir_ip' => ['required', 'ipv4'],
+            //'ip_address' => 'required|ipv4'
+            //'dir_ip' => ['required', 'regex:/^(\d{3})$/'],
             'mac_address' => ['required', 'regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/'],
 
             'comment' => ['max:190'],
@@ -66,13 +67,15 @@ class CreateSolModSegRequest extends FormRequest
         return [
             'archivo_ine.required' => 'Adjuntar un archivo PDF de la credencial INE ambos lados',
             'archivo_ine.mimes' => 'Archivo debe ser de formato: pdf',
+            'archivo_ine.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
 
             'archivo_comp_dom.required' => 'Adjuntar un archivo PDF del comprobante de domicilio',
             'archivo_comp_dom.mimes' => 'Archivo debe ser de formato: pdf',
+            'archivo_comp_dom.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
 
             'archivo_responsiva.required' => 'Adjuntar un archivo PDF de la responsiva firmada',
             'archivo_responsiva.mimes' => 'Archivo debe ser de formato: pdf',
-            //            'archivo.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
+            'archivo_responsiva.size' => 'El tamaño de Archivo debe ser menor de :size kilobytes',
 
             'fecha_sol_mod_seg.before_or_equal' => 'Fecha de Solicitud debe ser anterior o igual al día de hoy',
             'fecha_sol_mod_seg.required' => 'Fecha de Solicitud es dato obligatorio.',
@@ -101,14 +104,12 @@ class CreateSolModSegRequest extends FormRequest
             'usuario_mod_seg.required' => 'USUARIO es un campo obligatorio',
             'usuario_mod_seg.max' => 'USUARIO debe tener menos de :max caracteres',
             'usuario_mod_seg.min' => 'USUARIO debe tener al menos :min caracteres',
-            
+
             'telefono.required' => 'Teléfono es un campo obligatorio',
             'telefono.size' => 'Teléfono debe contener :size caracteres',
-            'telefono.regex' => 'Teléfono inválido',
 
             'tel_ext.required' => 'Extensión es un campo obligatorio',
             'tel_ext.size' => 'Extensión debe contener :size caracteres',
-            'tel_ext.regex' => 'Extensión inválida',
 
             'email.required' => 'Correo electrónico IMSS es un campo obligatorio',
             'email.regex' => 'Correo electrónico IMSS inválido o incompleto',

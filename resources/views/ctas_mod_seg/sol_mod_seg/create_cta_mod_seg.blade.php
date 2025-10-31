@@ -84,7 +84,7 @@
                         <label for="rol">Rol</label>
                         <select class="form-control @if($errors->has('rol')) is-invalid @endif" id="rol" name="rol">
                             <option value="" selected>Selecciona...</option>
-                            @forelse($roles as $rol)
+                            @forelse($roles_mod_seg as $rol)
                                 @if ($rol->id == old('rol'))
                                     @php
                                         $str_check = 'selected';
@@ -94,7 +94,7 @@
                                         $str_check = '';
                                     @endphp
                                 @endif
-                                <option value="{{ $rol->id }}" {{ $str_check }}>{{ $rol->num_oficio_ca }}: {{ $rol->delegacion->id }} - {{ $rol->delegacion->name }}</option>
+                                <option value="{{ $rol->id }}" {{ $str_check }}> {{ $rol->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -232,7 +232,7 @@
                 <div class="col-sm-3">
                     <label for="telefono">Teléfono (10 dígitos)</label>
                     <div class="input-group mb-4">
-                        <input type="tel" name="telefono" class="form-control @if($errors->has('telefono')) is-invalid @endif" placeholder="0112345678" pattern="[0-9]{2}[0-9]{4}[0-9]{4}" value="{{ strtoupper(old('telefono')) }}">
+                        <input type="tel" name="telefono" class="form-control @if($errors->has('telefono')) is-invalid @endif" placeholder="0112345678" value="{{ strtoupper(old('telefono')) }}">
                         @if ($errors->has('telefono'))
                             @foreach($errors->get('telefono') as $error)
                                 <div class="invalid-feedback">{{ $error }}</div>
