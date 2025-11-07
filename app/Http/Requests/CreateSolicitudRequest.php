@@ -25,7 +25,7 @@ class CreateSolicitudRequest extends FormRequest
     public function rules()
     {
         return [
-            'archivo' => ['required', 'file', 'mimes:pdf', 'between:100,8000'],
+            'archivo' => ['required', 'file', 'mimes:pdf', 'between:100,16000'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
             'tipo_movimiento' => ['required', Rule::in(['1', '2', '3'])],
             'subdelegacion' => ['required'],
@@ -38,6 +38,17 @@ class CreateSolicitudRequest extends FormRequest
             'gpo_actual' => ['required_if:tipo_movimiento,==,2,3'],
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
             'comment' => ['max:190'],
+
+            // 'rol' => ['required', Rule::in(['3'])],
+
+            // 'telefono' => ['required', 'max:10'],
+            // 'tel_ext' => ['required', 'max:5'],
+
+            // 'email' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
+            // 'nombre_pc' => ['required', 'max:50'],
+
+            // 'dir_ip' => ['required', 'ipv4'],
+            // 'mac_address' => ['required', 'regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/'],
         ];
     }
 
@@ -71,6 +82,25 @@ class CreateSolicitudRequest extends FormRequest
             'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',
             'gpo_nuevo.min' => 'Requerido si Tipo de Movimiento es ALTA o CAMBIO.',
             'comment.max' => 'Comentario debe tener menos de :max caracteres',
+
+            'rol.required' => 'Debe elegir un valor de Rol para el usuario',
+            'rol.in' => 'Debe elegir un Rol',
+
+            'telefono.required' => 'Teléfono es un campo obligatorio',
+            'telefono.size' => 'Teléfono debe contener :size caracteres',
+            'tel_ext.required' => 'Extensión es un campo obligatorio',
+            'tel_ext.size' => 'Extensión debe contener :size caracteres',
+
+            'email.required' => 'Correo electrónico IMSS es un campo obligatorio',
+            'email.regex' => 'Correo electrónico IMSS inválido o incompleto',
+            'nombre_pc.required' => 'Nombre del equipo|PC es un campo obligatorio',
+
+            'dir_ip.required' => 'Dirección IP es un campo obligatorio',
+            'dir_ip.size' => 'Dirección IP debe contener :size caracteres',
+            'dir_ip.regex' => 'Dirección IP inválida',
+            'mac_address.required' => 'Dirección física (MAC Address) es un campo obligatorio',
+            'mac_address.size' => 'Dirección física (MAC Address) debe contener :size caracteres',
+            'mac_address.regex' => 'Dirección física (MAC Address) inválida',
         ];
     }
 
