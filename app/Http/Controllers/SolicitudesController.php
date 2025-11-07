@@ -186,6 +186,14 @@ class SolicitudesController extends Controller
             'rechazo_id' => $request->input('rechazo'),
             'archivo' => $archivo->store('solicitudes/' . $user->delegacion_id, 'public'),
             'user_id' => $user->id,
+
+            'rol_id' => 3,
+            'telefono' => $request->input('telefono'),
+            'tel_ext' => $request->input('tel_ext'),
+            'email' => strtolower($request->input('email')),
+            'nombre_pc' => strtoupper($request->input('nombre_pc')),
+            'dir_ip' => $request->input('dir_ip'),
+            'mac_address' => strtoupper($request->input('mac_address')),
         ]);
 
         return redirect('ctas/solicitudes/' . $solicitud->id)->with('message', '¡Solicitud para ' . $solicitud->cuenta . ' creada exitosamente!');

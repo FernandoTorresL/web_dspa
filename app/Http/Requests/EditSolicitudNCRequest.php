@@ -29,7 +29,7 @@ class EditSolicitudNCRequest extends FormRequest
             //'archivo' => ['required', 'file', 'mimes:pdf', 'between:1,9000'],
             'valija' => ['required'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
-            'tipo_movimiento' => ['required', Rule::in(['1', '2', '3'])],
+            'tipo_movimiento' => ['required', Rule::in(['1', '2', '3', '6'])],
             'subdelegacion' => ['required'],
             'primer_apellido' => ['required', 'max:32'],
             'segundo_apellido' => ['max:32'],
@@ -41,6 +41,17 @@ class EditSolicitudNCRequest extends FormRequest
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
             'comment' => ['max:190'],
             'final_remark' => ['max:190'],
+
+            'rol' => [Rule::in(['3'])],
+
+            'telefono' => ['max:10'],
+            'tel_ext' => ['max:5'],
+
+            //'email' => ['regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
+            'nombre_pc' => ['max:50'],
+
+            //'dir_ip' => ['ipv4'],
+            //'mac_address' => ['regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/'],
         ];
     }
 
@@ -70,12 +81,31 @@ class EditSolicitudNCRequest extends FormRequest
             'cuenta.required' => 'User-ID es un campo obligatorio',
             'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
             'cuenta.min' => 'User-ID debe tener al menos :min caracteres',
-            'gpo_actual.required_if' => 'Elija un valor cuando Tipo de Movimiento es BAJA o CAMBIO.',
-            'gpo_nuevo.required_if' => 'Elija un valor cuando Tipo de Movimiento es ALTA o CAMBIO.',
+            'gpo_actual.required_if' => 'Elija un Grupo Actual cuando Tipo de Movimiento es BAJA o CAMBIO.',
+            'gpo_nuevo.required_if' => 'Elija un Grupo Nuevo cuando Tipo de Movimiento es ALTA o CAMBIO.',
             'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',
             'gpo_nuevo.min' => 'Requerido si Tipo de Movimiento es ALTA o CAMBIO.',
             'comment.max' => 'Comentario debe tener menos de :max caracteres',
             'final_remark.max' => 'Observaciones para el rechazo debe tener menos de :max caracteres',
+
+            'rol.required' => 'Debe elegir un valor de Rol para el usuario',
+            'rol.in' => 'Debe elegir un Rol',
+
+            'telefono.required' => 'Teléfono es un campo obligatorio',
+            'telefono.size' => 'Teléfono debe contener :size caracteres',
+            'tel_ext.required' => 'Extensión es un campo obligatorio',
+            'tel_ext.size' => 'Extensión debe contener :size caracteres',
+
+            'email.required' => 'Correo electrónico IMSS es un campo obligatorio',
+            'email.regex' => 'Correo electrónico IMSS inválido o incompleto',
+            'nombre_pc.required' => 'Nombre del equipo|PC es un campo obligatorio',
+
+            'dir_ip.required' => 'Dirección IP es un campo obligatorio',
+            'dir_ip.size' => 'Dirección IP debe contener :size caracteres',
+            'dir_ip.regex' => 'Dirección IP inválida',
+            'mac_address.required' => 'Dirección física (MAC Address) es un campo obligatorio',
+            'mac_address.size' => 'Dirección física (MAC Address) debe contener :size caracteres',
+            'mac_address.regex' => 'Dirección física (MAC Address) inválida',
         ];
     }
 

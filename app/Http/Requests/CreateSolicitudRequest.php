@@ -27,7 +27,7 @@ class CreateSolicitudRequest extends FormRequest
         return [
             'archivo' => ['required', 'file', 'mimes:pdf', 'between:100,16000'],
             'fecha_solicitud' => ['required', 'before_or_equal:today'],
-            'tipo_movimiento' => ['required', Rule::in(['1', '2', '3'])],
+            'tipo_movimiento' => ['required', Rule::in(['1', '2', '3', '6'])],
             'subdelegacion' => ['required'],
             'primer_apellido' => ['required', 'max:32'],
             'segundo_apellido' => ['max:32'],
@@ -39,16 +39,16 @@ class CreateSolicitudRequest extends FormRequest
             'gpo_nuevo' => ['required_if:tipo_movimiento,==,1,3'],
             'comment' => ['max:190'],
 
-            // 'rol' => ['required', Rule::in(['3'])],
+            'rol' => [Rule::in(['3'])],
 
-            // 'telefono' => ['required', 'max:10'],
-            // 'tel_ext' => ['required', 'max:5'],
+            'telefono' => ['max:10'],
+            'tel_ext' => ['max:5'],
 
-            // 'email' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
-            // 'nombre_pc' => ['required', 'max:50'],
+            //'email' => ['regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
+            'nombre_pc' => ['max:50'],
 
-            // 'dir_ip' => ['required', 'ipv4'],
-            // 'mac_address' => ['required', 'regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/'],
+            //'dir_ip' => ['ipv4'],
+            //'mac_address' => ['regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/'],
         ];
     }
 
@@ -77,8 +77,8 @@ class CreateSolicitudRequest extends FormRequest
             'cuenta.required' => 'User-ID es un campo obligatorio',
             'cuenta.max' => 'User-ID debe tener menos de :max caracteres',
             'cuenta.min' => 'User-ID debe tener al menos :min caracteres',
-            'gpo_actual.required_if' => 'Elija un valor cuando Tipo de Movimiento es BAJA o CAMBIO.',
-            'gpo_nuevo.required_if' => 'Elija un valor cuando Tipo de Movimiento es ALTA o CAMBIO.',
+            'gpo_actual.required_if' => 'Elija un Grupo Actual cuando Tipo de Movimiento es BAJA o CAMBIO.',
+            'gpo_nuevo.required_if' => 'Elija un Grupo Nuevo cuando Tipo de Movimiento es ALTA o CAMBIO.',
             'gpo_actual.min' => 'Requerido si Tipo de Movimiento es BAJA.',
             'gpo_nuevo.min' => 'Requerido si Tipo de Movimiento es ALTA o CAMBIO.',
             'comment.max' => 'Comentario debe tener menos de :max caracteres',
