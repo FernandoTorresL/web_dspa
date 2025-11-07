@@ -329,6 +329,14 @@ class SolicitudesController extends Controller
             'rechazo_id'            => $solicitud_original->rechazo_id,
             'archivo'               => $solicitud_original->archivo,
             'user_id'               => $solicitud_original->user_id,
+
+            'rol_id'                => 3,
+            'telefono'              => $solicitud_original->telefono,
+            'tel_ext'               => $solicitud_original->tel_ext,
+            'email'                 => strtolower($solicitud_original->email),
+            'nombre_pc'             => strtoupper($solicitud_original->nombre_pc),
+            'dir_ip'                => $solicitud_original->dir_ip,
+            'mac_address'           => strtoupper($solicitud_original->mac_address),
         ]);
 
         Log::info('Nva Solicitud Hist. Del:' . $solicitud_hist->id . $texto_log);
@@ -361,6 +369,14 @@ class SolicitudesController extends Controller
         $solicitud->rechazo_id              = $request->input('rechazo');
         $solicitud->archivo                 = $nuevo_archivo;
         $solicitud->user_id                 = $user_id;
+
+        $solicitud->rol_id                  = 3;
+        $solicitud->telefono                = $request->input('telefono');
+        $solicitud->tel_ext                 = $request->input('tel_ext');
+        $solicitud->email                   = strtolower($request->input('email'));
+        $solicitud->nombre_pc               = strtoupper($request->input('nombre_pc'));
+        $solicitud->dir_ip                  = $request->input('dir_ip');
+        $solicitud->mac_address             = strtoupper($request->input('mac_address'));
 
         $solicitud->save();
 

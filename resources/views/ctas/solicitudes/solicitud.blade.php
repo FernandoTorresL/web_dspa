@@ -20,11 +20,16 @@
         <h5 class="card-title">
             <strong>
                 Solicitud {{ $solicitud->movimiento->name }}
-                <span class="text-{{ $color_text_solicitud }}">{{ $cuenta }}</span>
+                <span class="text-{{ $color_text_solicitud }}">{{ $solicitud->movimiento_id==6 ? $solicitud->curp : $cuenta }}</span>
             </strong>
-            ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
-            {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
-            {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
+
+            @if ( $solicitud->movimiento_id<>'6' )
+                <span>
+                ( {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
+                {{ isset($solicitud->gpo_nuevo) && isset($solicitud->gpo_actual) ? '->' : '' }}
+                {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }} )
+                </span>
+            @endif
 
             <span class="card-text float-right">
                 <strong>Fecha en solicitud:</strong>

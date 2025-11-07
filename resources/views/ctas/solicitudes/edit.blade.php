@@ -384,6 +384,117 @@
                 </div>
             @endcan
 
+            <div class="row">
+                <br>
+            </div>
+
+            <div class="row-sm-3">
+                <label for="rol">
+                    <strong>CAMPOS ESPECÍFICOS DE USUARIOS DEL MÓDULO DE SEGUIMIENTO (No se utilizan para Usuarios SINDO)</strong>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select class="form-control" id="rol" name="rol">
+                            <option value="3" selected>Ventanilla</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label for="telefono">Teléfono (10 dígitos)</label>
+                    <div class="input-group mb-4">
+                        <input type="tel" name="telefono" class="form-control @if($errors->has('telefono')) is-invalid @endif" placeholder="0112345678" value="{{ strtoupper(old('telefono', $sol_original->telefono)) }}">
+                        @if ($errors->has('telefono'))
+                            @foreach($errors->get('telefono') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-sm-1">
+
+                </div>
+
+                <div class="col-sm-2">
+                    <label for="tel_ext">Extensión</label>
+                    <div class="input-group mb-4">
+                        <input type="number" name="tel_ext" class="form-control @if($errors->has('tel_ext')) is-invalid @endif" placeholder="12345" value="{{ strtoupper(old('tel_ext', $sol_original->tel_ext)) }}">
+                        @if ($errors->has('tel_ext'))
+                            @foreach($errors->get('tel_ext') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label for="email">Correo electrónico IMSS</label>
+                    <div class="input-group mb-4">
+                        <input type="email" name="email" class="form-control @if($errors->has('email')) is-invalid @endif" placeholder="nombre.apellido@imss.gob.mx" value="{{ strtoupper(old('email', $sol_original->email)) }}">
+                        @if ($errors->has('email'))
+                            @foreach($errors->get('email') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <label for="nombre_pc">Nombre del equipo/PC</label>
+                    <div class="input-group mb-4">
+                        <input type="text" name="nombre_pc" class="form-control @if($errors->has('nombre_pc')) is-invalid @endif" placeholder="MTO12345WSTF00.NTE.IMSS.GOB.MX" value="{{ strtoupper(old('nombre_pc', $sol_original->nombre_pc)) }}">
+                        @if ($errors->has('nombre_pc'))
+                            @foreach($errors->get('nombre_pc') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label for="dir_ip">Dirección IP del equipo</label>
+                    <div class="input-group mb-4">
+                        <input type="text" name="dir_ip" class="form-control @if($errors->has('dir_ip')) is-invalid @endif" placeholder="255.255.255.255" value="{{ strtoupper(old('dir_ip', $sol_original->dir_ip)) }}">
+                        @if ($errors->has('dir_ip'))
+                            @foreach($errors->get('dir_ip') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-sm-1">
+
+                </div>
+
+                <div class="col-sm-4">
+                    <label for="mac_address">Dirección física (MAC address)</label>
+                    <div class="input-group mb-4">
+                        <input type="text" name="mac_address" class="form-control @if($errors->has('mac_address')) is-invalid @endif" placeholder="F4-38-8E-DB-C4-48" pattern="^([0-9a-fA-F]{2}[:\-]){5}[0-9a-fA-F]{2}$" value="{{ strtoupper(old('mac_address', $sol_original->mac_address)) }}">
+                        @if ($errors->has('mac_address'))
+                            @foreach($errors->get('mac_address') as $error)
+                                <div class="invalid-feedback">{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <br>
+            </div>
+
             <div class="input-group text-right">
                 <button type="submit" class="btn btn-primary">Enviar cambios</button>
             </div>
