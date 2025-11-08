@@ -27,7 +27,8 @@ class SolicitudesDelController extends Controller
             $solicitudes =
                 Solicitud::select('id', 'lote_id', 'created_at', 'delegacion_id', 'subdelegacion_id',
                     'cuenta', 'nombre', 'primer_apellido', 'segundo_apellido', 'movimiento_id',
-                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula', 'curp')
+                    'gpo_actual_id', 'gpo_nuevo_id', 'status_sol_id', 'matricula', 'curp',
+                    'email', 'nombre_pc', 'dir_ip', 'mac_address')
                 ->with(['delegacion:id,name',
                         'subdelegacion:id,name,num_sub',
                         'movimiento:id,name',

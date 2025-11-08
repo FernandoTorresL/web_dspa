@@ -19,8 +19,10 @@
                 <th>Fecha captura</th>
                 <th>Lote</th>
                 <th>Del/Subdel</th>
-                <th>Apellidos-Nombre</th>
-                <th class="text-center">CURP (Matrícula)</th>
+                <th>Apellidos-Nombre (email)</th>
+                <th class="text-center">
+                    CURP (Matrícula)
+                </th>
                 <th class="text-center">Usuario</th>
                 <th class="text-center">Tipo mov</th>
                 <th class="text-center">Gpo actual</th>
@@ -73,29 +75,50 @@
                     </p>
                 </td>
 
-                <td class="small">{{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}</td>
+                <td class="small">
+                    {{ $solicitud->primer_apellido }}-{{ $solicitud->segundo_apellido }}-{{ $solicitud->nombre }}
+                    <p>
+                        {{ isset($solicitud->email) ? '(' . $solicitud->email . ')' : '' }}
+                    </p>
+                </td>
 
                 <td class="small text-left">
                     {{ $solicitud->curp }}
                     <p>
                         ({{ $solicitud->matricula }})
                     </p>
+                        {{ $solicitud->nombre_pc }}
+                    <p>
+                        {{ $solicitud->mac_address }}
+                    </p>
                 </td>
 
-                <td class="small text-left">
+                <td class="small text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">
                         <button type="button" class="btn btn-primary btn-sm text-monospace" data-toggle="tooltip"
                             title="Click para ver detalle...">
+                            @if($solicitud->movimiento_id==6)
+                                {{ isset($solicitud->resultado_solicitud) ? $solicitud->resultado_solicitud->curp : $solicitud->curp . '    ' }}
+                            @else
                                 {{ isset($solicitud->resultado_solicitud) ? $solicitud->resultado_solicitud->cuenta : $solicitud->cuenta . '    ' }}
+                            @endif
                         </button>
                     </a>
                 </td>
 
                 <td class="small text-center">{{ $solicitud->movimiento->name }}</td>
 
-                <td class="small text-center">{{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}</td>
+                <td class="small text-center">
+                    @if($solicitud->movimiento_id!=6)
+                        {{ isset($solicitud->gpo_actual) ? $solicitud->gpo_actual->name : '' }}
+                    @endif
+                </td>
 
-                <td class="small text-center">{{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}</td>
+                <td class="small text-center">
+                    @if($solicitud->movimiento_id!=6)
+                        {{ isset($solicitud->gpo_nuevo) ? $solicitud->gpo_nuevo->name : '' }}
+                    @endif
+                </td>
 
                 <td class="small text-{{ $color_solicitud }} text-center">
                     <a target="_blank" alt="Ver/Editar" href="/ctas/solicitudes/{{ $solicitud->id }}">

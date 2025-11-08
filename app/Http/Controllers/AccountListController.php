@@ -49,14 +49,13 @@ class AccountListController extends Controller
                     ->get();
         }
 
-            $subdelegaciones_list =
-                Subdelegacion::select('id', 'name', 'num_sub')
-                    ->where('delegacion_id', $p_delegacion_id)
-                    ->where('status', '<>', 0)
-                    ->where('num_sub', '<>', 0)
-                    ->orderBy('delegacion_id', 'asc')
-                    ->get();
-        }
+        $subdelegaciones_list =
+            Subdelegacion::select('id', 'name', 'num_sub')
+                ->where('delegacion_id', $p_delegacion_id)
+                ->where('status', '<>', 0)
+                ->where('num_sub', '<>', 0)
+                ->orderBy('delegacion_id', 'asc')
+                ->get();
 
         $delegacion_a_consultar = Delegacion::find($p_delegacion_id);
 
